@@ -359,7 +359,7 @@ pof.agg <- function(individuos = individuos.df,
 faixas.etarias.normais <- c(0, 1, 4, 7, 13, 18, 65, max(individuos.df$idade_anos))
 
 # Adulto e Criança apenas
-faixas.etarias.ad <- c(0, 14, max(individuos.df$idade_anos))
+faixas.etarias.ac <- c(0, 14, max(individuos.df$idade_anos))
 
 # Faixas etárias utilizadas por Vaz (2007)
 faixas.etarias.vaz <- c(0, 4, 9, 14, max(individuos.df$idade_anos))
@@ -368,30 +368,30 @@ faixas.etarias.vaz <- c(0, 4, 9, 14, max(individuos.df$idade_anos))
 faixas.etarias.deaton <- c(0, 4, 9, 14, 54, max(individuos.df$idade_anos))
 
 # AGREGAÇÕES POR FAIXAS ETÁRIAS COM E SEM SEXO
-# pof.agg(faixas.etarias = faixas.etarias.ad) -> pof.agg.com_sexo.ad
+# pof.agg(faixas.etarias = faixas.etarias.ac) -> pof.agg.com_sexo.ac
 # pof.agg(faixas.etarias = faixas.etarias.vaz) -> pof.agg.com_sexo.vaz
 # pof.agg(faixas.etarias = faixas.etarias.deaton) -> pof.agg.com_sexo.deaton
 # 
-# pof.agg(faixas.etarias = faixas.etarias.ad, sexo = F) -> pof.agg.sem_sexo.ad
+# pof.agg(faixas.etarias = faixas.etarias.ac, sexo = F) -> pof.agg.sem_sexo.ac
 # pof.agg(faixas.etarias = faixas.etarias.vaz, sexo = F) -> pof.agg.sem_sexo.vaz
 # pof.agg(faixas.etarias = faixas.etarias.deaton, sexo = F) -> pof.agg.sem_sexo.deaton
 
 # 4. SELEÇÃO AMOSTRAL
-# pof.agg.com_sexo.ad -> pof.agg.com_sexo.ad.backup
+# pof.agg.com_sexo.ac -> pof.agg.com_sexo.ac.backup
 # pof.agg.com_sexo.vaz -> pof.agg.com_sexo.vaz.backup
 # pof.agg.com_sexo.deaton -> pof.agg.com_sexo.deaton.backup
 # 
-# pof.agg.sem_sexo.ad -> pof.agg.sem_sexo.ad.backup
+# pof.agg.sem_sexo.ac -> pof.agg.sem_sexo.ac.backup
 # pof.agg.sem_sexo.vaz -> pof.agg.sem_sexo.vaz.backup
 # pof.agg.sem_sexo.deaton -> pof.agg.sem_sexo.deaton.backup
 # 
 # pof.agg.com_sexo.normais <- pof.agg.com_sexo.normais.backup
-# pof.agg.com_sexo.ad <- pof.agg.com_sexo.ad.backup
+# pof.agg.com_sexo.ac <- pof.agg.com_sexo.ac.backup
 # pof.agg.com_sexo.vaz <- pof.agg.com_sexo.vaz.backup
 # pof.agg.com_sexo.deaton <- pof.agg.com_sexo.deaton.backup
 # 
 # pof.agg.sem_sexo.normais <- pof.agg.sem_sexo.normais.backup
-# pof.agg.sem_sexo.ad <- pof.agg.sem_sexo.ad.backup
+# pof.agg.sem_sexo.ac <- pof.agg.sem_sexo.ac.backup
 # pof.agg.sem_sexo.vaz <- pof.agg.sem_sexo.vaz.backup
 # pof.agg.sem_sexo.deaton <- pof.agg.sem_sexo.deaton.backup
 
@@ -441,9 +441,7 @@ lm.engel.rothbarth <- function(df, good.i = 'despesas.alimentacao.mensal',
   
   paste(good.i, '/ despesas.totais.mensal ~ .',
         paste0('+ log(', expenditure, ')',
-               '- ', expenditure),
-        '+ log(qtd_morador_domc)',
-        '- qtd_morador_domc + 0 ') %>%
+               '- ', expenditure)) %>%
     as.formula(.) -> f
   
   df %>%
@@ -451,32 +449,10 @@ lm.engel.rothbarth <- function(df, good.i = 'despesas.alimentacao.mensal',
            good.i,
            control,
            despesas.totais.mensal,
-           expenditure,
-           qtd_morador_domc) %>%
-    lm(formula = f,
-       data = .)
-  
-}
-
-lm.engel.rothbarth.2 <- function(df, good.i = 'despesas.alimentacao.mensal',
-                                 control = c('UF.sigla', 'urbano')){
-  
-  paste(good.i, '/ despesas.totais.mensal ~ .',
-        '+ log(despesas.totais.nao.monetaria.mensal.per_capita)',
-        '+ log(qtd_morador_domc)',
-        '- despesas.totais.nao.monetaria.mensal.per_capita',
-        '- qtd_morador_domc + 0 ') %>%
-    as.formula(.) -> f
-  
-  df %>%
-    select(contains('anos'),
-           good.i,
-           control,
-           despesas.totais.mensal,
-           despesas.totais.nao.monetaria.mensal.per_capita,
-           qtd_morador_domc) %>%
-    lm(formula = f,
-       data = .)
+           expenditure) %>%
+    lm(formula = f#,
+       # weights = .weights
+    )
   
 }
 
@@ -491,57 +467,31 @@ lm.heteroskedasticity <- function(model, .type = 'HC3',
     model
 }
 
-equivalence.scales <- function(model, referencia){
-  model %>% 
-    broom::tidy(.) %>% 
-    filter(grepl('anos', term)) %>%
-    mutate(ref.name = referencia,
-           ref.estimate = filter(.,term == referencia) %>% 
-             pull(estimate),
-           coef.ref = estimate/ref.estimate)
-}
 
-equivalence.scales.2 <- function(model, na.r = 2, nc.r = 0, adulto){
-  model %>% 
-    broom::tidy(.) %>% 
-    mutate(log.expenditure.estimate = filter(.,term == 'log(despesas.totais.nao.monetaria.mensal.per_capita)') %>%
-             pull(estimate),
-           coef.rel = estimate/log.expenditure.estimate) %>%
-    filter(grepl('anos', term)) %>%
-    mutate(ref.name = adulto,
-           ref.estimate = filter(.,term == adulto) %>% 
-             pull(estimate),
-           equivalence.scale = exp(ref.estimate - coef.rel))
-}
-
-equivalence.scales.3 <- function(model, nh = 2, nr = 1,
-                                 expenditure = 'despesas.totais.mensal.per_capita'){
+equivalence.scales.dudel <- function(model, 
+                                     ref.a, na.h, nc.h,
+                                     na.r = 1, nc.r = 0,
+                                     nr = na.r + nc.r,
+                                     nh = na.h + nc.h,
+                                     expenditure = 'despesas.totais.mensal.per_capita'){
   
   model %>% 
     broom::tidy(.) %>% 
-    mutate(log.expenditure.estimate = filter(.,term == paste0('log(', expenditure, ')')) %>%
-             pull(estimate)) %>%
-    filter(grepl('anos', term)) %>%
-    mutate(equivalence.scale.couple = (nh/nr)*exp((estimate/log.expenditure.estimate)*(nr-nh)))
-}
-
-equivalence.scales.vaz <- function(model, nh = 3, nr = 2,
-                                   log.expenditure = 'log(despesas.totais.mensal.per_capita)'){
-  model %>% 
-    broom::tidy(.) %>% 
-    mutate(log.expenditure.estimate = filter(.,term == log.expenditure) %>%
-             pull(estimate),
+    mutate(log.expenditure.estimate = filter(.,term == paste0('log(', expenditure, ')')) %>% pull(estimate),
            coef.rel = estimate/log.expenditure.estimate) %>%
     filter(grepl('anos', term)) %>%
-    mutate(equivalence.scale.couple = -coef.rel*((nh-nr)/nh))
+    mutate(ref.estimate.rel = filter(.,term == ref.a) %>% pull(coef.rel),
+           equivalence.scale = ref.estimate.rel*(na.r - na.h) + coef.rel*(nc.r - nc.h),
+           equivalence.scale = exp(equivalence.scale)*(nh/nr),
+           member.cost = (equivalence.scale - 1)*(nr/nc.h))
 }
 
 
 # 5.2. TESTAGEM DE REGRESSÕES
 # HETEROCEDACIDADE
 # Heterocedasticidade em todas as regressões
-list(pof.agg.com_sexo.ad,
-     pof.agg.sem_sexo.ad,
+list(pof.agg.com_sexo.ac,
+     pof.agg.sem_sexo.ac,
      pof.agg.com_sexo.deaton,
      pof.agg.sem_sexo.deaton,
      pof.agg.com_sexo.vaz,
@@ -551,8 +501,8 @@ list(pof.agg.com_sexo.ad,
   lapply(function(x){x$p.value <= 0.05})
 
 # Novos erros-padrão
-list(pof.agg.com_sexo.ad,
-     pof.agg.sem_sexo.ad,
+list(pof.agg.com_sexo.ac,
+     pof.agg.sem_sexo.ac,
      pof.agg.com_sexo.deaton,
      pof.agg.sem_sexo.deaton,
      pof.agg.com_sexo.vaz,
@@ -562,10 +512,8 @@ list(pof.agg.com_sexo.ad,
 
 
 # 5.3. ESCALAS DE EQUIVALÊNCIA
-referencia.com_sexo.normais = '`Homens: (18,65] anos`'
-referencia.sem_sexo.normais = '`(18,65] anos`'
-referencia.com_sexo.ad = '`Homens: (14,104] anos`'
-referencia.sem_sexo.ad = '`(14,104] anos`'
+referencia.com_sexo.ac = '`Homens: (14,104] anos`'
+referencia.sem_sexo.ac = '`(14,104] anos`'
 referencia.com_sexo.vaz = '`Homens: (14,104] anos`'
 referencia.sem_sexo.vaz = '`(14,104] anos`'
 referencia.com_sexo.deaton = '`Homens: (14,54] anos`'
@@ -574,96 +522,32 @@ referencia.sem_sexo.deaton = '`(14,54] anos`'
 
 
 # # Método de Engel
-# Regressões Normais
-pof.agg.sem_sexo.ad %>%
-  # filter(urbano == 'Rural') %>%
-  lm.engel.rothbarth() %>% 
-  summary()
-
-pof.agg.sem_sexo.deaton %>%
-  filter(urbano == 'Urbano') %>%
-  lm.engel.rothbarth(control = c('despesas.totais.mensal', 'UF.sigla')) %>% 
-  equivalence.scales(referencia = referencia.sem_sexo.deaton)
-
-
-pof.agg(faixas.etarias = faixas.etarias.ad, sexo = F) %>%
-  filter(!(num_filhos == 1 & qtd_morador_domc == 2)) %>% 
-  sample.selection(max.moradores = 5,
-                   max.filhos = 3,
-                   incluir.solteiros = T) %>% 
-  # mutate(bens.adultos.mensal = despesas.fumo.mensal + despesas.bebidas_alcoolicas.mensal + despesas.jogos_apostas.mensal + despesas.vestuario_homem.mulher.mensal) %>%
-  # lm.engel.rothbarth(good.i = 'bens.adultos.mensal') %>%
-  lm.engel.rothbarth(.) %>% 
-  lm.heteroskedasticity(.) %>% broom::tidy() %>% View()
-equivalence.scales(referencia = referencia.sem_sexo.ad) %>%
-  select(1,ncol(.),p.value) %>%
-  mutate(p.value <= 0.05)
-
-
-# ds
-
-
-
 pof.agg.sem_sexo.vaz %>%
-  # filter(despesas.totais.nao.monetaria.mensal.per_capita > 0) %>%
-  # filter(!(num_filhos == 1 & qtd_morador_domc == 2)) %>% 
-  # filter(!(num_conjuge == 0 & num_filhos > 0)) %>% 
-  # sample.selection(max.moradores = 6,
-                   # max.filhos = 4,
-                   # incluir.solteiros = T) %>% 
-  # mutate(bens.adultos = despesas.vestuario_homem.mulher.mensal + 
-  # despesas.jogos_apostas.mensal + despesas.bebidas_alcoolicas.mensal + 
-  # despesas.fumo.mensal) %>%
-  # lm.engel.rothbarth.2(good.i = 'bens.adultos') %>%
+  filter(!(num_conjuge == 0 & num_filhos > 0)) %>%
+  sample.selection(max.moradores = 5, max.filhos = 3,
+                   incluir.solteiros = T) %>%
   lm.engel.rothbarth(.) %>%
-  # lm.engel.rothbarth(expenditure = 'despesas.totais.nao.monetaria.mensal.per_capita') %>%
   lm.heteroskedasticity(.) %>%
-  equivalence.scales.3(expenditure = 'despesas.totais.nao.monetaria.mensal.per_capita') %>%
-  # equivalence.scales.vaz(nh = 3,
-                         # nr = 2) %>%
-  # equivalence.scales.3(.) %>%
-  select(1,ncol(.),p.value) %>%
-  mutate(p.value <= 0.05,
-         equivalence.scale.couple = equivalence.scale.couple/last(equivalence.scale.couple))
+  equivalence.scales.dudel(ref.a = referencia.sem_sexo.vaz,
+                           na.h = 2, nc.h = 1,
+                           na.r = 2, nc.r = 0) %>%
+  select(term, equivalence.scale, std.error,
+         member.cost, p.value) %>%
+  mutate(p.value = p.value <= 0.05)
 
-
-
-
-
-lm.engel.2(df = pof.agg.com_sexo.normais) %>% 
-  equivalence.scales(referencia = referencia.tipos.familias,
-                     var.idade = 'tipo.familia') %>%
-  filter(Variable != 'tipo.familia(1,1)') %>%
-  mutate(`P-Value.Simple` = findInterval(`Pr(>|t|)`,
-                                         vec = c(0.01, 0.05, 0.1),
-                                         rightmost.closed = T,
-                                         left.open = T)) %>% 
-  mutate(`P-Value.Color` = case_when(`P-Value.Simple` == 0 ~ 'p < 0.01',
-                                     `P-Value.Simple` == 1 ~ 'p < 0.05',
-                                     `P-Value.Simple` == 2 ~ 'p < 0.1',
-                                     `P-Value.Simple` == 3 ~ 'Not Significant'),
-         `P-Value.Color` = factor(`P-Value.Color`),
-         Variable = factor(Variable, unique(Variable))) %>% 
-  ggplot(aes(x = Variable,
-             y = Equivalence.Scale - 1,
-             color = `P-Value.Color`,
-             fill = `P-Value.Color`)) +
+lapply(1:4, function(x)
+  equivalence.scales.dudel(model = m,
+                           ref.a = referencia.sem_sexo.ac,
+                           na.h = 2, nc.h = x,
+                           na.r = 2, nc.r = 0) %>%
+    select(term, equivalence.scale,
+           member.cost, p.value) %>%
+    mutate(nc = x,
+           term = factor(term, unique(term)),
+           p.value = p.value <= 0.05)) %>%
+  bind_rows(.) %>%
+  ggplot(aes(x = term,
+             y = member.cost)) + 
   geom_bar(stat = 'identity') + 
-  geom_text(aes(label = round(Equivalence.Scale,2)-1),
-            fontface = 'bold',
-            hjust = -0.25) +
-  # gghighlight(Variable == referencia.tipos.familias,
-  # unhighlighted_params = list(color = 'white',
-  #                             label = NA)) +
-  gghighlight(`Pr(>|t|)` <= 0.05,
-              unhighlighted_params = list(color = 'white',
-                                          label = NA)) +
-  scale_fill_viridis(option = 'viridis',
-                     direction = -1,
-                     discrete = T) +
-  scale_color_viridis(option = 'viridis',
-                      direction = -1,
-                      discrete = T) +
-  guides(fill = guide_legend(override.aes = list(size = 3))) +
+  facet_grid(cols = vars(nc)) + 
   coord_flip()
-
