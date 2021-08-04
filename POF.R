@@ -4,43 +4,21 @@
 # library(devtools)
 # remotes::install_github('ajdamico/lodown', dependencies = T)
 # remotes::install_github('tomasbarcellos/pof')
-# install.packages('tidyverse')
-# install.packages('sidrar')
-# install.packages('plyr')
-# install.packages('sandwich')
-# install.packages('lmtest')
-# install.packages('geobr')
-# install.packages('leaflet')
-# install.packages('rgdal')
-# install.packages('stargazer')
-# install.packages('gghighlight')
-# install.packages('ggridges')
-# install.packages('viridis')
-# install.packages('naniar')
-# install.packages('scales')
-# install.packages('vars')
-# install.packages('patchwork')
 
-# library(pof)
-library(tidyverse)
-library(sidrar)
-library(plyr)
-library(sandwich)
-library(lmtest)
-library(geobr)
-library(leaflet)
-library(rgdal)
-library(stargazer)
-library(gghighlight)
-library(ggridges)
-library(viridis)
-library(naniar)
-library(scales)
-library(vars)
-library(patchwork)
+pkg <- c('tidyverse', 'plyr', 'sandwich', 'lmtest',
+         'geobr', 'rgdal', 'stargazer', 'gghighlight',
+         'ggridges', 'ggthemes', 'viridis', 'naniar',
+         'scales', 'patchwork' #, pof
+         )
+
+lapply(pkg, function(x)
+  if(!require(x, character.only = T))
+  {install.packages(x); require(x)})
+
 select <- dplyr::select
 mutate <- dplyr::mutate
 summarise <- dplyr::summarise
+
 
 
 # 2. TEMA

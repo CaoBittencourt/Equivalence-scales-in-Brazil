@@ -1,35 +1,13 @@
 # 1. PACOTES
-# install.packages('tidyverse')
-# install.packages('plyr')
-# install.packages('sandwich')
-# install.packages('lmtest')
-# install.packages('geobr')
-# install.packages('leaflet')
-# install.packages('rgdal')
-# install.packages('stargazer')
-# install.packages('gghighlight')
-# install.packages('ggridges')
-# install.packages('viridis')
-# install.packages('naniar')
-# install.packages('scales')
-# install.packages('vars')
-# install.packages('patchwork')
+pkg <- c('tidyverse', 'plyr', 'sandwich', 'lmtest',
+         'geobr', 'rgdal', 'stargazer', 'gghighlight',
+         'ggridges', 'ggthemes', 'viridis', 'naniar',
+         'scales', 'patchwork')
 
-library(tidyverse)
-library(plyr)
-library(sandwich)
-library(lmtest)
-library(geobr)
-library(leaflet)
-library(rgdal)
-library(stargazer)
-library(gghighlight)
-library(ggridges)
-library(viridis)
-library(naniar)
-library(scales)
-library(vars)
-library(patchwork)
+lapply(pkg, function(x)
+  if(!require(x, character.only = T))
+  {install.packages(x); require(x)})
+
 select <- dplyr::select
 mutate <- dplyr::mutate
 summarise <- dplyr::summarise
@@ -105,6 +83,23 @@ consumo.df <- read.csv(consumo.file,
 
 individuos.df <- read.csv(individuos.file,
                           sep = ';')
+
+install.packages("devtools")
+devtools::install_github("lucasmation/microdadosBrasil")
+library('microdadosBrasil')
+
+# Censo Demográfico 2000
+download_sourceData("PNAD", 2002, unzip = T)
+
+download_sourceData("CENSO", 2000, unzip = T)
+d <- read_CENSO('domicilios', 2000)
+d <- read_CENSO('pessoas', 2000)
+
+# Censo Demográfico 2000
+download_sourceData("CENSO", 2010, unzip = T)
+d <- read_CENSO('domicilios', 2010)
+d <- read_CENSO('pessoas', 2010)
+
 
 # 3.3. AJUSTES
 # EXPLORAÇÃO I
