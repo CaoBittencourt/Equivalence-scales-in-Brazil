@@ -1,8 +1,37 @@
 # 1. PACOTES
-pkg <- c('tidyverse', 'plyr', 'sandwich', 'lmtest',
-         'geobr', 'rgdal', 'stargazer', 'gghighlight',
-         'ggridges', 'ggthemes', 'viridis', 'naniar',
-         'scales', 'patchwork')
+pkg <- c('sandwich', 'lmtest', 'stargazer', 'rgdal', 'REndo',
+         'geobr', 'gghighlight', 'ggridges', 'ggthemes', 'viridis', 'patchwork', 'naniar', 'scales',
+         'plyr', 'glue', 'tidyverse')
+
+# pacotes que testei e não funcionaram (por enquanto): microdadosBrasil, pof 
+# install.packages( "devtools" , repos = "http://cran.rstudio.com/" )
+# library(devtools)
+# install_github( "ajdamico/lodown" , dependencies = TRUE )
+# library(lodown)
+# pof_cat <-
+#   get_catalog( "pof" ,
+#                output_dir = file.path( path.expand( "~" ) , "POF" ) )
+# 
+# pof_cat <- lodown( "pof" , pof_cat )
+
+# install.packages("devtools")
+# devtools::install_github("lucasmation/microdadosBrasil")
+# library('microdadosBrasil')
+# 
+# # Censo Demográfico 2000
+# download_sourceData("PNAD", 2002, unzip = T)
+# 
+# download_sourceData("CENSO", 2000, unzip = T)
+# d <- read_CENSO('domicilios', 2000)
+# d <- read_CENSO('pessoas', 2000)
+# 
+# # Censo Demográfico 2000
+# download_sourceData("CENSO", 2010, unzip = T)
+# d <- read_CENSO('domicilios', 2010)
+# d <- read_CENSO('pessoas', 2010)
+# get_import_dictionary('POF',2008,'morador')
+
+
 
 lapply(pkg, function(x)
   if(!require(x, character.only = T))
@@ -16,57 +45,57 @@ summarise <- dplyr::summarise
 # 2. TEMA
 # 2.1. MAPAS
 # 2.2. GRÁFICOS
-theme_set(theme_bw(base_size = 16) +
-            theme(plot.title = element_text(size = rel(1),
-                                            face = 'bold',
-                                            hjust = 0.5,
-                                            vjust = 3),
-                  plot.subtitle = element_text(size = rel(1),
-                                               face = 'italic',
-                                               hjust = 0.5,
-                                               vjust = 3),
-                  plot.margin = margin(20,20,20,20),
-                  panel.grid = element_line(size = rel(0.2)),
-                  axis.title.x = element_text(size = rel(0.85),
-                                              hjust = 0.5,
-                                              vjust = -3),
-                  axis.title.y = element_text(size = rel(0.85),
-                                              hjust = 0.5,
-                                              vjust = 3),
-                  axis.text.x = element_text(size = rel(0.8)),
-                  axis.text.y = element_text(size = rel(0.8)),
-                  strip.text.x = element_text(size = rel(0.8)),
-                  strip.text.y = element_text(size = rel(0.8)),
-                  legend.title = element_text(size = rel(0.8)),
-                  legend.text = element_text(size = rel(0.7)),
-                  legend.background = element_blank(),
-                  legend.position = 'right',
-                  legend.direction = 'vertical',
-                  legend.box.background = element_blank()))
-
-theme_ridges(font_size = 16) +
-  theme(plot.title = element_text(size = rel(1),
-                                  face = 'bold',
-                                  hjust = 0.5,
-                                  vjust = 3),
-        plot.margin = margin(20,20,20,20),
-        panel.grid = element_line(size = rel(0.2)),
-        axis.title.x = element_text(size = rel(0.8),
-                                    hjust = 0.5,
-                                    vjust = -3),
-        axis.title.y = element_text(size = rel(0.8),
-                                    hjust = 0.5,
-                                    vjust = 3),
-        axis.text.x = element_text(size = rel(0.8)),
-        axis.text.y = element_text(size = rel(0.8)),
-        strip.text.x = element_text(size = rel(0.8)),
-        strip.text.y = element_text(size = rel(0.8)),
-        legend.title = element_text(size = rel(0.8)),
-        legend.text = element_text(size = rel(0.7)),
-        legend.background = element_blank(),
-        legend.position = 'right',
-        legend.direction = 'vertical',
-        legend.box.background = element_blank()) -> theme_ridges.2
+# theme_set(theme_bw(base_size = 16) +
+#             theme(plot.title = element_text(size = rel(1),
+#                                             face = 'bold',
+#                                             hjust = 0.5,
+#                                             vjust = 3),
+#                   plot.subtitle = element_text(size = rel(1),
+#                                                face = 'italic',
+#                                                hjust = 0.5,
+#                                                vjust = 3),
+#                   plot.margin = margin(20,20,20,20),
+#                   panel.grid = element_line(size = rel(0.2)),
+#                   axis.title.x = element_text(size = rel(0.85),
+#                                               hjust = 0.5,
+#                                               vjust = -3),
+#                   axis.title.y = element_text(size = rel(0.85),
+#                                               hjust = 0.5,
+#                                               vjust = 3),
+#                   axis.text.x = element_text(size = rel(0.8)),
+#                   axis.text.y = element_text(size = rel(0.8)),
+#                   strip.text.x = element_text(size = rel(0.8)),
+#                   strip.text.y = element_text(size = rel(0.8)),
+#                   legend.title = element_text(size = rel(0.8)),
+#                   legend.text = element_text(size = rel(0.7)),
+#                   legend.background = element_blank(),
+#                   legend.position = 'right',
+#                   legend.direction = 'vertical',
+#                   legend.box.background = element_blank()))
+# 
+# theme_ridges(font_size = 16) +
+#   theme(plot.title = element_text(size = rel(1),
+#                                   face = 'bold',
+#                                   hjust = 0.5,
+#                                   vjust = 3),
+#         plot.margin = margin(20,20,20,20),
+#         panel.grid = element_line(size = rel(0.2)),
+#         axis.title.x = element_text(size = rel(0.8),
+#                                     hjust = 0.5,
+#                                     vjust = -3),
+#         axis.title.y = element_text(size = rel(0.8),
+#                                     hjust = 0.5,
+#                                     vjust = 3),
+#         axis.text.x = element_text(size = rel(0.8)),
+#         axis.text.y = element_text(size = rel(0.8)),
+#         strip.text.x = element_text(size = rel(0.8)),
+#         strip.text.y = element_text(size = rel(0.8)),
+#         legend.title = element_text(size = rel(0.8)),
+#         legend.text = element_text(size = rel(0.7)),
+#         legend.background = element_blank(),
+#         legend.position = 'right',
+#         legend.direction = 'vertical',
+#         legend.box.background = element_blank()) -> theme_ridges.2
 
 
 # 3. DADOS
@@ -83,22 +112,6 @@ consumo.df <- read.csv(consumo.file,
 
 individuos.df <- read.csv(individuos.file,
                           sep = ';')
-
-install.packages("devtools")
-devtools::install_github("lucasmation/microdadosBrasil")
-library('microdadosBrasil')
-
-# Censo Demográfico 2000
-download_sourceData("PNAD", 2002, unzip = T)
-
-download_sourceData("CENSO", 2000, unzip = T)
-d <- read_CENSO('domicilios', 2000)
-d <- read_CENSO('pessoas', 2000)
-
-# Censo Demográfico 2000
-download_sourceData("CENSO", 2010, unzip = T)
-d <- read_CENSO('domicilios', 2010)
-d <- read_CENSO('pessoas', 2010)
 
 
 # 3.3. AJUSTES
@@ -432,11 +445,15 @@ sample.selection <- function(df, regioes = levels(df$regiao),
 # 5.1. FUNÇÕES DE REGRESSÃO E ESCALAS DE EQUIVALÊNCIA
 lm.engel.rothbarth <- function(df, good.i = 'despesas.alimentacao.mensal',
                                expenditure = 'despesas.totais.mensal.per_capita',
-                               control = c('UF.sigla', 'urbano')){
+                               control = c('UF.sigla', 'urbano')
+                               # , .weights = 'fator_expansao1'
+){
   
-  paste(good.i, '/ despesas.totais.mensal ~ .',
-        paste0('+ log(', expenditure, ')',
-               '- ', expenditure)) %>%
+  paste(control, collapse = ' + ') %>%
+    {glue('{good.i}/despesas.totais.mensal ~ . ',
+          '+ log({expenditure})',
+          '- {expenditure}',
+          '+ {.}')} %>%
     as.formula(.) -> f
   
   df %>%
@@ -445,9 +462,7 @@ lm.engel.rothbarth <- function(df, good.i = 'despesas.alimentacao.mensal',
            control,
            despesas.totais.mensal,
            expenditure) %>%
-    lm(formula = f#,
-       # weights = .weights
-    )
+    lm(formula = f)
   
 }
 
@@ -521,8 +536,8 @@ pof.agg.sem_sexo.vaz %>%
   filter(!(num_conjuge == 0 & num_filhos > 0)) %>%
   sample.selection(max.moradores = 5, max.filhos = 3,
                    incluir.solteiros = T) %>%
-  lm.engel.rothbarth(.) %>%
-  lm.heteroskedasticity(.) %>%
+  lm.engel.rothbarth(.) %>% 
+  lm.heteroskedasticity(.) %>% 
   equivalence.scales.dudel(ref.a = referencia.sem_sexo.vaz,
                            na.h = 2, nc.h = 1,
                            na.r = 2, nc.r = 0) %>%
@@ -530,19 +545,44 @@ pof.agg.sem_sexo.vaz %>%
          member.cost, p.value) %>%
   mutate(p.value = p.value <= 0.05)
 
-lapply(1:4, function(x)
-  equivalence.scales.dudel(model = m,
-                           ref.a = referencia.sem_sexo.ac,
-                           na.h = 2, nc.h = x,
-                           na.r = 2, nc.r = 0) %>%
-    select(term, equivalence.scale,
-           member.cost, p.value) %>%
-    mutate(nc = x,
-           term = factor(term, unique(term)),
-           p.value = p.value <= 0.05)) %>%
-  bind_rows(.) %>%
-  ggplot(aes(x = term,
-             y = member.cost)) + 
-  geom_bar(stat = 'identity') + 
-  facet_grid(cols = vars(nc)) + 
-  coord_flip()
+pof.agg.sem_sexo.vaz %>%
+  filter(despesas.totais.nao.monetaria.mensal.per_capita > 0) %>%
+  filter(!(num_conjuge == 0 & num_filhos > 0)) %>%
+  sample.selection(max.moradores = 5, max.filhos = 3,
+                   incluir.solteiros = T) %>%
+  # mutate(bens.adultos = despesas.vestuario_adulto.mensal 
+  #        + despesas.jogos_apostas.mensal
+  #        + despesas.fumo.mensal
+  #        + despesas.bebidas_alcoolicas.mensal) %>%
+  lm.engel.rothbarth(expenditure = 'despesas.totais.nao.monetaria.mensal.per_capita') %>% 
+  lm.heteroskedasticity(.) %>% 
+  equivalence.scales.dudel(ref.a = referencia.sem_sexo.vaz,
+                           na.h = 2, nc.h = 1,
+                           na.r = 2, nc.r = 0,
+                           expenditure = 'despesas.totais.nao.monetaria.mensal.per_capita') %>%
+  select(term, equivalence.scale, std.error,
+         member.cost, p.value) %>%
+  mutate(p.value = p.value <= 0.05)
+
+# lapply(1:4, function(x)
+#   
+#   pof.agg.sem_sexo.vaz %>%
+#     filter(!(num_conjuge == 0 & num_filhos > 0)) %>%
+#     sample.selection(max.moradores = 5, max.filhos = 3,
+#                      incluir.solteiros = T) %>%
+#     lm.engel.rothbarth(.) %>%
+#     lm.heteroskedasticity(.) %>% 
+#   equivalence.scales.dudel(ref.a = referencia.sem_sexo.ac,
+#                            na.h = 2, nc.h = x,
+#                            na.r = 2, nc.r = 0) %>%
+#     select(term, equivalence.scale,
+#            member.cost, p.value) %>%
+#     mutate(nc = x,
+#            term = factor(term, unique(term)),
+#            p.value = p.value <= 0.05)) %>%
+#   bind_rows(.) %>%
+#   ggplot(aes(x = term,
+#              y = member.cost)) + 
+#   geom_bar(stat = 'identity') + 
+#   facet_grid(cols = vars(nc)) + 
+#   coord_flip()

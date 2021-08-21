@@ -5,10 +5,9 @@
 # remotes::install_github('ajdamico/lodown', dependencies = T)
 # remotes::install_github('tomasbarcellos/pof')
 
-pkg <- c('tidyverse', 'plyr', 'sandwich', 'lmtest',
-         'geobr', 'rgdal', 'stargazer', 'gghighlight',
-         'ggridges', 'ggthemes', 'viridis', 'naniar',
-         'scales', 'patchwork' #, pof
+pkg <- c('sandwich', 'lmtest', 'stargazer', 'rgdal', 'sidrar',
+         'geobr', 'gghighlight', 'ggridges', 'ggthemes', 'viridis', 'patchwork', 'naniar', 'scales',
+         'plyr', 'tidyverse' #, pof
          )
 
 lapply(pkg, function(x)
@@ -24,57 +23,57 @@ summarise <- dplyr::summarise
 # 2. TEMA
 # 2.1. MAPAS
 # 2.2. GRÁFICOS
-theme_set(theme_bw(base_size = 16) +
-            theme(plot.title = element_text(size = rel(1),
-                                            face = 'bold',
-                                            hjust = 0.5,
-                                            vjust = 3),
-                  plot.subtitle = element_text(size = rel(1),
-                                               face = 'italic',
-                                               hjust = 0.5,
-                                               vjust = 3),
-                  plot.margin = margin(20,20,20,20),
-                  panel.grid = element_line(size = rel(0.2)),
-                  axis.title.x = element_text(size = rel(0.85),
-                                              hjust = 0.5,
-                                              vjust = -3),
-                  axis.title.y = element_text(size = rel(0.85),
-                                              hjust = 0.5,
-                                              vjust = 3),
-                  axis.text.x = element_text(size = rel(0.8)),
-                  axis.text.y = element_text(size = rel(0.8)),
-                  strip.text.x = element_text(size = rel(0.8)),
-                  strip.text.y = element_text(size = rel(0.8)),
-                  legend.title = element_text(size = rel(0.8)),
-                  legend.text = element_text(size = rel(0.7)),
-                  legend.background = element_blank(),
-                  legend.position = 'right',
-                  legend.direction = 'vertical',
-                  legend.box.background = element_blank()))
-
-theme_ridges(font_size = 16) +
-  theme(plot.title = element_text(size = rel(1),
-                                  face = 'bold',
-                                  hjust = 0.5,
-                                  vjust = 3),
-        plot.margin = margin(20,20,20,20),
-        panel.grid = element_line(size = rel(0.2)),
-        axis.title.x = element_text(size = rel(0.8),
-                                    hjust = 0.5,
-                                    vjust = -3),
-        axis.title.y = element_text(size = rel(0.8),
-                                    hjust = 0.5,
-                                    vjust = 3),
-        axis.text.x = element_text(size = rel(0.8)),
-        axis.text.y = element_text(size = rel(0.8)),
-        strip.text.x = element_text(size = rel(0.8)),
-        strip.text.y = element_text(size = rel(0.8)),
-        legend.title = element_text(size = rel(0.8)),
-        legend.text = element_text(size = rel(0.7)),
-        legend.background = element_blank(),
-        legend.position = 'right',
-        legend.direction = 'vertical',
-        legend.box.background = element_blank()) -> theme_ridges.2
+# theme_set(theme_bw(base_size = 16) +
+#             theme(plot.title = element_text(size = rel(1),
+#                                             face = 'bold',
+#                                             hjust = 0.5,
+#                                             vjust = 3),
+#                   plot.subtitle = element_text(size = rel(1),
+#                                                face = 'italic',
+#                                                hjust = 0.5,
+#                                                vjust = 3),
+#                   plot.margin = margin(20,20,20,20),
+#                   panel.grid = element_line(size = rel(0.2)),
+#                   axis.title.x = element_text(size = rel(0.85),
+#                                               hjust = 0.5,
+#                                               vjust = -3),
+#                   axis.title.y = element_text(size = rel(0.85),
+#                                               hjust = 0.5,
+#                                               vjust = 3),
+#                   axis.text.x = element_text(size = rel(0.8)),
+#                   axis.text.y = element_text(size = rel(0.8)),
+#                   strip.text.x = element_text(size = rel(0.8)),
+#                   strip.text.y = element_text(size = rel(0.8)),
+#                   legend.title = element_text(size = rel(0.8)),
+#                   legend.text = element_text(size = rel(0.7)),
+#                   legend.background = element_blank(),
+#                   legend.position = 'right',
+#                   legend.direction = 'vertical',
+#                   legend.box.background = element_blank()))
+# 
+# theme_ridges(font_size = 16) +
+#   theme(plot.title = element_text(size = rel(1),
+#                                   face = 'bold',
+#                                   hjust = 0.5,
+#                                   vjust = 3),
+#         plot.margin = margin(20,20,20,20),
+#         panel.grid = element_line(size = rel(0.2)),
+#         axis.title.x = element_text(size = rel(0.8),
+#                                     hjust = 0.5,
+#                                     vjust = -3),
+#         axis.title.y = element_text(size = rel(0.8),
+#                                     hjust = 0.5,
+#                                     vjust = 3),
+#         axis.text.x = element_text(size = rel(0.8)),
+#         axis.text.y = element_text(size = rel(0.8)),
+#         strip.text.x = element_text(size = rel(0.8)),
+#         strip.text.y = element_text(size = rel(0.8)),
+#         legend.title = element_text(size = rel(0.8)),
+#         legend.text = element_text(size = rel(0.7)),
+#         legend.background = element_blank(),
+#         legend.position = 'right',
+#         legend.direction = 'vertical',
+#         legend.box.background = element_blank()) -> theme_ridges.2
 
 
 # 3. DADOS
@@ -88,7 +87,7 @@ pib.2010_municipios <- 'C:/Users/Sony/Downloads/PIB.2010.Municipios.csv'
 censo.2010_regioes <- 'C:/Users/Sony/Downloads/Censo.2010.Regioes.csv'
 censo.2010_uf <- 'C:/Users/Sony/Downloads/Censo.2010.UF.csv'
 censo.2010_municipios <- 'C:/Users/Sony/Downloads/Censo.2010.Municipios.csv'
-
+ 
 # # POF 2008-2009
 # Consumo
 pof.2008_consumo <- 'C:/Users/Sony/Downloads/consumo.csv'
@@ -163,7 +162,6 @@ info_sidra(1378)$classific_category$`c287 = Idade (135):` %>%
          str_detect(desc,'Total') == F,
          str_detect(desc,'ou') == F | str_detect(desc,'100')) %>%
   pull(cod) %>%
-  
   lapply(function(idades.cod){
     get_sidra(1378,
               variable = 93,
@@ -181,10 +179,6 @@ info_sidra(1378)$classific_category$`c287 = Idade (135):` %>%
       select('Ano', 'Município (Código)', 'Município',
              'Idade', 'Sexo', 'Valor')
   }) %>% bind_rows(.) -> censo.2010_municipios.df
-
-
-
-
 
 info_sidra(1378) %>% 
   filter(str_detect(desc,'ano') == T,
@@ -210,7 +204,9 @@ lapply(geom.2010_municipios.df$code_muni[1:3],
                                    'C2' = c(4,5))) %>% 
            View(.)
        })
+
 df <- geom.2010_municipios.df$code_muni
+
 mapply(function(df,cod){
   get_sidra(1378,
             period = '2010',
@@ -393,9 +389,7 @@ pof.agg.2 <- function(individuos, consumo,
               num_ext_renda = num_ext_renda, 
               fator_expansao1 = fator_expansao1, 
               fator_expansao2 = fator_expansao2) %>% 
-    pivot_wider(id_cols = c(cod_uf, num_seq, num_dv, cod_domc, 
-                            num_ext_renda, fator_expansao1, fator_expansao2),
-                names_from = cod_rel_pess_refe_uc,
+    pivot_wider(names_from = cod_rel_pess_refe_uc,
                 values_from = 1,
                 values_fn = length,
                 values_fill = 0) -> individuos.agg_parentesco
@@ -552,11 +546,8 @@ pof.agg.2 <- function(individuos, consumo,
   
   
   # CONSUMO AGREGADO POR DOMICÍLIO
-  merge(individuos.agg, consumo.agg) %>% 
-    mutate(tipo.familia = paste0('(', (qtd_morador_domc - num_filhos),',',
-                                 num_filhos,')')) %>% 
-    arrange(qtd_morador_domc, desc(num_filhos)) %>%
-    mutate(tipo.familia = factor(tipo.familia, unique(tipo.familia)))
+  merge(individuos.agg, consumo.agg)
+  
 }
 
 # Faixas Etárias
@@ -566,6 +557,7 @@ faixas.etarias.vaz <- c(0, 4, 9, 14, max(pof.2008_individuos.df$idade_anos))
 pof.agg.2(consumo = pof.2008_consumo.df,
           individuos = pof.2008_individuos.df,
           faixas.etarias = faixas.etarias.vaz) -> pof.2008
+
 
 # 3.7. DATA FRAMES FINAL
 # OBS: os dados em nível municipal da POF são limitados demais para juntá-los com os demais
@@ -614,7 +606,8 @@ map.sf <- function(dados, var = 'PIB.2010_SQRT',
             fill = NA, color = cor.contorno,
             size = .1) +
     scale_fill_viridis(option = option.viridis) + 
-    scale_color_viridis(option = option.viridis)
+    scale_color_viridis(option = option.viridis) +
+    ggthemes::theme_map()
   
   else
     
@@ -628,7 +621,8 @@ map.sf <- function(dados, var = 'PIB.2010_SQRT',
             fill = NA, color = cor.contorno,
             size = .1) +
     scale_fill_viridis(option = option.viridis) + 
-    scale_color_viridis(option = option.viridis)
+    scale_color_viridis(option = option.viridis) +
+    ggthemes::theme_map()
 }
 
 
