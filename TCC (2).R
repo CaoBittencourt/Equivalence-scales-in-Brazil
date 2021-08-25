@@ -1,19 +1,23 @@
 # 1. PACOTES
-pkg <- c('sandwich', 'lmtest', 'stargazer', 'rgdal',
-         'geobr', 'gghighlight', 'ggridges', 'ggthemes', 'viridis', 'patchwork', 'naniar', 'scales',
-         'np', 'Matching', 'systemfit', 'ivreg',
-         'rio', 'plyr', 'glue', 'tidyverse')
+pkg <- c('sandwich', 'lmtest', 'stargazer', 'np', 'Matching', 'systemfit', 'ivreg', #Regressões e estatística
+         'rgdal', 'geobr', 'gghighlight', 'ggridges', 'ggthemes', 'viridis', 'patchwork', 'naniar', 'scales', #Visualização
+         'rio', 'plyr', 'glue', 'tidyverse') #Leitura e Manipulação de Dados
 
 lapply(pkg, function(x)
   if(!require(x, character.only = T))
   {install.packages(x); require(x)})
+
+# Função de Agregação de POF
+source('C:/Users/Sony/Documents/GitHub/TCC/POF_AGG.R')
+
+# Estimação de Escalas de Engel e Rothbarth
+source('C:/Users/Sony/Documents/GitHub/TCC/Escalas_Engel_Rothbarth.R')
 
 select <- dplyr::select
 mutate <- dplyr::mutate
 summarise <- dplyr::summarise
 
 # 2. DADOS
-
 setwd('C:/Users/Sony/Documents/GitHub/TCC')
 
 # POF 2002-2003, 2008-2009 via Stata (DataZoom)
@@ -57,96 +61,11 @@ lapply(1:4, function(x){
 # 
 # })
 
-
-
-# usar id_dom
-
-
+# # Identificadores das categorias (despesas e receitas)
 # Não é necessário agregar as receitas (as variáveis renda e renda_total já são agregações mensais)
-# id_receitas.agg <- list(receitas = c('vare', 'vre', 'vvp'))
+id_receitas.agg <- list(receitas = c('vare', 'vre', 'vvp'))
 
-lapply(id_despesas.agg, function(id){
-  
-  basepadrao.pof2002 %>%
-    replace(is.na(.), 0) %>%
-    mutate(rowSums(across(.cols = contains(id))))
-  
-}) %>% as_tibble(.) %>% View()
-
-lapply(id_despesas.agg[1], function(id){
-  
-  basepadrao.pof2002 %>%
-    mutate(!!sym(names(id_despesas.agg[id])) := 
-             rowSums(across(.cols = contains(id_despesas.agg[[id]])),
-                     na.rm = T)) %>% 
-    select(-contains(id_despesas.agg[[id]]))
-  
-})
-
-base <- basepadrao.pof2002
-
-lapply(names(id_despesas.especificas), function(id){
-  
-  base %>%
-    mutate(!!sym(glue('despesas.mensais.{names(id_despesas.especificas[id])}')) :=
-             rowSums(across(.cols = contains(id_despesas.especificas[[id]])),
-                     na.rm = T)/12) %>%
-    select(-contains(id_despesas.especificas[[id]])) ->> base
-  
-}) %>% 
-  invisible(.)
-
-lapply(names(id_despesas.agg), function(id){
-  
-  base %>%
-    mutate(!!sym(glue('despesas.mensais.{names(id_despesas.agg[id])}')) :=
-             rowSums(across(.cols = contains(id_despesas.agg[[id]])),
-                     na.rm = T)/12) %>%
-    select(-contains(id_despesas.agg[[id]])) ->> base
-  
-}) %>% 
-  invisible(.)
-
-base
-
-id_despesas.agg %>% names()
-id_despesas.agg[1]
-id_despesas.agg[1] %>% names()
-id_despesas.agg[[1]]
-
-lapply(id_despesas.agg, function(x)
-  
-  x
-  
-)
-
-
-
-id <- 'emprestimos'
-
-c(emprestimos = '1',
-  lala = '2') %>%
-  lapply(function(x)
-    
-    c(paste0('va',x),
-      paste0('nm',x),
-      paste0('cr',x))
-    
-  ) %>% names()
-
-# mapply(list.cat = id_despesas.agg['emprestimos'], 
-#        id = names(id_despesas.agg['emprestimos']),
-#        FUN = function(list.cat, id){
-#          
-#          basepadrao.pof2002 %>%
-#            mutate(!!sym(id) :=
-#                     rowSums(across(.cols = contains(list.cat)),
-#                             na.rm = T)) %>%
-#            select(-contains(list.cat))
-#          
-#        })
-
-# Identidade das despesas para agregação (categorias gerais)
+# Categorias gerais
 list(alimentacao = 'da',
      moradia = 'dd02',
      vestuario = 'dd03',
@@ -161,13 +80,13 @@ list(alimentacao = 'da',
      impostos_previdencia_doacoes = 'dd12',
      imoveis_investimentos = 'dd13',
      emprestimos = 'dd14') %>% 
-  sapply(function(x){
+  lapply(function(x){
     
     c(paste0('va',x),
       paste0('nm',x),
       paste0('cr',x))
     
-  }) -> names(id_despesas.agg) 
+  }) -> id_despesas.agg
 
 # Identidade das despesas para agregação (categorias específicas utilizadas em alguns métodos de estimação) 
 list(takeout.food = c('da21', 'da22', 'da23', 'da24',
@@ -186,210 +105,110 @@ list(takeout.food = c('da21', 'da22', 'da23', 'da24',
   }) -> id_despesas.especificas
 
 
-pof.agg <- function(individuos, consumo, 
-                    lista.id_receitas,
-                    lista.id_despesas.agg,
-                    lista.id_despesas.especificas,
-                    faixas.etarias, sexo = T){
-  
-  individuos %>% 
-    transmute(cod_rel_pess_refe_uc = case_when(cod_rel_pess_refe_uc == 1 ~ 'num_pessoa.ref',
-                                               cod_rel_pess_refe_uc == 2 ~ 'num_conjuge',
-                                               cod_rel_pess_refe_uc == 3 ~ 'num_filhos',
-                                               cod_rel_pess_refe_uc == 4 ~ 'num_outros.parentes',
-                                               cod_rel_pess_refe_uc == 5 ~ 'num_agregados',
-                                               cod_rel_pess_refe_uc == 6 ~ 'num_pensionistas',
-                                               cod_rel_pess_refe_uc == 7 ~ 'num_empregados.dom',
-                                               cod_rel_pess_refe_uc == 8 ~ 'num_parentes.empregados'),
-              cod_uf = cod_uf, num_seq = num_seq, 
-              num_dv = num_dv, cod_domc = cod_domc,
-              num_ext_renda = num_ext_renda, 
-              fator_expansao1 = fator_expansao1, 
-              fator_expansao2 = fator_expansao2) %>% 
-    pivot_wider(names_from = cod_rel_pess_refe_uc,
-                values_from = 1,
-                values_fn = length,
-                values_fill = 0) -> individuos.agg_parentesco
-  
-  if(sexo == T)
-    individuos %>% 
-    transmute(cod_sexo = case_when(cod_sexo == 1 ~ 'Homens',
-                                   cod_sexo == 2 ~ 'Mulheres'),
-              idade = cut(idade_anos,
-                          breaks = faixas.etarias,
-                          include.lowest = T,
-                          right = T,
-                          na.rm = T),
-              cod_uf = cod_uf, num_seq = num_seq, 
-              num_dv = num_dv, cod_domc = cod_domc,
-              num_ext_renda = num_ext_renda, 
-              fator_expansao1 = fator_expansao1, 
-              fator_expansao2 = fator_expansao2) %>% 
-    pivot_wider(names_from = c(cod_sexo, idade),
-                names_glue = '{cod_sexo}: {idade} anos',
-                names_sort = T,
-                values_from = 1,
-                values_fn = length,
-                values_fill = 0) -> individuos.agg_sexo.idade
-  
-  else
-    individuos %>% 
-    transmute(idade = cut(idade_anos,
-                          breaks = faixas.etarias,
-                          include.lowest = T,
-                          right = T,
-                          na.rm = T),
-              cod_uf = cod_uf, num_seq = num_seq, 
-              num_dv = num_dv, cod_domc = cod_domc,
-              num_ext_renda = num_ext_renda, 
-              fator_expansao1 = fator_expansao1, 
-              fator_expansao2 = fator_expansao2) %>% 
-    pivot_wider(names_from = idade,
-                names_glue = '{idade} anos',
-                names_sort = T,
-                values_from = 1,
-                values_fn = length,
-                values_fill = 0) -> individuos.agg_sexo.idade
-  
-  # GERAL
-  merge(individuos.agg_parentesco,
-        individuos.agg_sexo.idade) -> individuos.agg
-  
-  # CATEGORIAS ORÇAMENTÁRIAS
-  id_despesas <- list(alimentacao = 'da',
-                      moradia = 'dd02',
-                      vestuario = 'dd03',
-                      transporte = 'dd04',
-                      higiene = 'dd05',
-                      saude = c('dd06', 'dd6'),
-                      educacao = 'dd07',
-                      lazer = 'dd08',
-                      fumo = 'dd09',
-                      servicos.pessoais = 'dd10',
-                      despesas.diversas = 'dd11',
-                      impostos_previdencia_doacoes = 'dd12',
-                      imoveis_investimentos = 'dd13',
-                      empresimos = 'dd14')
-  
-  id_take.out <- c('da21', 'da22', 'da23', 'da24',
-                   'da25', 'da28', 'da29')
-  
-  id_lanche.escolar <- 'da27'
-  
-  id_vestuario_infantil <- 'dd033'
-  
-  id_vestuario_homem.mulher <- c('dd031', 'dd032')
-  
-  id_bebidas_alcoolicas <- 'da26'
-  
-  id_jogos_apostas <- 'dd111'
-  
-  id_receitas <- 're'
-  
-  
-  # CONSUMO AGREGADO
-  lapply(lista.id_receitas,function(id){
-    
-    consumo %>%
-      mutate(across(.cols = contains(id),
-                    .fns = rowSums(na.rm = T),
-                    .names = '{names(id)}'))}) -> consumo
-  lapply(lista.id_despesas.agg, function(id){
-    
-    consumo %>%
-      mutate(across(.cols = contains(id),
-                    .fns = rowSums(na.rm = T),
-                    .names = '{names(id)}'))}) -> consumo
-  lapply(lista.id_despesas.especificas, function(id){
-    
-    consumo %>%
-      mutate(across(.cols = contains(id),
-                    .fns = rowSums(na.rm = T),
-                    .names = '{names(id)}'))}) -> consumo
-  
-  consumo %>% 
-    select(names(lista.id_receitas),
-           names(lista.id_despesas.agg),
-           names(lista.id_despesas.especificas))
-  
-  
-  
-  consumo %>%
-    transmute(despesas.alimentacao = rowSums(select(.,contains(id_despesas$alimentacao)), na.rm = T),
-              despesas.alimentacao.fora = rowSums(select(.,contains(id_take.out)), na.rm = T),
-              despesas.alimentacao.lanche.escolar = rowSums(select(.,contains(id_lanche.escolar)), na.rm = T),
-              
-              despesas.moradia = rowSums(select(.,contains(id_despesas$moradia)), na.rm = T),
-              despesas.vestuario = rowSums(select(.,contains(id_despesas$vestuario)), na.rm = T),
-              despesas.transporte = rowSums(select(.,contains(id_despesas$transporte)), na.rm = T),
-              despesas.higiene = rowSums(select(.,contains(id_despesas$higiene)), na.rm = T),
-              despesas.saude = rowSums(select(.,contains(id_despesas$saude)), na.rm = T),
-              
-              despesas.educacao = rowSums(select(.,contains(id_despesas$educacao)), na.rm = T),
-              
-              despesas.lazer = rowSums(select(.,contains(id_despesas$lazer)), na.rm = T),
-              despesas.fumo = rowSums(select(.,contains(id_despesas$fumo)), na.rm = T),
-              despesas.servicos.pessoais = rowSums(select(.,contains(id_despesas$servicos.pessoais)), na.rm = T),
-              despesas.diversas = rowSums(select(.,contains(id_despesas$despesas.diversas)), na.rm = T),
-              despesas.impostos_previdencia_doacoes = rowSums(select(.,contains(id_despesas$impostos_previdencia_doacoes)), na.rm = T),
-              despesas.imoveis_investimentos = rowSums(select(.,contains(id_despesas$imoveis_investimentos)), na.rm = T),
-              despesas.empresimos = rowSums(select(.,contains(id_despesas$empresimos)), na.rm = T),
-              despesas.var_ativo_passivo = rowSums(select(.,contains(id_despesas$var_ativo_passivo)), na.rm = T),
-              despesas.totais = rowSums(select(.,contains(as.character(unlist(id_despesas)))), na.rm = T),
-              
-              despesas.totais.nao.monetaria = rowSums(select(.,contains('nm')), na.rm = T),
-              
-              
-              # Para o método de Rothbarth
-              despesas.vestuario_infantil = rowSums(select(.,contains(id_vestuario_infantil)), na.rm = T),
-              
-              despesas.vestuario_homem.mulher = rowSums(select(.,contains(id_vestuario_homem.mulher)), na.rm = T),
-              despesas.vestuario_adulto = ifelse((despesas.vestuario - despesas.vestuario_infantil < 0),
-                                                 0, (despesas.vestuario - despesas.vestuario_infantil)),
-              despesas.bebidas_alcoolicas = rowSums(select(.,contains(id_bebidas_alcoolicas)), na.rm = T),
-              despesas.jogos_apostas = rowSums(select(.,contains(id_jogos_apostas)), na.rm = T),
-              
-              receitas.totais = rowSums(select(.,contains(id_receitas)), na.rm = T),
-              
-              cod_uf = cod_uf,
-              num_seq = num_seq,
-              num_dv = num_dv,
-              cod_domc = cod_domc,
-              id_dom = id_dom,
-              urbano = ifelse(urbano == 0, 'Rural', 'Urbano'),
-              urbano = factor(urbano),
-              
-              # Código regional utilizado pelo IBGE = Primeiro número do código estadual
-              code_region = substr(cod_uf, start = 1, stop = 1),
-              code_region = factor(code_region),
-              
-              # Estratificação Social (renda per capita)
-              classe.social = cut(receitas.totais,
-                                  quantile(receitas.totais,
-                                           probs = seq(0,1,0.2),
-                                           na.rm = T),
-                                  labels = c('Primeiro Quinto (Renda per capita)',
-                                             'Segundo Quinto (Renda per capita)',
-                                             'Terceiro Quinto (Renda per capita)',
-                                             'Quarto Quinto (Renda per capita)',
-                                             'Quinto Quinto (Renda per capita)'),
-                                  include.lowest = T),
-              
-              qtd_morador_domc = qtd_morador_domc,
-              renda_bruta_monetaria = renda_bruta_monetaria,
-              renda_bruta_nao_monetaria = renda_bruta_nao_monetaria,
-              renda_total = renda_total) %>% 
-    mutate(across(.cols = contains('despesas.'), ~ . / 12, 
-                  .names = '{.col}.mensal')) %>% 
-    mutate(across(.cols = contains('receitas.'), ~ . / 12, 
-                  .names = '{.col}.mensal')) %>% 
-    mutate(across(.cols = contains('.mensal'), ~ . / qtd_morador_domc, 
-                  .names = '{.col}.per_capita')) -> consumo.agg
-  
-  
-  # CONSUMO AGREGADO POR DOMICÍLIO
-  merge(individuos.agg, consumo.agg)
-  
-}
+# Agregação das POFs
+# Nomes com base na POF 2008-2009 => Mudar nomes das variáveis nas outras POFs antes de aplicar o algoritmo
+# POF 2002-2003
+# setdiff(names(basepadrao.pof2002),
+#         names(basepadrao.pof2008))
+# Consumo
+basepadrao.pof2002 %>% 
+  rename(cod_uf = uf,
+         num_seq = seq,
+         num_dv = dv,
+         cod_domc = domcl,
+         num_ext_renda = estrato,
+         fator_expansao1 = fator_set,
+         fator_expansao2 = fator,
+         qtd_morador_domc = n_morador,
+         renda_total = renda) -> basepadrao.pof2002_renomeada
+
+# Registro de indivíduos
+tr1_4.pof2002[[2]] %>% 
+  rename(cod_uf = uf,
+         num_seq = seq,
+         num_dv = dv,
+         cod_domc = domcl,
+         num_ext_renda = estrato,
+         fator_expansao1 = fator_set,
+         fator_expansao2 = fator,
+         renda_total = renda,
+         cod_rel_pess_refe_uc = rel_chefe,
+         cod_sexo = sexo,
+         idade_anos = idade) -> individuos_renomeados
+
+pof.agg(individuos = individuos_renomeados,
+        consumo = basepadrao.pof2002_renomeada,
+        lista.id_receitas.agg = id_receitas.agg,
+        lista.id_despesas.agg = id_despesas.agg,
+        lista.id_despesas.especificas = id_despesas.especificas,
+        faixas.etarias = c(0, 4, 9, 14, max(individuos_renomeados$idade_anos)),
+        sexo = F) -> pof.2002_vaz_semsexo
+
+referencia.sem_sexo.vaz <- '`(14,110] anos`'
+# referencia.sem_sexo.vaz <- '`Homens: (14,110] anos`'
+
+pof.agg(individuos = individuos_renomeados,
+        consumo = basepadrao.pof2002_renomeada,
+        lista.id_receitas.agg = id_receitas.agg,
+        lista.id_despesas.agg = id_despesas.agg,
+        lista.id_despesas.especificas = id_despesas.especificas,
+        faixas.etarias = c(0, 4, 9, 14, max(individuos_renomeados$idade_anos)),
+        sexo = T) %>% 
+  filter(!(qtd_conjuge == 0 & qtd_filhos > 0)) %>%
+  filter(qtd_morador_domc <= 5, qtd_filhos <= 3) %>%
+  lm.engel.rothbarth(welfare.indicator = 'share_despesas.mensais.alimentacao',
+                     expenditure = 'renda_total_per.capita') %>% 
+  lm.heteroskedasticity(.) %>%
+  equivalence.scales.dudel(pessoa.referencia = referencia.sem_sexo.vaz,
+                           expenditure = 'renda_total_per.capita',
+                           na.h = 2, nc.h = 1,
+                           na.r = 2, nc.r = 0) %>% 
+  select(term, equivalence.scale, std.error,
+         member.cost, p.value) %>%
+  mutate(p.value = p.value <= 0.05)
 
 
+pof.2002_vaz_semsexo %>% 
+  select(contains('anos'),
+         share_despesas.mensais.alimentacao,
+         despesas.mensais.totais_per.capita,
+         renda_total_per.capita,
+         desc_urbano,
+         UF_sigla) -> lala
+
+pof.2002_vaz_semsexo %>% 
+iv2sls.engel.rothbarth(welfare.indicator = 'share_despesas.mensais.alimentacao',
+                       expenditure = 'despesas.mensais.totais_per.capita',
+                       iv.expenditure = 'renda_total_per.capita',
+                       control = c('UF_sigla', 'desc_urbano')) %>% 
+  lm.heteroskedasticity(.) %>%
+  equivalence.scales.dudel(pessoa.referencia = referencia.sem_sexo.vaz,
+                           expenditure = 'despesas.mensais.totais_per.capita',
+                           na.h = 2, nc.h = 1,
+                           na.r = 2, nc.r = 0) %>% 
+  select(term, equivalence.scale, std.error,
+         member.cost, p.value) %>%
+  mutate(p.value = p.value <= 0.05) 
+
+pof.agg(individuos = tr1_4.pof2008[[2]],
+        consumo = basepadrao.pof2008,
+        lista.id_receitas.agg = id_receitas.agg,
+        lista.id_despesas.agg = id_despesas.agg,
+        lista.id_despesas.especificas = id_despesas.especificas,
+        faixas.etarias = c(0, 4, 9, 14, max(tr1_4.pof2008[[2]]$idade_anos)),
+        sexo = F) %>% 
+  filter(!(qtd_conjuge == 0 & qtd_filhos > 0)) %>%
+  filter(qtd_morador_domc <= 5, qtd_filhos <= 3) %>%
+  lm.engel.rothbarth(welfare.indicator = 'despesas.mensais.alimentacao') %>%
+# iv2sls.engel.rothbarth(welfare.indicator = 'share_despesas.mensais.alimentacao',
+#                        expenditure = 'despesas.mensais.totais_per.capita',
+#                        iv.expenditure = 'renda_total_per.capita',
+#                        control = c('UF_sigla', 'desc_urbano')) %>% 
+  lm.heteroskedasticity(.) %>%
+  equivalence.scales.dudel(pessoa.referencia = '`(14,104] anos`',
+                           expenditure = 'despesas.mensais.totais_per.capita',
+                           na.h = 2, nc.h = 1,
+                           na.r = 2, nc.r = 0) %>% 
+  select(term, equivalence.scale, std.error,
+         member.cost, p.value) %>%
+  mutate(p.value = p.value <= 0.05) 

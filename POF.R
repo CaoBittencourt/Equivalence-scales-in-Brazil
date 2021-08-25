@@ -552,6 +552,7 @@ pof.agg.2 <- function(individuos, consumo,
 
 # Faixas Etárias
 faixas.etarias.vaz <- c(0, 4, 9, 14, max(pof.2008_individuos.df$idade_anos))
+# faixas.etarias.vaz <- c(0, 4, 9, 14, max(tr1_4.pof2008[[2]]$idade_anos))
 
 # Agregação
 pof.agg.2(consumo = pof.2008_consumo.df,
