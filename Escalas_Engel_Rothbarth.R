@@ -5,6 +5,9 @@ lapply(pkg, function(x)
   if(!require(x, character.only = T))
   {install.packages(x); require(x)})
 
+# lapply(pkg, function(x)
+#   {citation(package = x)})
+
 
 # 2. REGRESSÃO DE ENGEL E ROTHBARTH FLEXÍVEL
 lm.engel.rothbarth <- function(df, welfare.indicator = 'share_despesas.mensais.alimentacao',

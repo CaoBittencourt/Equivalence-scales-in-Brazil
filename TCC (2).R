@@ -7,6 +7,9 @@ lapply(pkg, function(x)
   if(!require(x, character.only = T))
   {install.packages(x); require(x)})
 
+# lapply(pkg, function(x)
+#   {citation(package = x)})
+
 # Função de Agregação de POF
 source('C:/Users/Sony/Documents/GitHub/TCC/POF_AGG.R')
 

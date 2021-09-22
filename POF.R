@@ -14,6 +14,9 @@ lapply(pkg, function(x)
   if(!require(x, character.only = T))
   {install.packages(x); require(x)})
 
+# lapply(pkg, function(x)
+#   {citation(package = x)})
+
 select <- dplyr::select
 mutate <- dplyr::mutate
 summarise <- dplyr::summarise
