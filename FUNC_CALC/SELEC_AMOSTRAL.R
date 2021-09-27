@@ -10,44 +10,73 @@ lapply(pkg, function(x)
 # lapply(pkg, function(x)
 #   {citation(package = x)})
 
-
 # 2. FUNÇÃO DE SELEÇÃO AMOSTRAL -------------------------------------------
-# 
-# sample.selection <- function(df, regioes = levels(df$regiao),
-#                              UF = levels(df$UF.sigla),
-#                              rural.urbano = levels(df$urbano),
-#                              max.moradores = 7, max.filhos = 4,
-#                              max.agregados = 0, max.pensionistas = 0,
-#                              max.empregados.dom = 0, max.fam.empregados.dom = 0,
-#                              incluir.solteiros = F){
-#   if(incluir.solteiros == T){
-#     df %>% 
-#       filter(regiao %in% regioes,
-#              UF.sigla %in% UF,
-#              urbano %in% rural.urbano,
-#              qtd_morador_domc <= max.moradores,
-#              num_filhos <= max.filhos,
-#              num_agregados <= max.agregados,
-#              num_pensionistas <= max.pensionistas,
-#              num_empregados.dom <= max.empregados.dom,
-#              num_parentes.empregados <= max.fam.empregados.dom) %>%
-#       mutate(across(c(regiao, UF.sigla, UF.nome, urbano),
-#                     .fns = factor))
-#   }
-#   else
-#     df %>% 
-#     filter(regiao %in% regioes,
-#            UF.sigla %in% UF,
-#            urbano %in% rural.urbano,
-#            num_conjuge == 1,
-#            qtd_morador_domc <= max.moradores,
-#            num_filhos <= max.filhos,
-#            num_agregados <= max.agregados,
-#            num_pensionistas <= max.pensionistas,
-#            num_empregados.dom <= max.empregados.dom,
-#            num_parentes.empregados <= max.fam.empregados.dom) %>%
-#     mutate(across(c(regiao, UF.sigla, UF.nome, urbano),
-#                   .fns = factor))
-# }
-# 
-# 
+sample.selection <- function(
+  df, 
+  # regioes = levels(df$regiao),
+  # UF = levels(df$UF_sigla),
+  # rural_urbano = levels(df$urbano),
+  
+  qtd_morador = 'qtd_morador_domc',
+  
+  incluir_solteiros_sem.filhos = T,
+  incluir_solteiros_com.filhos = F,
+  
+  max_moradores = 7,
+  max_conjuge = 1,
+  max_filhos = 4,
+  max_outros.parentes = 3,
+  max_agregados = 3, 
+  max_pensionistas = 0,
+  max_empregados = 0, 
+  max_parentes.empregados = 0
+){
+  
+  df %>%
+    filter(
+      # regiao %in% regioes,
+      # UF_sigla %in% UF,
+      # urbano %in% rural_urbano,
+      
+      !!sym(qtd_morador) <= max_moradores,
+      
+      qtd_conjuge <= max_conjuge,
+      qtd_filhos <= max_filhos,
+      qtd_outros.parentes <= max_outros.parentes,
+      qtd_agregados <= max_agregados,
+      qtd_pensionistas <= max_pensionistas,
+      qtd_empregados <= max_empregados,
+      qtd_parentes.empregados <= max_parentes.empregados) -> sample
+  
+  
+  if(!incluir_solteiros_sem.filhos){
+    
+    df %>% 
+      filter(
+        !(qtd_conjuge == 0 & qtd_filhos == 0)
+      ) -> sample
+    
+  } 
+  
+  if(!incluir_solteiros_com.filhos){ 
+    
+    df %>% 
+      filter(
+        !(qtd_conjuge == 0 & qtd_filhos > 0)
+      ) -> sample
+    
+  }
+  
+  if(!incluir_solteiros_sem.filhos & 
+     !incluir_solteiros_com.filhos){ 
+    
+    df %>% 
+      filter(
+        !(qtd_conjuge == 0)
+      ) -> sample
+    
+  }
+  
+  return(sample)
+  
+}
