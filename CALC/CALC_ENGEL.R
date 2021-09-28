@@ -57,7 +57,11 @@ pof_ac_2002_ss %>%
   ) %>% 
   iv.engel.rothbarth(weights = T, weights.var = wgt2002,
                      iv.expenditure = 'renda_per.capita',
-                     show.diagnostics = F) %>%
+                     show.diagnostics = T) %>%
+  # iv.engel.rothbarth.quad(weights = T, weights.var = wgt2002,
+  #                    iv.expenditure = 'renda_per.capita',
+  #                    show.diagnostics = T) %>%
+  # 
   fix.heteroskedasticity(.) %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_ac_2002_ss)
 
@@ -93,7 +97,12 @@ pof_vaz_2002_ss %>%
   ) %>%
   iv.engel.rothbarth(weights = T, weights.var = wgt2002,
                      iv.expenditure = 'renda_per.capita',
-                     show.diagnostics = F) %>%
+                     show.diagnostics = T) %>%
+  # iv.engel.rothbarth.quad(weights = T, weights.var = wgt2002,
+  #                         iv.expenditure = 'renda_per.capita',
+  #                         show.diagnostics = T) %>%
+  # 
+  
   fix.heteroskedasticity(.) %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_vaz_2002_ss)
 

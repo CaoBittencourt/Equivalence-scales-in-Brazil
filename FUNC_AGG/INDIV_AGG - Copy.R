@@ -46,12 +46,12 @@ list(
                 .default = 'Mulheres'),
   # 'cod_sabe_ler' = list('1' = 'Sabe ler',
   #                       .default = 'Não sabe ler'),
-  'cor' = list('1' = 'Branca',
-               '2' = 'Preta',
-               '3' = 'Amarela',
-               '4' = 'Parda',
-               '5' = 'Indígena',
-               .default = 'Não sabe'),
+  'cor' = list('1' = 'cor.Branca',
+               '2' = 'cor.Preta',
+               '3' = 'cor.Amarela',
+               '4' = 'cor.Parda',
+               '5' = 'cor.Indígena',
+               .default = 'cor.Não sabe'),
   'cartao' = list('1' = 'Tem cartão de crédito',
                   .default = 'Não tem cartão de crédito'),
   'plano_saude' = list('1' = 'Tem plano de saúde',
@@ -74,12 +74,12 @@ list(
                     .default = 'Mulheres'),
   'cod_sabe_ler' = list('1' = 'Sabe ler',
                         .default = 'Não sabe ler'),
-  'cod_cor_raca' = list('1' = 'Branca',
-                        '2' = 'Preta',
-                        '3' = 'Amarela',
-                        '4' = 'Parda',
-                        '5' = 'Indígena',
-                        .default = 'Não sabe'),
+  'cod_cor_raca' = list('1' = 'cor.Branca',
+                        '2' = 'cor.Preta',
+                        '3' = 'cor.Amarela',
+                        '4' = 'cor.Parda',
+                        '5' = 'cor.Indígena',
+                        .default = 'cor.Não sabe'),
   'cod_tem_cartao' = list('1' = 'Tem cartão de crédito',
                           .default = 'Não tem cartão de crédito'),
   'plano_saude' = list('1' = 'Tem plano de saúde',
@@ -90,8 +90,10 @@ list(
 
 # 4. FUNÇÕES DE AGREGAÇÃO DE REGISTROS ------------------------------------
 # 4.1. INDIVÍDUOS
-individuos.agg_fun <- function(
-  individuos, faixas.etarias, sexo = F, 
+individuos.agg_fun2 <- function(
+  individuos, 
+  faixas.etarias, 
+  sexo = F, 
   
   identificacao.domc = c('cod_uf', 'num_seq',
                          'num_dv', 'cod_domc'),
@@ -102,13 +104,16 @@ individuos.agg_fun <- function(
   var.sexo = 'cod_sexo',
   var.idade = 'idade_anos',
   var.ler_escrever = 'cod_sabe_ler',
-  var.anos_estudo = 'anos_de_estudo'#,
+  var.anos_estudo = 'anos_de_estudo',
   
+  var.interesse_chefe.fam = c(var.anos_estudo,
+                              var.idade),
   # var.interesse_domc = c(),
-  # var.interesse_indv = c('cod_sabe_ler', 'cod_cor_raca', 
-  #                        'cod_tem_cartao', 'plano_saude'),
-  # var.interesse_indv.perct = F, 
-  # var.interesse_pessoa.ref = c()
+  var.interesse_indv = c('cod_sabe_ler', 'cod_cor_raca',
+                         'cod_tem_cartao', 'plano_saude')
+  
+  # , var.interesse_indv.perct = F
+  
 ){ 
   # [FEITO]: FUNCIONANDO CORRETAMENTE
   # Recode: descrição de variáveis de interesse
@@ -121,7 +126,8 @@ individuos.agg_fun <- function(
   # => Outliers não significativos 
   individuos %>% 
     mutate(
-      !!sym(var.anos_estudo) := replace(!!sym(var.anos_estudo), !!sym(var.anos_estudo) >= 50, NA)
+      !!sym(var.anos_estudo) := replace(!!sym(var.anos_estudo), 
+                                        !!sym(var.anos_estudo) >= 50, NA)
     ) -> individuos
   
   # [FEITO]: FUNCIONANDO CORRETAMENTE
@@ -136,71 +142,110 @@ individuos.agg_fun <- function(
                 values_fill = 0,
                 names_prefix = 'qtd_') -> individuos.agg_parentesco
   
-  # [FEITO]: FUNCIONANDO CORRETAMENTE
-  # Número de indivíduos de cada classe de sexo e idade
-  if(sexo)
-    individuos %>%
-    mutate(idade = cut(.data[[var.idade]],
-                       breaks = faixas.etarias,
-                       include.lowest = T,
-                       right = T,
-                       na.rm = T)) %>%
-    pivot_wider(id_cols = identificacao.domc,
-                names_from = c(var.sexo, idade),
-                names_sort = T,
-                values_from = 1,
-                values_fn = length,
-                values_fill = 0) -> individuos.agg_sexo.idade
-  
-  # [FEITO]: FUNCIONANDO CORRETAMENTE
-  # Número de indivíduos de cada classe de sexo e idade
-  else
-    individuos %>%
-    mutate(idade = cut(.data[[var.idade]],
-                       breaks = faixas.etarias,
-                       include.lowest = T,
-                       right = T,
-                       na.rm = T)) %>%
-    pivot_wider(id_cols = identificacao.domc,
-                names_from = idade,
-                names_glue = '{idade} anos',
-                names_sort = T,
-                values_from = 1,
-                values_fn = length,
-                values_fill = 0) -> individuos.agg_sexo.idade
-  
-  # [NÃO FEITO]: NÃO URGENTE (VARIÁVEIS DE CONTROLE DE DIFERENTES TIPOS)
-  # Variáveis de interesse individuais (fazer dummies com o somatório de cada uma, e.g. quantas pessoas sabem ler e escrever)
-  # individuos %>%
-  # group_by(!!!syms(var.interesse_indv)) %>%
-  
-  # if(!missing(var.interesse_indv))
-  #   lapply(var.interesse_indv, function(var.individual)
+  # # [FEITO]: FUNCIONANDO CORRETAMENTE
+  # # Número de indivíduos de cada classe de sexo e idade
+  # if(sexo)
+  #   individuos %>%
+  #   mutate(idade = cut(.data[[var.idade]],
+  #                      breaks = faixas.etarias,
+  #                      include.lowest = T,
+  #                      right = T,
+  #                      na.rm = T)) %>%
+  #   pivot_wider(id_cols = identificacao.domc,
+  #               names_from = c(var.sexo, idade),
+  #               names_sort = T,
+  #               values_from = 1,
+  #               values_fn = length,
+  #               values_fill = 0) -> individuos.agg_sexo.idade
   # 
-  #     individuos %>%
-  #       pivot_wider(id_cols = identificacao.domc,
-  #                   names_from = var.individual,
-  #                   values_from = 1,
-  #                   values_fn = length,
-  #                   values_fill = 0,
-  #                   names_prefix = 'qtd_') -> individuos.var.interesse
-  #     
-  #     merge(individuos.agg_parentesco,
-  #           individuos.var.interesse)
-  #     
-  #     )
-
-  #     if(empty(individuos.agg_var.domc) == F)
+  # # [FEITO]: FUNCIONANDO CORRETAMENTE
+  # # Número de indivíduos de cada classe de sexo e idade
+  # else
+  #   individuos %>%
+  #   mutate(idade = cut(.data[[var.idade]],
+  #                      breaks = faixas.etarias,
+  #                      include.lowest = T,
+  #                      right = T,
+  #                      na.rm = T)) %>%
+  #   pivot_wider(id_cols = identificacao.domc,
+  #               names_from = idade,
+  #               names_glue = '{idade} anos',
+  #               names_sort = T,
+  #               values_from = 1,
+  #               values_fn = length,
+  #               values_fill = 0) -> individuos.agg_sexo.idade
+  # 
+  # # [QUASE FEITO]: NÃO URGENTE (VARIÁVEIS DE CONTROLE DE DIFERENTES TIPOS)
+  # # [FEITO]
+  # # Variáveis de interesse individuais (fazer variáveis com o somatório de cada uma, e.g. quantas pessoas sabem ler e escrever)
+  # 
+  #   lapply(
+  #     var.interesse_indv,
+  #     function(var){
+  #       individuos %>%
+  #         pivot_wider(
+  #           id_cols = identificacao.domc,
+  #           names_from = var,
+  #           values_from = 1,
+  #           values_fn = length,
+  #           values_fill = 0,
+  #           names_repair = 'unique',
+  #           names_prefix = 'control.qtd_'
+  #         ) -> individuos.temp
+  #       
+  #       merge(individuos.agg_parentesco, 
+  #             individuos.temp) ->> individuos.agg_parentesco
+  #     } 
+  #   ) 
+  
+  # [FAZER ISSO TAMBÉM?]: VARIÁVEIS DE CONTROLE PERCENTUAIS (%Sabe Ler, %Cartão de Crédito etc)
+  # if(var.interesse_indv.perct){
+  #   
+  #   individuos.agg_parentesco %>% 
+  #     mutate(
+  #       across(
+  #         .cols = var.interesse_indv,
+  #         ~ . / qtd_morador,
+  #         .names = "percent_{.col}"
+  #       )
+  #     ) -> individuos.agg_parentesco
+  # }
+  
+  # [EM ANDAMENTO]: VARIÁVEIS DE CONTROLE DO CHEFE DA FAMÍLIA 
+  # lapply(
+  #   var.interesse_chefe.fam,
+  #   function(var){
+  individuos %>%
+    filter(!!sym(var.relacao.pessoa.ref) == 'chefe') %>% 
+    group_by(!!!syms(identificacao.domc)) %>% 
+    summarise(
+      across(
+        .cols = var.interesse_chefe.fam
+      )
+    ) %>% return(.)
+  
+  # 
+  # ) -> individuos.temp
+  # merge(individuos.agg_parentesco,
+  # individuos.temp) ->> individuos.agg_parentesco
+  # }
+  # )
+  
+  
+  
+  
+  #     if(!empty(individuos.agg_var.domc))
   #       merge(individuos.agg_parentesco,
   #             individuos.agg_var.domc)
   # 
-  # if(empty(individuos.agg_var.indv) == F)
+  # if(!empty(individuos.agg_var.indv))
   #   merge(individuos.agg_parentesco,
   #         individuos.agg_var.indv)
   
   # GERAL
-  merge(individuos.agg_parentesco,
-        individuos.agg_sexo.idade) %>% return(.)
+  # return(individuos.agg_parentesco)
+  # merge(individuos.agg_parentesco,
+  # individuos.agg_sexo.idade) %>% return(.)
 }
 
 
@@ -406,3 +451,39 @@ individuos.agg_fun <- function(
 #   group_by(uf,seq,dv,domcl, cartao) %>%
 #   tally(.)
 # hist(.)
+
+individuos.pof2008 %>% 
+  df_recode(list.recode = list.var.recode_tr2.pof2008) %>% 
+  select(
+    cod_uf, num_seq, num_dv, cod_domc,
+    
+    cod_rel_pess_refe_uc,
+    idade_anos, 
+    anos_de_estudo
+  ) %>% 
+  filter(cod_rel_pess_refe_uc == 'chefe') %>%
+  group_by(cod_uf, num_seq, num_dv, cod_domc) %>%
+  summarise(across(.fns = .)) %>% View(.)
+# individuos.agg_fun2(faixas.etarias = faixas.etarias.vaz2008,
+# sexo = T) %>% 
+glimpse(.)
+
+
+
+# mapply(
+#   var = var.interesse_indv,
+#   function(var){
+#     
+#     individuos.pof2008 %>%
+#       pivot_wider(id_cols = cod_rel_pess_refe_uc,
+#                   names_from = var,
+#                   values_from = 1,
+#                   values_fn = length,
+#                   values_fill = 0,
+#                   names_prefix = 'qtd_')
+#     
+#   }
+# )
+
+
+

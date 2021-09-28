@@ -178,6 +178,93 @@ iv.engel.rothbarth <- function(
   
 }
 
+iv.engel.rothbarth.quad <- function(
+  df, 
+  welfare.indicator = 'share_despesas.mensais.alimentacao',
+  expenditure = 'despesas.mensais.totais_per.capita',
+  iv.expenditure = 'renda_total_per.capita',
+  show.diagnostics = F,
+  control = c('UF_sigla', 'urbano'),
+  weights = T,
+  weights.var = 'fator_expansao1'
+){
+  
+  # Pesos amostrais
+  if(weights){
+    
+    df %>% 
+      mutate(
+        wgt = !!sym(weights.var)
+      ) -> df
+    
+  }
+  
+  # log(expenditure)
+  df %>%
+    filter(!!sym(expenditure) > 0,
+           !!sym(iv.expenditure) > 0) %>%
+    mutate(
+      !!sym(expenditure) := log(!!sym(expenditure)),
+      !!sym(iv.expenditure) := log(!!sym(iv.expenditure)),
+      
+      # Termos quadráticos
+      !!sym(glue('quad_{expenditure}')) := (!!sym(expenditure))^2,
+      !!sym(glue('quad_{iv.expenditure}')) := (!!sym(iv.expenditure))^2
+      
+    ) -> df
+  
+  # Classes de sexo e idade
+  df %>%
+    select(contains(']')) %>%
+    names(.) %>%
+    {glue('`{.}`')} %>%
+    paste(collapse = '+') -> classes.etarias
+  
+  paste(control, collapse = '+') %>%
+    {glue('{welfare.indicator} ~ ', #Regressão normal
+          '{classes.etarias}',
+          '+ {expenditure}',
+          '+ quad_{expenditure}',
+          '+ {.} |', #Regressão instrumental a partir de "|"
+          '{classes.etarias}',
+          '+ {iv.expenditure}',
+          '+ quad_{iv.expenditure}',
+          '+ {.}')} %>%
+    as.formula(.) -> f
+  
+  # Regressão com pesos amostrais
+  if(weights){
+    
+    ivreg(
+      formula = f, 
+      data = df,
+      weights = wgt
+    ) -> ivreg.engel.rothbarth
+    
+  }
+  # Regressão sem pesos amostrais
+  else {
+    
+    ivreg(
+      formula = f, 
+      data = df
+    ) -> ivreg.engel.rothbarth
+    
+  }
+  
+  # Teste de endogeneidade e validade da variável instrumental
+  if(show.diagnostics){
+    
+    ivreg.engel.rothbarth %>% 
+      summary(diagnostics = T) %>%
+      print(.)
+    
+  }
+  
+  return(ivreg.engel.rothbarth)
+  
+}
+
 iv.engel.rothbarth2 <- function(
   df, 
   welfare.indicator = 'share_despesas.mensais.alimentacao',
