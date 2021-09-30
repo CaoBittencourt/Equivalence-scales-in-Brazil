@@ -68,13 +68,13 @@ pof_ac_2008_cs %>%
 
 # 5. OUTROS ARGUMENTOS DA REGRESSÃO ------------------------------------------------
 # POF2002
-engel.welfare.indicator_pof2002 <- 'share_despesas.mensais.alimentacao' #Para o método de Engel, o bem-estar é inferido da participação orçamentária de comida
+rothbarth.welfare.indicator_pof2002 <- 'share_despesas.mensais.bens_adultos' #Para o método de Rothbarth, o bem-estar é inferido da participação orçamentária de "bens adultos"
 expenditure_pof2002 <- 'despesas.mensais.totais_per.capita' #Dispêndio per capita
 iv.expenditure_pof2002 <- 'renda_per.capita' #Variável instrumental do dispêndio = renda
 weights.var_pof2002 <- 'fator' #Peso amostral
 
 # POF2008
-engel.welfare.indicator_pof2008 <- 'share_despesas.mensais.alimentacao' #Para o método de Engel, o bem-estar é inferido da participação orçamentária de comida
+rothbarth.welfare.indicator_pof2008 <- 'share_despesas.mensais.bens_adultos' #Para o método de Rothbarth, o bem-estar é inferido da participação orçamentária de "bens adultos"
 expenditure_pof2008 <- 'despesas.mensais.totais_per.capita' #Dispêndio per capita
 iv.expenditure_pof2008 <- 'renda_total_per.capita' #Variável instrumental do dispêndio = renda
 weights.var_pof2008 <- 'fator_expansao1' #Peso amostral
@@ -338,15 +338,167 @@ pof_deaton_2008_cs %>%
     max_parentes.empregados = 0
   ) -> pof_deaton_2008_cs.sample
 
+# 6. BENS ADULTOS (ROTHBARTH) ------------------------------------------------------------
+bens_adultos <- c(
+  'share_despesas.mensais.bebidas.alcoolicas',
+  'share_despesas.mensais.fumo',
+  'share_despesas.mensais.jogos_apostas',
+  'share_despesas.mensais.vestuario.homem_mulher'
+)
+
+# POF2002
+# Adulto e Criança, POF2002, sem sexo
+pof_ac_2002_ss.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_ac_2002_ss.sample.rothbarth
+
+# Adulto e Criança, POF2002, com sexo
+pof_ac_2002_cs.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_ac_2002_cs.sample.rothbarth
+
+# Faixas etárias normais, POF2002, sem sexo
+pof_normais_2002_ss.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_normais_2002_ss.sample.rothbarth
+
+# Faixas etárias normais, POF2002, com sexo
+pof_normais_2002_cs.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_normais_2002_cs.sample.rothbarth
+
+# VAZ & VAZ, POF2002, sem sexo
+pof_vaz_2002_ss.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_vaz_2002_ss.sample.rothbarth
+
+# VAZ & VAZ, POF2002, com sexo
+pof_vaz_2002_cs.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_vaz_2002_cs.sample.rothbarth
+
+# Deaton, POF2002, sem sexo
+pof_deaton_2002_ss.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_deaton_2002_ss.sample.rothbarth
+
+# Deaton, POF2002, com sexo
+pof_deaton_2002_cs.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_deaton_2002_cs.sample.rothbarth
+
+# POF2008
+# Adulto e Criança, POF2008, sem sexo
+pof_ac_2008_ss.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_ac_2008_ss.sample.rothbarth
+
+# Adulto e Criança, POF2008, com sexo
+pof_ac_2008_cs.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_ac_2008_cs.sample.rothbarth
+
+# Faixas etárias normais, POF2008, sem sexo
+pof_normais_2008_ss.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_normais_2008_ss.sample.rothbarth
+
+# Faixas etárias normais, POF2008, com sexo
+pof_normais_2008_cs.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_normais_2008_cs.sample.rothbarth
+
+# VAZ & VAZ, POF2008, sem sexo
+pof_vaz_2008_ss.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_vaz_2008_ss.sample.rothbarth
+
+# VAZ & VAZ, POF2008, com sexo
+pof_vaz_2008_cs.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_vaz_2008_cs.sample.rothbarth
+
+# Deaton, POF2008, sem sexo
+pof_deaton_2008_ss.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_deaton_2008_ss.sample.rothbarth
+
+# Deaton, POF2008, com sexo
+pof_deaton_2008_cs.sample %>% 
+  mutate(
+    share_despesas.mensais.bens_adultos = rowSums(
+      across(
+        .cols = bens_adultos),
+      na.rm = T)
+  ) -> pof_deaton_2008_cs.sample.rothbarth
+
 # 7. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # Adulto e Criança, POF2002, sem sexo
-pof_ac_2002_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-  # iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2002,
+pof_ac_2002_ss.sample.rothbarth %>%
+  iv.engel.rothbarth(
+    welfare.indicator = rothbarth.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    qtd_morador = qtd_moradores_pof2002,
     # control = c('UF_sigla','urbano'),
     control = control_pof2002,
     weights = T,
@@ -358,17 +510,14 @@ pof_ac_2002_ss.sample %>%
   #                    show.diagnostics = T) %>%
   # 
   fix.heteroskedasticity(.) %>%
-  # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2002_ss) %>% View(.)
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_ac_2002_ss)
 
 # Normais, POF2002, sem sexo  
-pof_normais_2002_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-  # iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2002,
+pof_normais_2002_ss.sample.rothbarth %>%
+  iv.engel.rothbarth(
+    welfare.indicator = rothbarth.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    qtd_morador = qtd_moradores_pof2002,
     # control = c('UF_sigla','urbano'),
     control = control_pof2002,
     weights = T,
@@ -376,17 +525,14 @@ pof_normais_2002_ss.sample %>%
     show.diagnostics = T
   ) %>%
   fix.heteroskedasticity(.) %>%
-  # equivalence.scales.engel.rothbarth(pessoa.referencia = ref_normais_2002_ss)
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_normais_2002_ss)
 
 # Vaz & Vaz, POF2002, sem sexo
-pof_vaz_2002_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-    # iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2002,
+pof_vaz_2002_ss.sample.rothbarth %>%
+  iv.engel.rothbarth(
+    welfare.indicator = rothbarth.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    qtd_morador = qtd_moradores_pof2002,
     # control = c('UF_sigla','urbano'),
     control = control_pof2002,
     weights = T,
@@ -401,13 +547,11 @@ pof_vaz_2002_ss.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_vaz_2002_ss)
 
 # Deaton, POF2002, sem sexo
-pof_deaton_2002_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-    # iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2002,
+pof_deaton_2002_ss.sample.rothbarth %>%
+  iv.engel.rothbarth(
+    welfare.indicator = rothbarth.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    qtd_morador = qtd_moradores_pof2002,
     # control = c('UF_sigla','urbano'),
     control = control_pof2002,
     weights = T,
@@ -419,9 +563,9 @@ pof_deaton_2002_ss.sample %>%
 
 # 8. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
 # Adulto e Criança, POF2002, com sexo
-pof_ac_2002_cs.sample %>%
+pof_ac_2002_cs.sample.rothbarth %>%
   iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2002,
+    welfare.indicator = rothbarth.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
     # control = c('UF_sigla','urbano'),
@@ -438,9 +582,9 @@ pof_ac_2002_cs.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_ac_2002_cs)
 
 # Normais, POF2002, com sexo  
-pof_normais_2002_cs.sample %>%
+pof_normais_2002_cs.sample.rothbarth %>%
   iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2002,
+    welfare.indicator = rothbarth.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
     # control = c('UF_sigla','urbano'),
@@ -453,9 +597,9 @@ pof_normais_2002_cs.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_normais_2002_cs)
 
 # Vaz & Vaz, POF2002, com sexo
-pof_vaz_2002_cs.sample %>%
+pof_vaz_2002_cs.sample.rothbarth %>%
   iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2002,
+    welfare.indicator = rothbarth.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
     # control = c('UF_sigla','urbano'),
@@ -472,9 +616,9 @@ pof_vaz_2002_cs.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_vaz_2002_cs)
 
 # Deaton, POF2002, com sexo
-pof_deaton_2002_cs.sample %>%
+pof_deaton_2002_cs.sample.rothbarth %>%
   iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2002,
+    welfare.indicator = rothbarth.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
     # control = c('UF_sigla','urbano'),
@@ -488,13 +632,11 @@ pof_deaton_2002_cs.sample %>%
 
 # 9. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # Adulto e Criança, POF2008, sem sexo
-pof_ac_2008_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-    # iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2008,
+pof_ac_2008_ss.sample.rothbarth %>%
+  iv.engel.rothbarth(
+    welfare.indicator = rothbarth.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
-    qtd_morador = qtd_moradores_pof2008,
     # control = c('UF_sigla','urbano'),
     control = control_pof2008,
     weights = T,
@@ -506,17 +648,14 @@ pof_ac_2008_ss.sample %>%
   #                    show.diagnostics = T) %>%
   # 
   fix.heteroskedasticity(.) %>%
-  # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2008_ss) %>% View(.)
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_ac_2008_ss)
 
 # Normais, POF2008, sem sexo  
-pof_normais_2008_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-    # iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2008,
+pof_normais_2008_ss.sample.rothbarth %>%
+  iv.engel.rothbarth(
+    welfare.indicator = rothbarth.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
-    qtd_morador = qtd_moradores_pof2008,
     # control = c('UF_sigla','urbano'),
     control = control_pof2008,
     weights = T,
@@ -524,17 +663,14 @@ pof_normais_2008_ss.sample %>%
     show.diagnostics = T
   ) %>%
   fix.heteroskedasticity(.) %>%
-  # equivalence.scales.engel.rothbarth(pessoa.referencia = ref_normais_2008_ss)
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_normais_2008_ss)
 
 # Vaz & Vaz, POF2008, sem sexo
-pof_vaz_2008_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-    # iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2008,
+pof_vaz_2008_ss.sample.rothbarth %>%
+  iv.engel.rothbarth(
+    welfare.indicator = rothbarth.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
-    qtd_morador = qtd_moradores_pof2008,
     # control = c('UF_sigla','urbano'),
     control = control_pof2008,
     weights = T,
@@ -549,13 +685,11 @@ pof_vaz_2008_ss.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_vaz_2008_ss)
 
 # Deaton, POF2008, sem sexo
-pof_deaton_2008_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-    # iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2008,
+pof_deaton_2008_ss.sample.rothbarth %>%
+  iv.engel.rothbarth(
+    welfare.indicator = rothbarth.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
-    qtd_morador = qtd_moradores_pof2008,
     # control = c('UF_sigla','urbano'),
     control = control_pof2008,
     weights = T,
@@ -567,9 +701,9 @@ pof_deaton_2008_ss.sample %>%
 
 # 10. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, com sexo ------------------------------------------------------------
 # Adulto e Criança, POF2008, com sexo
-pof_ac_2008_cs.sample %>%
+pof_ac_2008_cs.sample.rothbarth %>%
   iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2008,
+    welfare.indicator = rothbarth.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
     # control = c('UF_sigla','urbano'),
@@ -586,9 +720,9 @@ pof_ac_2008_cs.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_ac_2008_cs)
 
 # Normais, POF2008, com sexo  
-pof_normais_2008_cs.sample %>%
+pof_normais_2008_cs.sample.rothbarth %>%
   iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2008,
+    welfare.indicator = rothbarth.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
     # control = c('UF_sigla','urbano'),
@@ -601,9 +735,9 @@ pof_normais_2008_cs.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_normais_2008_cs)
 
 # Vaz & Vaz, POF2008, com sexo
-pof_vaz_2008_cs.sample %>%
+pof_vaz_2008_cs.sample.rothbarth %>%
   iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2008,
+    welfare.indicator = rothbarth.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
     # control = c('UF_sigla','urbano'),
@@ -620,9 +754,9 @@ pof_vaz_2008_cs.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_vaz_2008_cs)
 
 # Deaton, POF2008, com sexo
-pof_deaton_2008_cs.sample %>%
+pof_deaton_2008_cs.sample.rothbarth %>%
   iv.engel.rothbarth(
-    welfare.indicator = engel.welfare.indicator_pof2008,
+    welfare.indicator = rothbarth.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
     # control = c('UF_sigla','urbano'),
@@ -633,7 +767,6 @@ pof_deaton_2008_cs.sample %>%
   ) %>%
   fix.heteroskedasticity(.) %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_deaton_2008_cs)
-
 
 
 

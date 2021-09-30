@@ -66,9 +66,10 @@ pof.agg_fun <- function(
   lista.id_receitas.agg = id_receitas.agg,
   lista.id_despesas.agg = id_despesas.agg,
   lista.id_despesas.especificas = id_despesas.especificas,
-  qtd_moradores = 'qtd_morador_domc',
-  renda = 'renda_total',
-  unid_fed = 'cod_uf'
+  lista.var.recode,
+  qtd_moradores,
+  renda,
+  unid_fed
 ){
   
   # CONSUMO AGREGADO
@@ -153,6 +154,8 @@ pof.agg_fun <- function(
                              `3` = 'Sudeste',
                              `4` = 'Sul',
                              `5` = 'Centro-Oeste')
+      
+      
     ) -> consumo
   
   # Remoção das variáveis desagregadas

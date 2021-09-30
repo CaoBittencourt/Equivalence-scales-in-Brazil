@@ -22,6 +22,10 @@ sample.selection <- function(
   incluir_solteiros_sem.filhos = T,
   incluir_solteiros_com.filhos = F,
   
+  var.chefe_idade,
+  max_idade_chefe = 200,
+  min_idade_chefe = 0,
+  
   max_moradores = 7,
   max_conjuge = 1,
   max_filhos = 4,
@@ -37,6 +41,9 @@ sample.selection <- function(
       # regiao %in% regioes,
       # UF_sigla %in% UF,
       # urbano %in% rural_urbano,
+      
+      !!sym(var.chefe_idade) %in% seq(min_idade_chefe,
+                                      max_idade_chefe),
       
       !!sym(qtd_morador) <= max_moradores,
       

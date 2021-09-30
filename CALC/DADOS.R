@@ -23,6 +23,10 @@ basepadrao.pof2008 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_
 individuos.pof2002 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2002/pof2002_tr2.dta')
 individuos.pof2008 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_tr2.dta')
 
+# Registros de Moradia 2002-2003, 2008-2009 via Stata (DataZoom)
+moradia.pof2002 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2002/pof2002_tr1.dta')
+moradia.pof2008 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_tr1.dta')
+
 # 3. FAIXAS ETÁRIAS -------------------------------------------------------
 # Faixas Etárias I
 # Idosos (>65 anos)
@@ -61,7 +65,128 @@ lista.faixas.etarias2008 <- list('normais_2008' = faixas.etarias.normais2008,
                                  'vaz_2008' = faixas.etarias.vaz2008,
                                  'deaton_2008' = faixas.etarias.deaton2008)
 
-# 4. AGREGAÇÃO ------------------------------------------------------------
+# 4. RECODES (NOMES DAS VARIÁVEIS) ----------------------------------------
+# POF 2002
+# Moradia (tr1)
+list(
+  
+  'cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
+                     '2' = 'Imóvel próprio (em pagamento)',
+                     '3' = 'Imóvel cedido (por empregador)',
+                     '4' = 'Imóvel cedido (outra forma)',
+                     '5' = 'Outras condições de ocupação',
+                     '6' = 'Imóvel alugado')
+  
+) -> list.var.recode_tr1.pof2002
+
+# Indivíduos (tr2)
+list(
+  
+  'rel_chefe' = list('1' = 'chefe',
+                     '2' = 'conjuge',
+                     '3' = 'filhos',
+                     '4' = 'outros.parentes',
+                     '5' = 'agregados',
+                     '6' = 'pensionistas',
+                     '7' = 'empregados',
+                     '8' = 'parentes.empregados'),
+  'sexo' = list('1' = 'Homens',
+                .default = 'Mulheres'),
+  'cor' = list('1' = 'cor.Branca',
+               '2' = 'cor.Preta',
+               '3' = 'cor.Amarela',
+               '4' = 'cor.Parda',
+               '5' = 'cor.Indígena',
+               .default = 'cor.Não sabe'),
+  'orc_rend' = list('1' = 'Empregado',
+                    .default = 'Não empregado'),
+  'cartao' = list('1' = 'Tem cartão de crédito',
+                  .default = 'Não tem cartão de crédito'),
+  'plano_saude' = list('1' = 'Tem plano de saúde',
+                       .default = 'Não tem plano de saúde')
+  
+) -> list.var.recode_tr2.pof2002
+
+# POF 2008
+# Moradia (tr1)
+list(
+  
+  'cod_cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
+                         '2' = 'Imóvel próprio (em pagamento)',
+                         '3' = 'Imóvel cedido (por empregador)',
+                         '4' = 'Imóvel cedido (outra forma)',
+                         '5' = 'Outras condições de ocupação',
+                         '6' = 'Imóvel alugado')
+  
+) -> list.var.recode_tr1.pof2008
+
+# Indivíduos (tr2)
+list(
+  
+  'cod_rel_pess_refe_uc' = list('1' = 'chefe',
+                                '2' = 'conjuge',
+                                '3' = 'filhos',
+                                '4' = 'outros.parentes',
+                                '5' = 'agregados',
+                                '6' = 'pensionistas',
+                                '7' = 'empregados',
+                                '8' = 'parentes.empregados'),
+  'cod_sexo' = list('1' = 'Homens',
+                    .default = 'Mulheres'),
+  'cod_cor_raca' = list('1' = 'cor.Branca',
+                        '2' = 'cor.Preta',
+                        '3' = 'cor.Amarela',
+                        '4' = 'cor.Parda',
+                        '5' = 'cor.Indígena',
+                        .default = 'cor.Não sabe'),
+  'cod_sit_receita' = list('1' = 'Empregado',
+                           .default = 'Não empregado'), #Obs: não consta no manual da POF2008 a legenda deste código, mas é análogo ao da POF2002. Supõe-se que 1 = empregado e os demais, de um modo ou de outro, não empregados ou indisponíveis para resposta, como na POF2002.
+  'cod_tem_cartao' = list('1' = 'Tem cartão de crédito',
+                          .default = 'Não tem cartão de crédito'),
+  'plano_saude' = list('1' = 'Tem plano de saúde',
+                       .default = 'Não tem plano de saúde')
+  
+) -> list.var.recode_tr2.pof2008
+
+# 5. ARGUMENTOS PARA AGREGAÇÃO ------------------------------------------------
+# POF 2002
+# Argumentos para a função de agregação de domicílios POF 2002
+identificacao.domc_pof2002 <- c('uf', 'seq', 'dv', 'domcl')
+var.relacao.pessoa.ref_pof2002 <- 'rel_chefe'
+var.sexo_pof2002 <- 'sexo'
+var.idade_pof2002 <- 'idade'
+var.anos_estudo_pof2002 <- 'anos_est'
+# Argumentos para a função de agregação de consumo POF 2002
+qtd_moradores_pof2002 <- 'n_morador'
+renda_pof2002 <- 'renda'
+unid_fed_pof2002 <- 'uf'
+
+# POF 2008
+# Argumentos para a função de agregação de domicílios POF 2008
+identificacao.domc_pof2008 <- c('cod_uf', 'num_seq', 'num_dv', 'cod_domc')
+var.relacao.pessoa.ref_pof2008 <- 'cod_rel_pess_refe_uc'
+var.sexo_pof2008 <- 'cod_sexo'
+var.idade_pof2008 <- 'idade_anos'
+var.anos_estudo_pof2008 <- 'anos_de_estudo'
+# Argumentos para a função de agregação de consumo POF 2002
+qtd_moradores_pof2008 <- 'qtd_morador_domc'
+renda_pof2008 <- 'renda_total'
+unid_fed_pof2008 <- 'cod_uf'
+
+# 6. VARIÁVEIS DE CONTROLE ------------------------------------------------
+# POF 2002
+# Variáveis de controle POF 2002
+var.interesse_chefe.fam_pof2002 <- c(var.idade_pof2002, var.anos_estudo_pof2002)
+var.interesse_indv_pof2002 <- c('cor', 'orc_rend', 'cartao', 'plano_saude')
+var.interesse_domc_pof2002 <- c('cond_ocup')
+
+# POF 2008
+# Variáveis de controle POF 2008
+var.interesse_chefe.fam_pof2008 <- c(var.idade_pof2008, var.anos_estudo_pof2008)
+var.interesse_indv_pof2008 <- c('cod_cor_raca', 'cod_sit_receita', 'cod_tem_cartao', 'plano_saude')
+var.interesse_domc_pof2008 <- c('cod_cond_ocup')
+
+# 7. AGREGAÇÃO ------------------------------------------------------------
 # POF 2002
 # POF 2002, todas as faixas etárias, sem sexo
 mapply(
@@ -71,27 +196,35 @@ mapply(
            faixa.etaria.var_name){
     # Domicílios agregados POF 2002
     individuos.agg_fun(
-      individuos = individuos.pof2002,
+      df_individuos = individuos.pof2002,
       faixas.etarias = faixa.etaria,
       sexo = F,
       
-      identificacao.domc = c('uf', 'seq',
-                             'dv', 'domcl'),
+      identificacao.domc = identificacao.domc_pof2002,
       
-      var.relacao.pessoa.ref = 'rel_chefe',
-      var.sexo = 'sexo',
-      var.idade = 'idade',
-      var.anos_estudo = 'anos_est',
+      list.var.recode = list.var.recode_tr2.pof2002,
       
-      list.var.recode = list.var.recode_tr2.pof2002
+      var.relacao.pessoa.ref = var.relacao.pessoa.ref_pof2002,
+      var.sexo = var.sexo_pof2002,
+      var.idade = var.idade_pof2002,
+      var.anos_estudo = var.anos_estudo_pof2002,
+      
+      var.interesse_indv = var.interesse_indv_pof2002,
+      var.interesse_chefe.fam = var.interesse_chefe.fam_pof2002
     ) -> domicilio.agg.temp
+    
+    domicilio.agg.temp %>%
+      moradia.agg_fun(df_moradia = moradia.pof2002,
+                      identificacao.domc = identificacao.domc_pof2002,
+                      list.var.recode = list.var.recode_tr1.pof2002,
+                      var.interesse_domc = var.interesse_domc_pof2002) -> domicilio.agg.temp
     
     # Consumo domiciliar POF 2002
     pof.agg_fun(
       consumo = basepadrao.pof2002,
-      qtd_moradores = 'n_morador',
-      renda = 'renda',
-      unid_fed = 'uf'
+      qtd_moradores = qtd_moradores_pof2002,
+      renda = renda_pof2002,
+      unid_fed = unid_fed_pof2002
     ) -> consumo.agg.temp
     
     merge(domicilio.agg.temp,
@@ -111,27 +244,35 @@ mapply(
            faixa.etaria.var_name){
     # Domicílios agregados POF 2002
     individuos.agg_fun(
-      individuos = individuos.pof2002,
+      df_individuos = individuos.pof2002,
       faixas.etarias = faixa.etaria,
       sexo = T,
       
-      identificacao.domc = c('uf', 'seq',
-                             'dv', 'domcl'),
+      identificacao.domc = identificacao.domc_pof2002,
       
-      var.relacao.pessoa.ref = 'rel_chefe',
-      var.sexo = 'sexo',
-      var.idade = 'idade',
-      var.anos_estudo = 'anos_est',
+      list.var.recode = list.var.recode_tr2.pof2002,
       
-      list.var.recode = list.var.recode_tr2.pof2002
+      var.relacao.pessoa.ref = var.relacao.pessoa.ref_pof2002,
+      var.sexo = var.sexo_pof2002,
+      var.idade = var.idade_pof2002,
+      var.anos_estudo = var.anos_estudo_pof2002,
+      
+      var.interesse_indv = var.interesse_indv_pof2002,
+      var.interesse_chefe.fam = var.interesse_chefe.fam_pof2002
     ) -> domicilio.agg.temp
+    
+    domicilio.agg.temp %>%
+      moradia.agg_fun(df_moradia = moradia.pof2002,
+                      identificacao.domc = identificacao.domc_pof2002,
+                      list.var.recode = list.var.recode_tr1.pof2002,
+                      var.interesse_domc = var.interesse_domc_pof2002) -> domicilio.agg.temp
     
     # Consumo domiciliar POF 2002
     pof.agg_fun(
       consumo = basepadrao.pof2002,
-      qtd_moradores = 'n_morador',
-      renda = 'renda',
-      unid_fed = 'uf'
+      qtd_moradores = qtd_moradores_pof2002,
+      renda = renda_pof2002,
+      unid_fed = unid_fed_pof2002
     ) -> consumo.agg.temp
     
     merge(domicilio.agg.temp,
@@ -143,7 +284,7 @@ mapply(
   }
 ) %>% invisible(.)
 
-
+# POF 2008
 # POF 2008, todas as faixas etárias, sem sexo
 mapply(
   faixa.etaria = lista.faixas.etarias2008,
@@ -152,14 +293,35 @@ mapply(
            faixa.etaria.var_name){
     # Domicílios agregados POF 2008
     individuos.agg_fun(
-      individuos = individuos.pof2008,
+      df_individuos = individuos.pof2008,
       faixas.etarias = faixa.etaria,
-      sexo = F
+      sexo = F,
+      
+      identificacao.domc = identificacao.domc_pof2008,
+      
+      list.var.recode = list.var.recode_tr2.pof2008,
+      
+      var.relacao.pessoa.ref = var.relacao.pessoa.ref_pof2008,
+      var.sexo = var.sexo_pof2008,
+      var.idade = var.idade_pof2008,
+      var.anos_estudo = var.anos_estudo_pof2008,
+      
+      var.interesse_indv = var.interesse_indv_pof2008,
+      var.interesse_chefe.fam = var.interesse_chefe.fam_pof2008
     ) -> domicilio.agg.temp
+    
+    domicilio.agg.temp %>%
+      moradia.agg_fun(df_moradia = moradia.pof2008,
+                      identificacao.domc = identificacao.domc_pof2008,
+                      list.var.recode = list.var.recode_tr1.pof2008,
+                      var.interesse_domc = var.interesse_domc_pof2008) -> domicilio.agg.temp
     
     # Consumo domiciliar POF 2008
     pof.agg_fun(
-      consumo = basepadrao.pof2008
+      consumo = basepadrao.pof2008,
+      qtd_moradores = qtd_moradores_pof2008,
+      renda = renda_pof2008,
+      unid_fed = unid_fed_pof2008
     ) -> consumo.agg.temp
     
     merge(domicilio.agg.temp,
@@ -179,14 +341,35 @@ mapply(
            faixa.etaria.var_name){
     # Domicílios agregados POF 2008
     individuos.agg_fun(
-      individuos = individuos.pof2008,
+      df_individuos = individuos.pof2008,
       faixas.etarias = faixa.etaria,
-      sexo = T
+      sexo = T,
+      
+      identificacao.domc = identificacao.domc_pof2008,
+      
+      list.var.recode = list.var.recode_tr2.pof2008,
+      
+      var.relacao.pessoa.ref = var.relacao.pessoa.ref_pof2008,
+      var.sexo = var.sexo_pof2008,
+      var.idade = var.idade_pof2008,
+      var.anos_estudo = var.anos_estudo_pof2008,
+      
+      var.interesse_indv = var.interesse_indv_pof2008,
+      var.interesse_chefe.fam = var.interesse_chefe.fam_pof2008
     ) -> domicilio.agg.temp
+    
+    domicilio.agg.temp %>%
+      moradia.agg_fun(df_moradia = moradia.pof2008,
+                      identificacao.domc = identificacao.domc_pof2008,
+                      list.var.recode = list.var.recode_tr1.pof2008,
+                      var.interesse_domc = var.interesse_domc_pof2008) -> domicilio.agg.temp
     
     # Consumo domiciliar POF 2008
     pof.agg_fun(
-      consumo = basepadrao.pof2008
+      consumo = basepadrao.pof2008,
+      qtd_moradores = qtd_moradores_pof2008,
+      renda = renda_pof2008,
+      unid_fed = unid_fed_pof2008
     ) -> consumo.agg.temp
     
     merge(domicilio.agg.temp,
@@ -197,4 +380,3 @@ mapply(
            envir = .GlobalEnv)
   }
 ) %>% invisible(.)
-

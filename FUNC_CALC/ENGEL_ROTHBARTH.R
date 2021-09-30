@@ -11,102 +11,103 @@ lapply(pkg, function(x)
 
 
 # 2. FUNÇÃO DE REGRESSÃO OLS (ENGEL E ROTHBARTH) FLEXÍVEL ---------------------
-lm.engel.rothbarth <- function(
-  df, welfare.indicator = 'share_despesas.mensais.alimentacao',
-  expenditure = 'despesas.mensais.totais_per.capita',
-  log.expenditure = T,
-  control = c('UF_sigla', 'urbano')
-  # , .weights = 'fator_expansao1'
-){
-  
-  if(log.expenditure){
-    
-    df %>%
-      filter(!!sym(expenditure) > 0) %>%
-      mutate(
-        !!sym(expenditure) := log(!!sym(expenditure))
-      ) -> df
-    
-  }
-  
-  df %>%
-    select(contains(']')) %>% 
-    names(.) %>% 
-    {glue('`{.}`')} %>%
-    paste(collapse = '+') -> classes.etarias
-  
-  paste(control, collapse = '+') %>%
-    {glue('{welfare.indicator} ~ ',
-          '{classes.etarias}',
-          '+ {expenditure}',
-          '+ {.}')} %>%
-    as.formula(.) -> f
-  
-  lm(formula = f, data = df) %>%
-    return(.)
-  
-}
-
-lm.engel.rothbarth2 <- function(
-  df, welfare.indicator = 'share_despesas.mensais.alimentacao',
-  expenditure = 'despesas.mensais.totais_per.capita',
-  log.expenditure = T,
-  control = c('UF_sigla', 'urbano'),
-  qtd_morador = 'qtd_morador_domc'
-  # , .weights = 'fator_expansao1'
-){
-  
-  if(log.expenditure){
-    
-    df %>%
-      filter(!!sym(expenditure) > 0) %>%
-      mutate(
-        !!sym(expenditure) := log(!!sym(expenditure))
-      ) -> df
-    
-  }
-  
-  df %>% 
-    mutate(
-      across(.cols = contains(']'),
-             ~ . / !!sym(qtd_morador)
-      ),
-      
-      !!sym(qtd_morador) := log(!!sym(qtd_morador))
-      
-    ) -> df
-  
-  df %>%
-    select(contains(']')) %>% 
-    names(.) %>% 
-    {glue('`{.}`')} %>%
-    paste(collapse = '+') -> classes.etarias
-  
-  paste(control, collapse = '+') %>%
-    {glue('{welfare.indicator} ~ ',
-          '{classes.etarias}',
-          '+ {expenditure}',
-          '+ {qtd_morador}',
-          '+ {.}')} %>%
-    as.formula(.) -> f
-  
-  lm(formula = f, data = df) %>%
-    return(.)
-  
-}
+# [ENDOGENEIDADE MUITO FORTE => NÃO UTILIZAR OLS]
+# lm.engel.rothbarth <- function(
+#   df, welfare.indicator = 'share_despesas.mensais.alimentacao',
+#   expenditure = 'despesas.mensais.totais_per.capita',
+#   log.expenditure = T,
+#   control = c('UF_sigla', 'urbano')
+#   # , .weights = 'fator_expansao1'
+# ){
+#   
+#   if(log.expenditure){
+#     
+#     df %>%
+#       filter(!!sym(expenditure) > 0) %>%
+#       mutate(
+#         !!sym(expenditure) := log(!!sym(expenditure))
+#       ) -> df
+#     
+#   }
+#   
+#   df %>%
+#     select(contains(']')) %>% 
+#     names(.) %>% 
+#     {glue('`{.}`')} %>%
+#     paste(collapse = '+') -> classes.etarias
+#   
+#   paste(control, collapse = '+') %>%
+#     {glue('{welfare.indicator} ~ ',
+#           '{classes.etarias}',
+#           '+ {expenditure}',
+#           '+ {.}')} %>%
+#     as.formula(.) -> f
+#   
+#   lm(formula = f, data = df) %>%
+#     return(.)
+#   
+# }
+# 
+# lm.engel.rothbarth2 <- function(
+#   df, welfare.indicator = 'share_despesas.mensais.alimentacao',
+#   expenditure = 'despesas.mensais.totais_per.capita',
+#   log.expenditure = T,
+#   control = c('UF_sigla', 'urbano'),
+#   qtd_morador = 'qtd_morador_domc'
+#   # , .weights = 'fator_expansao1'
+# ){
+#   
+#   if(log.expenditure){
+#     
+#     df %>%
+#       filter(!!sym(expenditure) > 0) %>%
+#       mutate(
+#         !!sym(expenditure) := log(!!sym(expenditure))
+#       ) -> df
+#     
+#   }
+#   
+#   df %>% 
+#     mutate(
+#       across(.cols = contains(']'),
+#              ~ . / !!sym(qtd_morador)
+#       ),
+#       
+#       !!sym(qtd_morador) := log(!!sym(qtd_morador))
+#       
+#     ) -> df
+#   
+#   df %>%
+#     select(contains(']')) %>% 
+#     names(.) %>% 
+#     {glue('`{.}`')} %>%
+#     paste(collapse = '+') -> classes.etarias
+#   
+#   paste(control, collapse = '+') %>%
+#     {glue('{welfare.indicator} ~ ',
+#           '{classes.etarias}',
+#           '+ {expenditure}',
+#           '+ {qtd_morador}',
+#           '+ {.}')} %>%
+#     as.formula(.) -> f
+#   
+#   lm(formula = f, data = df) %>%
+#     return(.)
+#   
+# }
 
 
 
 # 3. FUNÇÃO DE REGRESSÃO 2SLS (ENGEL E ROTHBARTH) FLEXÍVEL ----------------
 iv.engel.rothbarth <- function(
   df, 
-  welfare.indicator = 'share_despesas.mensais.alimentacao',
-  expenditure = 'despesas.mensais.totais_per.capita',
-  iv.expenditure = 'renda_total_per.capita',
+  welfare.indicator,
+  expenditure,
+  iv.expenditure,
   show.diagnostics = F,
-  control = c('UF_sigla', 'urbano'),
+  control,
   weights = T,
-  weights.var = 'fator_expansao1'
+  weights.var
 ){
   
   # Pesos amostrais
@@ -265,17 +266,16 @@ iv.engel.rothbarth.quad <- function(
   
 }
 
-iv.engel.rothbarth2 <- function(
+iv.engel.rothbarth.econ_scale <- function(
   df, 
-  welfare.indicator = 'share_despesas.mensais.alimentacao',
-  qtd_morador = 'qtd_morador_domc',
-  expenditure = 'despesas.mensais.totais_per.capita',
-  iv.expenditure = 'renda_total_per.capita',
+  welfare.indicator,
+  expenditure,
+  iv.expenditure,
+  qtd_morador,
   show.diagnostics = F,
-  log.expenditure = T,
-  control = c('UF_sigla', 'urbano'),
+  control,
   weights = T,
-  weights.var = 'fator_expansao1'
+  weights.var
 ){
   
   # Pesos amostrais
@@ -300,9 +300,7 @@ iv.engel.rothbarth2 <- function(
   # log(qtd_morador)
   df %>% 
     mutate(
-      
       !!sym(qtd_morador) := log(!!sym(qtd_morador))
-      
     ) -> df
   
   # Classes de sexo e idade
@@ -358,8 +356,11 @@ iv.engel.rothbarth2 <- function(
 }
 
 # 3. FUNÇÃO DE DIAGNÓSTICO E CONSERTO DE HETEROSCEDASTICIDADE -----------------------
-fix.heteroskedasticity <- function(model, .type = 'HC3',
-                                   significance = 0.05){
+fix.heteroskedasticity <- function(
+  model, 
+  .type = 'HC3',
+  significance = 0.05
+){
   
   if(bptest(model)$p.value <= significance){
     model %>%
@@ -375,8 +376,8 @@ equivalence.scales.engel.rothbarth <- function(
   expenditure = 'despesas.mensais.totais_per.capita',
   pessoa.referencia, 
   na.h = 2, nc.h = 1,
-  na.r = 2, nc.r = 0
-  
+  na.r = 2, nc.r = 0,
+  significance.level = 0.05
 ){
   
   nr <- na.r + nc.r
@@ -398,24 +399,29 @@ equivalence.scales.engel.rothbarth <- function(
       # equivalence.scale = ref.estimate.rel*(na.r - na.h) + coef.rel*(nc.r - nc.h),
       equivalence.scale = ref.estimate.rel*(na.h - na.r) + coef.rel*(nc.h - nc.r), # Deaton e Muellbauer (1986) escrevem a escala de equivalência como Dudel (2021), i.e. com xh - xr
       equivalence.scale = exp(equivalence.scale)*(nh/nr),
-      member.cost = (equivalence.scale - 1)*(nr/nc.h)
+      member.cost = (equivalence.scale - 1)*(nr/nc.h),
+      
+      !!sym(glue('p.value<={significance.level}')) := p.value <= significance.level
     ) %>% 
     select(
       term, 
       std.error,
       p.value,
+      !!sym(glue('p.value<={significance.level}')),
       equivalence.scale,
       member.cost
-    ) %>% return(.)
+    ) %>%
+    return(.)
 }
 
-equivalence.scales.engel.rothbarth2 <- function(
+equivalence.scales.engel.rothbarth.econ_scale <- function(
   model, 
   expenditure = 'despesas.mensais.totais_per.capita',
+  qtd_morador = 'n_morador',
   pessoa.referencia, 
   na.h = 2, nc.h = 1,
-  na.r = 2, nc.r = 0
-  
+  na.r = 2, nc.r = 0,
+  significance.level = 0.05
 ){
   
   nr <- na.r + nc.r
@@ -427,107 +433,38 @@ equivalence.scales.engel.rothbarth2 <- function(
       expenditure.estimate = filter(.,term == expenditure) %>% 
         pull(estimate),
       
+      qtd_morador.estimate = filter(.,term == qtd_morador) %>% 
+        pull(estimate),
+      
       coef.rel = estimate/expenditure.estimate
+      
     ) %>%
-    filter(grepl(']', term)) %>%
     mutate(
       ref.estimate.rel = filter(.,term == pessoa.referencia) %>% 
         pull(coef.rel),
       
+      qtd_morador.estimate.rel = filter(.,term == qtd_morador) %>% 
+        pull(coef.rel)
+    ) %>%
+    filter(grepl(']', term)) %>%
+    mutate(
       # equivalence.scale = ref.estimate.rel*(na.r - na.h) + coef.rel*(nc.r - nc.h),
-      equivalence.scale = ref.estimate.rel*(na.h - na.r) + coef.rel*(nc.h - nc.r), # Deaton e Muellbauer (1986) escrevem a escala de equivalência como Dudel (2021), i.e. com xh - xr
+      equivalence.scale = ref.estimate.rel*(na.h - na.r) + coef.rel*(nc.h - nc.r) + qtd_morador.estimate.rel*log(nh/nr), # Deaton e Muellbauer (1986) escrevem a escala de equivalência como Dudel (2021), i.e. com xh - xr
       equivalence.scale = exp(equivalence.scale)*(nh/nr),
-      member.cost = (equivalence.scale - 1)*(nr/nc.h)
+      member.cost = (equivalence.scale - 1)*(nr/nc.h),
+      economies.scale = 1 + qtd_morador.estimate.rel,
+      
+      !!sym(glue('p.value<={significance.level}')) := p.value <= significance.level
     ) %>% 
     select(
       term, 
       std.error,
       p.value,
+      !!sym(glue('p.value<={significance.level}')),
       equivalence.scale,
-      member.cost
-    ) %>% return(.)
+      member.cost,
+      economies.scale
+    ) %>%
+    return(.)
 }
 
-# PROBLEMAS: ESCALAS DE EQUIVALÊNCIA ABSURDAS, MAS FUNÇÕES FUNCIONANDO CORRETAMENTE
-# SOLUÇÃO: REVER A FÓRMULA DA ESCALA DE EQUIVALÊNCIA + SELEÇÃO AMOSTRAL + VARIÁVEIS DE CONTROLE
-# OBS: POSSIVELMENTE O RESULTADO NÃO ESTÁ ERRADO, SÓ A INTERPRETAÇÃO (comparação (2,1) vs (2,0) etc)?
-# 5. TESTES ---------------------------------------------------------------
-# pof_ac_2008_ss %>% 
-#   sample.selection( # Seleção amostral VAZ & VAZ (2007)
-#     incluir_solteiros_sem.filhos = F,
-#     incluir_solteiros_com.filhos = F,
-#     max_moradores = 8,
-#     max_agregados = 0,
-#     max_pensionistas = 0,
-#     max_empregados = 0,
-#     max_parentes.empregados = 0
-#   ) %>%
-#   # sample.selection(.) %>%
-#   iv.engel.rothbarth(weights = T) %>%
-#   fix.heteroskedasticity(.) %>%
-#   equivalence.scales.engel.rothbarth(pessoa.referencia = '`(14,104] anos`')
-# 
-# pof_vaz_2008_cs %>%
-#   # sample.selection( # Seleção amostral VAZ & VAZ (2007)
-#   #   incluir_solteiros_sem.filhos = F,
-#   #   incluir_solteiros_com.filhos = F,
-#   #   max_moradores = 8,
-#   #   max_agregados = 0,
-#   #   max_pensionistas = 0,
-#   #   max_empregados = 0,
-#   #   max_parentes.empregados = 0
-#   # ) %>%
-#   sample.selection(.) %>%
-#   iv.engel.rothbarth(.) %>%
-#   fix.heteroskedasticity(.) %>%
-#   equivalence.scales.engel.rothbarth(pessoa.referencia = '`Homens_(14,104]`')
-# 
-# pof_deaton_2008_cs %>%
-#   sample.selection( # Seleção amostral VAZ & VAZ (2007)
-#     incluir_solteiros_sem.filhos = F,
-#     incluir_solteiros_com.filhos = F,
-#     max_moradores = 8,
-#     max_agregados = 0,
-#     max_pensionistas = 0,
-#     max_empregados = 0,
-#     max_parentes.empregados = 0
-#   ) %>%
-#   # sample.selection(.) %>%
-#   iv.engel.rothbarth(weights = T) %>%
-#   fix.heteroskedasticity(.) %>%
-#   equivalence.scales.engel.rothbarth(pessoa.referencia = '`Homens_(14,54]`')
-# 
-# pof_ac_2008_ss %>%
-#   sample.selection( # Seleção amostral VAZ & VAZ (2007)
-#     incluir_solteiros_sem.filhos = F,
-#     incluir_solteiros_com.filhos = F,
-#     max_moradores = 8,
-#     max_agregados = 0,
-#     max_pensionistas = 0,
-#     max_empregados = 0,
-#     max_parentes.empregados = 0
-#   ) %>%
-#   # sample.selection(.) %>%
-#   iv.engel.rothbarth(.) %>%
-#   fix.heteroskedasticity(.) %>%
-#   equivalence.scales.engel.rothbarth(pessoa.referencia = '`(14,104] anos`',
-#                                      na.h = 1, nc.h = 1,
-#                                      na.r = 1, nc.r = 0) #%>%
-# # mutate(member.cost = member.cost/max(member.cost)) # Talvez seja isso? Não
-# 
-# pof_vaz_2002_ss %>%
-#   sample.selection(qtd_morador = 'n_morador') %>%
-#   mutate(
-#     adult.goods =
-#       share_despesas.mensais.bebidas.alcoolicas +
-#       share_despesas.mensais.vestuario.homem_mulher +
-#       share_despesas.mensais.fumo +
-#       share_despesas.mensais.jogos_apostas
-#   ) %>%
-#   iv.engel.rothbarth(welfare.indicator = 'adult.goods',
-#                      iv.expenditure = 'renda_per.capita',
-#                      qtd_morador = 'n_morador') %>%
-#   fix.heteroskedasticity(.) %>%
-#   equivalence.scales.engel.rothbarth(pessoa.referencia = '`(14,110] anos`',
-#                                      na.h = 2, nc.h = 1,
-#                                      na.r = 2, nc.r = 0)
