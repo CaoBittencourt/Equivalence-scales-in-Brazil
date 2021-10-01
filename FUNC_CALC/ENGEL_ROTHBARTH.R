@@ -414,6 +414,49 @@ equivalence.scales.engel.rothbarth <- function(
     return(.)
 }
 
+equivalence.scales.engel.rothbarth2 <- function(
+  model, 
+  expenditure = 'despesas.mensais.totais_per.capita',
+  pessoa.referencia, 
+  na.h = 2, nc.h = 1,
+  na.r = 2, nc.r = 0,
+  significance.level = 0.05
+){
+  
+  nr <- na.r + nc.r
+  nh <- na.h + nc.h
+  
+  model %>% 
+    broom::tidy(.) %>% 
+    mutate(
+      expenditure.estimate = filter(.,term == expenditure) %>% 
+        pull(estimate),
+      
+      coef.rel = estimate/expenditure.estimate
+    ) %>%
+    filter(grepl(']', term)) %>%
+    mutate(
+      ref.estimate.rel = filter(.,term == pessoa.referencia) %>% 
+        pull(coef.rel),
+      
+      equivalence.scale = ref.estimate.rel*(na.r - na.h) + coef.rel*(nc.r - nc.h),
+      # equivalence.scale = ref.estimate.rel*(na.h - na.r) + coef.rel*(nc.h - nc.r), # Deaton e Muellbauer (1986) escrevem a escala de equivalência como Dudel (2021), i.e. com xh - xr
+      equivalence.scale = exp(equivalence.scale)*(nh/nr),
+      member.cost = (equivalence.scale - 1)*(nr/nc.h),
+      
+      !!sym(glue('p.value<={significance.level}')) := p.value <= significance.level
+    ) %>% 
+    select(
+      term, 
+      std.error,
+      p.value,
+      !!sym(glue('p.value<={significance.level}')),
+      equivalence.scale,
+      member.cost
+    ) %>%
+    return(.)
+}
+
 equivalence.scales.engel.rothbarth.econ_scale <- function(
   model, 
   expenditure = 'despesas.mensais.totais_per.capita',
@@ -452,7 +495,8 @@ equivalence.scales.engel.rothbarth.econ_scale <- function(
       equivalence.scale = ref.estimate.rel*(na.h - na.r) + coef.rel*(nc.h - nc.r) + qtd_morador.estimate.rel*log(nh/nr), # Deaton e Muellbauer (1986) escrevem a escala de equivalência como Dudel (2021), i.e. com xh - xr
       equivalence.scale = exp(equivalence.scale)*(nh/nr),
       member.cost = (equivalence.scale - 1)*(nr/nc.h),
-      economies.scale = 1 + qtd_morador.estimate.rel,
+      # economies.scale = 1 + qtd_morador.estimate.rel,
+      economies.scale = 1 - qtd_morador.estimate.rel,
       
       !!sym(glue('p.value<={significance.level}')) := p.value <= significance.level
     ) %>% 

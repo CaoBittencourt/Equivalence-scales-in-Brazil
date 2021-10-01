@@ -79,10 +79,15 @@ expenditure_pof2008 <- 'despesas.mensais.totais_per.capita' #Dispêndio per capi
 iv.expenditure_pof2008 <- 'renda_total_per.capita' #Variável instrumental do dispêndio = renda
 weights.var_pof2008 <- 'fator_expansao1' #Peso amostral
 
-# 6. SAMPLE SELECTION ------------------------------------------------------------
+# 6. SELEÇÃO AMOSTRAL ------------------------------------------------------------
 # POF2002
 # Adulto e Criança, POF2002, sem sexo
 pof_ac_2002_ss %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2002) > 0,
+    !!sym(expenditure_pof2002) > 0,
+    !!sym(iv.expenditure_pof2002) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -99,6 +104,11 @@ pof_ac_2002_ss %>%
 
 # Adulto e Criança, POF2002, com sexo
 pof_ac_2002_cs %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2002) > 0,
+    !!sym(expenditure_pof2002) > 0,
+    !!sym(iv.expenditure_pof2002) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -115,6 +125,11 @@ pof_ac_2002_cs %>%
 
 # Faixas etárias normais, POF2002, sem sexo
 pof_normais_2002_ss %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2002) > 0,
+    !!sym(expenditure_pof2002) > 0,
+    !!sym(iv.expenditure_pof2002) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -131,6 +146,11 @@ pof_normais_2002_ss %>%
 
 # Faixas etárias normais, POF2002, com sexo
 pof_normais_2002_cs %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2002) > 0,
+    !!sym(expenditure_pof2002) > 0,
+    !!sym(iv.expenditure_pof2002) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -147,6 +167,11 @@ pof_normais_2002_cs %>%
 
 # VAZ & VAZ, POF2002, sem sexo
 pof_vaz_2002_ss %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2002) > 0,
+    !!sym(expenditure_pof2002) > 0,
+    !!sym(iv.expenditure_pof2002) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -163,6 +188,11 @@ pof_vaz_2002_ss %>%
 
 # VAZ & VAZ, POF2002, com sexo
 pof_vaz_2002_cs %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2002) > 0,
+    !!sym(expenditure_pof2002) > 0,
+    !!sym(iv.expenditure_pof2002) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -179,6 +209,11 @@ pof_vaz_2002_cs %>%
 
 # Deaton, POF2002, sem sexo
 pof_deaton_2002_ss %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2002) > 0,
+    !!sym(expenditure_pof2002) > 0,
+    !!sym(iv.expenditure_pof2002) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -195,6 +230,11 @@ pof_deaton_2002_ss %>%
 
 # Deaton, POF2002, com sexo
 pof_deaton_2002_cs %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2002) > 0,
+    !!sym(expenditure_pof2002) > 0,
+    !!sym(iv.expenditure_pof2002) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -212,6 +252,11 @@ pof_deaton_2002_cs %>%
 # POF2008
 # Adulto e Criança, POF2008, sem sexo
 pof_ac_2008_ss %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2008) > 0,
+    !!sym(expenditure_pof2008) > 0,
+    !!sym(iv.expenditure_pof2008) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -228,6 +273,11 @@ pof_ac_2008_ss %>%
 
 # Adulto e Criança, POF2008, com sexo
 pof_ac_2008_cs %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2008) > 0,
+    !!sym(expenditure_pof2008) > 0,
+    !!sym(iv.expenditure_pof2008) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -244,6 +294,11 @@ pof_ac_2008_cs %>%
 
 # Faixas etárias normais, POF2008, sem sexo
 pof_normais_2008_ss %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2008) > 0,
+    !!sym(expenditure_pof2008) > 0,
+    !!sym(iv.expenditure_pof2008) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -260,6 +315,11 @@ pof_normais_2008_ss %>%
 
 # Faixas etárias normais, POF2008, com sexo
 pof_normais_2008_cs %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2008) > 0,
+    !!sym(expenditure_pof2008) > 0,
+    !!sym(iv.expenditure_pof2008) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -276,6 +336,11 @@ pof_normais_2008_cs %>%
 
 # VAZ & VAZ, POF2008, sem sexo
 pof_vaz_2008_ss %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2008) > 0,
+    !!sym(expenditure_pof2008) > 0,
+    !!sym(iv.expenditure_pof2008) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -292,6 +357,11 @@ pof_vaz_2008_ss %>%
 
 # VAZ & VAZ, POF2008, com sexo
 pof_vaz_2008_cs %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2008) > 0,
+    !!sym(expenditure_pof2008) > 0,
+    !!sym(iv.expenditure_pof2008) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -308,6 +378,11 @@ pof_vaz_2008_cs %>%
 
 # Deaton, POF2008, sem sexo
 pof_deaton_2008_ss %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2008) > 0,
+    !!sym(expenditure_pof2008) > 0,
+    !!sym(iv.expenditure_pof2008) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -324,6 +399,11 @@ pof_deaton_2008_ss %>%
 
 # Deaton, POF2008, com sexo
 pof_deaton_2008_cs %>% 
+  filter(
+    !!sym(engel.welfare.indicator_pof2008) > 0,
+    !!sym(expenditure_pof2008) > 0,
+    !!sym(iv.expenditure_pof2008) > 0
+  ) %>%
   sample.selection( # Seleção amostral VAZ & VAZ (2007)
     incluir_solteiros_sem.filhos = F,
     incluir_solteiros_com.filhos = F,
@@ -340,14 +420,15 @@ pof_deaton_2008_cs %>%
 
 # 7. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # Adulto e Criança, POF2002, sem sexo
-pof_ac_2002_ss.sample %>%
-  iv.engel.rothbarth.econ_scale(
-  # iv.engel.rothbarth(
+# pof_ac_2002_ss %>%
+  pof_ac_2002_ss.sample %>%
+  # iv.engel.rothbarth.econ_scale(
+  iv.engel.rothbarth(
     welfare.indicator = engel.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    qtd_morador = qtd_moradores_pof2002,
-    # control = c('UF_sigla','urbano'),
+    # qtd_morador = qtd_moradores_pof2002,
+    
     control = control_pof2002,
     weights = T,
     weights.var = weights.var_pof2002,
@@ -359,17 +440,17 @@ pof_ac_2002_ss.sample %>%
   # 
   fix.heteroskedasticity(.) %>%
   # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2002_ss) %>% View(.)
-  equivalence.scales.engel.rothbarth(pessoa.referencia = ref_ac_2002_ss)
+  equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2002_ss)
 
 # Normais, POF2002, sem sexo  
 pof_normais_2002_ss.sample %>%
   iv.engel.rothbarth.econ_scale(
-  # iv.engel.rothbarth(
+    # iv.engel.rothbarth(
     welfare.indicator = engel.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
     qtd_morador = qtd_moradores_pof2002,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2002,
     weights = T,
     weights.var = weights.var_pof2002,
@@ -381,13 +462,14 @@ pof_normais_2002_ss.sample %>%
 
 # Vaz & Vaz, POF2002, sem sexo
 pof_vaz_2002_ss.sample %>%
+  # pof_vaz_2002_ss %>%
   iv.engel.rothbarth.econ_scale(
     # iv.engel.rothbarth(
     welfare.indicator = engel.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
     qtd_morador = qtd_moradores_pof2002,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2002,
     weights = T,
     weights.var = weights.var_pof2002,
@@ -408,7 +490,7 @@ pof_deaton_2002_ss.sample %>%
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
     qtd_morador = qtd_moradores_pof2002,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2002,
     weights = T,
     weights.var = weights.var_pof2002,
@@ -424,7 +506,7 @@ pof_ac_2002_cs.sample %>%
     welfare.indicator = engel.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2002,
     weights = T,
     weights.var = weights.var_pof2002,
@@ -443,7 +525,7 @@ pof_normais_2002_cs.sample %>%
     welfare.indicator = engel.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2002,
     weights = T,
     weights.var = weights.var_pof2002,
@@ -453,12 +535,13 @@ pof_normais_2002_cs.sample %>%
   equivalence.scales.engel.rothbarth(pessoa.referencia = ref_normais_2002_cs)
 
 # Vaz & Vaz, POF2002, com sexo
-pof_vaz_2002_cs.sample %>%
+# pof_vaz_2002_cs.sample %>%
+pof_vaz_2002_cs %>%
   iv.engel.rothbarth(
     welfare.indicator = engel.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2002,
     weights = T,
     weights.var = weights.var_pof2002,
@@ -477,7 +560,7 @@ pof_deaton_2002_cs.sample %>%
     welfare.indicator = engel.welfare.indicator_pof2002,
     expenditure = expenditure_pof2002,
     iv.expenditure = iv.expenditure_pof2002,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2002,
     weights = T,
     weights.var = weights.var_pof2002,
@@ -495,7 +578,7 @@ pof_ac_2008_ss.sample %>%
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
     qtd_morador = qtd_moradores_pof2008,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2008,
     weights = T,
     weights.var = weights.var_pof2008,
@@ -517,7 +600,7 @@ pof_normais_2008_ss.sample %>%
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
     qtd_morador = qtd_moradores_pof2008,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2008,
     weights = T,
     weights.var = weights.var_pof2008,
@@ -535,7 +618,7 @@ pof_vaz_2008_ss.sample %>%
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
     qtd_morador = qtd_moradores_pof2008,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2008,
     weights = T,
     weights.var = weights.var_pof2008,
@@ -556,7 +639,7 @@ pof_deaton_2008_ss.sample %>%
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
     qtd_morador = qtd_moradores_pof2008,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2008,
     weights = T,
     weights.var = weights.var_pof2008,
@@ -572,7 +655,7 @@ pof_ac_2008_cs.sample %>%
     welfare.indicator = engel.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2008,
     weights = T,
     weights.var = weights.var_pof2008,
@@ -591,7 +674,7 @@ pof_normais_2008_cs.sample %>%
     welfare.indicator = engel.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2008,
     weights = T,
     weights.var = weights.var_pof2008,
@@ -606,7 +689,7 @@ pof_vaz_2008_cs.sample %>%
     welfare.indicator = engel.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2008,
     weights = T,
     weights.var = weights.var_pof2008,
@@ -625,7 +708,7 @@ pof_deaton_2008_cs.sample %>%
     welfare.indicator = engel.welfare.indicator_pof2008,
     expenditure = expenditure_pof2008,
     iv.expenditure = iv.expenditure_pof2008,
-    # control = c('UF_sigla','urbano'),
+    
     control = control_pof2008,
     weights = T,
     weights.var = weights.var_pof2008,
