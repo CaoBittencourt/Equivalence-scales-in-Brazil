@@ -16,48 +16,68 @@ summarise <- dplyr::summarise
 
 
 # 2. LISTAS DE DESPESAS (NOMES DAS VARIÁVEIS) ----------------------------------------
+
+# CUIDADO! 
+# AS VARIÁVEIS SÃO SEPARADAS EM TRÊS TIPOS: TOTAL(VA), A PRAZO (CR) E NÃO MONETÁRIA (NM)
+# AS VARIÁVEIS À VISTA NÃO SÃO CONTABILIZADAS, MAS PODERIAM SER OBTIDAS PELA DIFERENÇA VA - (CR + NM)
+# EXISTEM ERROS CONTÁBEIS MUITO PEQUENOS (EM CENTAVOS), DE MODO QUE NEM SEMPRE VA = CR + NM
+# UM TESTE INGÊNUO DO TIPO VA > CR + NM SERIA VÁLIDO APENAS 50% DAS VEZES (APROXIMADAMENTE)
+# MAS, TENDO EM VISTA QUE TRATA-SE DE UM ERRO CONTÁBIL PEQUENO, O TESTE APROPRIADO SERIA
+# round(VA,0) > round(CR + NM,0), QUE É VÁLIDO 100% DAS VEZES
+# PORTANTO, DE FATO VA = CR + NM E PODE-SE UTILIZAR VA COMO MEDIDA AGREGADA
+
+
 # Identificadores das categorias (despesas e receitas) são os mesmos em todas as POFs
 # Não é necessário agregar as receitas (as variáveis renda e renda_total já são agregações mensais)
 id_receitas.agg <- list(receitas = c('vare', 'vre', 'vvp'))
 
 # Categorias gerais
-list(alimentacao = 'da',
-     moradia = 'dd02',
-     vestuario = 'dd03',
-     transporte = 'dd04',
-     higiene = 'dd05',
-     saude = c('dd06', 'dd6'),
-     educacao = 'dd07',
-     lazer = 'dd08',
-     fumo = 'dd09',
-     servicos.pessoais = 'dd10',
-     despesas.diversas = 'dd11',
-     impostos_previdencia_doacoes = 'dd12',
-     imoveis_investimentos = 'dd13',
-     emprestimos = 'dd14') %>% 
-  lapply(function(x){
-    
-    c(paste0('va',x),
-      paste0('nm',x),
-      paste0('cr',x))
-    
-  }) -> id_despesas.agg
+list(alimentacao = 'vada',
+     moradia = 'vadd02',
+     vestuario = 'vadd03',
+     transporte = 'vadd04',
+     higiene = 'vadd05',
+     saude = c('vadd06', 'vadd6'),
+     educacao = 'vadd07',
+     lazer = 'vadd08',
+     fumo = 'vadd09',
+     servicos.pessoais = 'vadd10',
+     despesas.diversas = 'vadd11',
+     impostos_previdencia_doacoes = 'vadd12',
+     imoveis_investimentos = 'vadd13',
+     emprestimos = 'vadd14') -> id_despesas.agg #%>% 
+# lapply(function(x){
+#   
+#   c(paste0('va',x),
+#     paste0('nm',x),
+#     paste0('cr',x))
+#   
+# }) -> id_despesas.agg
 
 # Identidade das despesas para agregação (categorias específicas utilizadas em alguns métodos de estimação) 
-list(takeout.food = c('da21', 'da22', 'da23', 'da24',
-                      'da25', 'da28', 'da29'),
-     lanche.escolar = 'da27',
-     vestuario.infantil = 'dd033',
-     vestuario.homem_mulher = c('dd031', 'dd032'),
-     bebidas.alcoolicas = 'da26',
-     jogos_apostas = 'dd111') %>% 
-  lapply(function(x){
-    
-    c(paste0('va',x),
-      paste0('nm',x),
-      paste0('cr',x))
-    
-  }) -> id_despesas.especificas
+list(
+  takeout.food = c('vada21', 'vada22', 'vada23', 'vada24',
+                   'vada25', 'vada28', 'vada29'),
+  bebidas.alcoolicas = 'vada26',
+  lanche.escolar = 'vada27',
+  vestuario.infantil = 'vadd033',
+  vestuario.homem_mulher = c('vadd031', 'vadd032'),
+  ensino.superior = 'vadd072',
+  artigos.escolares = 'vadd075',
+  brinquedos_jogos = 'vadd081',
+  manicure_pedicure = 'vadd102',
+  jogos_apostas = 'vadd111',
+  imoveis.aquisicao = 'vadd131',
+  imoveis.reforma = 'vadd132',
+  imoveis.prestacao = 'vadd142'
+) -> id_despesas.especificas #%>% 
+# lapply(function(x){
+#   
+#   c(paste0('va',x),
+#     paste0('nm',x),
+#     paste0('cr',x))
+#   
+# }) -> id_despesas.especificas
 
 
 # 3. FUNÇÃO DE AGREGAÇÃO DE DESPESAS ------------------------------------

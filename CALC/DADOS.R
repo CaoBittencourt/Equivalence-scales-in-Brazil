@@ -10,22 +10,22 @@ lapply(pkg, function(x)
 # lapply(pkg, function(x)
 #   {citation(package = x)})
 
-# Funções próprias
+# Confecção própria
 source('C:/Users/Sony/Documents/GitHub/TCC/FUNC_AGG/POF_AGG.R', encoding = 'UTF-8')
 source('C:/Users/Sony/Documents/GitHub/TCC/FUNC_AGG/INDIV_AGG.R', encoding = 'UTF-8')
 
 # 2. DADOS -------------------------------------------------------------------
 # POF 2002-2003, 2008-2009 via Stata (DataZoom)
-basepadrao.pof2002 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2002/pof2002_dom_standard.dta')
-basepadrao.pof2008 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_dom_standard.dta')
+basepadrao.pof2002 <- rio::import('C:/Users/Sony/Documents/TCC_DADOS/POF2002/pof2002_dom_standard.dta')
+basepadrao.pof2008 <- rio::import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_dom_standard.dta')
 
 # Registros de Individuos 2002-2003, 2008-2009 via Stata (DataZoom)
-individuos.pof2002 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2002/pof2002_tr2.dta')
-individuos.pof2008 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_tr2.dta')
+individuos.pof2002 <- rio::import('C:/Users/Sony/Documents/TCC_DADOS/POF2002/pof2002_tr2.dta')
+individuos.pof2008 <- rio::import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_tr2.dta')
 
 # Registros de Moradia 2002-2003, 2008-2009 via Stata (DataZoom)
-moradia.pof2002 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2002/pof2002_tr1.dta')
-moradia.pof2008 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_tr1.dta')
+moradia.pof2002 <- rio::import('C:/Users/Sony/Documents/TCC_DADOS/POF2002/pof2002_tr1.dta')
+moradia.pof2008 <- rio::import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_tr1.dta')
 
 # 3. FAIXAS ETÁRIAS -------------------------------------------------------
 # Faixas Etárias I
@@ -36,8 +36,8 @@ moradia.pof2008 <- import('C:/Users/Sony/Documents/TCC_DADOS/POF2008/pof2008_tr1
 # Crianças II (4-6 anos)
 # Crianças I (1-3 anos)
 # Bebês (<1 anos)
-faixas.etarias.normais2002 <- c(0, 1, 4, 7, 13, 18, 65, max(individuos.pof2002$idade))
-faixas.etarias.normais2008 <- c(0, 1, 4, 7, 13, 18, 65, max(individuos.pof2008$idade_anos))
+# faixas.etarias.normais2002 <- c(0, 1, 4, 7, 13, 18, 65, max(individuos.pof2002$idade))
+# faixas.etarias.normais2008 <- c(0, 1, 4, 7, 13, 18, 65, max(individuos.pof2008$idade_anos))
 
 # Faixas Etárias II
 # Adulto e Criança apenas
@@ -55,15 +55,32 @@ faixas.etarias.deaton2002 <- c(0, 4, 9, 14, 54, max(individuos.pof2002$idade))
 faixas.etarias.deaton2008 <- c(0, 4, 9, 14, 54, max(individuos.pof2008$idade_anos))
 
 # Listas
-lista.faixas.etarias2002 <- list('normais_2002' = faixas.etarias.normais2002, 
-                                 'ac_2002' = faixas.etarias.ac2002,
-                                 'vaz_2002' = faixas.etarias.vaz2002,
-                                 'deaton_2002' = faixas.etarias.deaton2002)
+list(
+  # 'normais_2002' = faixas.etarias.normais2002, 
+  'ac_2002' = faixas.etarias.ac2002,
+  'vaz_2002' = faixas.etarias.vaz2002,
+  'deaton_2002' = faixas.etarias.deaton2002
+) -> lista.faixas.etarias2002
 
-lista.faixas.etarias2008 <- list('normais_2008' = faixas.etarias.normais2008, 
-                                 'ac_2008' = faixas.etarias.ac2008,
-                                 'vaz_2008' = faixas.etarias.vaz2008,
-                                 'deaton_2008' = faixas.etarias.deaton2008)
+list(
+  # 'normais_2008' = faixas.etarias.normais2008, 
+  'ac_2008' = faixas.etarias.ac2008,
+  'vaz_2008' = faixas.etarias.vaz2008,
+  'deaton_2008' = faixas.etarias.deaton2008
+) -> lista.faixas.etarias2008
+
+lista.faixas.etarias2002_ss <- lista.faixas.etarias2002
+names(lista.faixas.etarias2002_ss) <- glue('pof_{names(lista.faixas.etarias2002)}_ss')
+
+lista.faixas.etarias2002_cs <- lista.faixas.etarias2002
+names(lista.faixas.etarias2002_cs) <- glue('pof_{names(lista.faixas.etarias2002)}_cs')
+
+
+lista.faixas.etarias2008_ss <- lista.faixas.etarias2008
+names(lista.faixas.etarias2008_ss) <- glue('pof_{names(lista.faixas.etarias2008)}_ss')
+
+lista.faixas.etarias2008_cs <- lista.faixas.etarias2008
+names(lista.faixas.etarias2008_cs) <- glue('pof_{names(lista.faixas.etarias2008)}_cs')
 
 # 4. RECODES (NOMES DAS VARIÁVEIS) ----------------------------------------
 # POF 2002
@@ -190,8 +207,8 @@ var.interesse_domc_pof2008 <- c('cod_cond_ocup')
 # POF 2002
 # POF 2002, todas as faixas etárias, sem sexo
 mapply(
-  faixa.etaria = lista.faixas.etarias2002,
-  faixa.etaria.var_name = names(lista.faixas.etarias2002),
+  faixa.etaria = lista.faixas.etarias2002_ss,
+  faixa.etaria.var_name = names(lista.faixas.etarias2002_ss),
   function(faixa.etaria,
            faixa.etaria.var_name){
     # Domicílios agregados POF 2002
@@ -230,16 +247,16 @@ mapply(
     merge(domicilio.agg.temp,
           consumo.agg.temp) -> pof.temp
     
-    assign(x = glue('pof_{faixa.etaria.var_name}_ss'),
-           value = pof.temp,
-           envir = .GlobalEnv)
+    # assign(x = glue('pof_{faixa.etaria.var_name}_ss'),
+           # value = pof.temp,
+           # envir = .GlobalEnv)
   }
-) %>% invisible(.)
+) -> lista.pof2002_ss
 
 # POF 2002, todas as faixas etárias, com sexo
 mapply(
-  faixa.etaria = lista.faixas.etarias2002,
-  faixa.etaria.var_name = names(lista.faixas.etarias2002),
+  faixa.etaria = lista.faixas.etarias2002_cs,
+  faixa.etaria.var_name = names(lista.faixas.etarias2002_cs),
   function(faixa.etaria,
            faixa.etaria.var_name){
     # Domicílios agregados POF 2002
@@ -278,17 +295,17 @@ mapply(
     merge(domicilio.agg.temp,
           consumo.agg.temp) -> pof.temp
     
-    assign(x = glue('pof_{faixa.etaria.var_name}_cs'),
-           value = pof.temp,
-           envir = .GlobalEnv)
+    # assign(x = glue('pof_{faixa.etaria.var_name}_cs'),
+    #        value = pof.temp,
+    #        envir = .GlobalEnv)
   }
-) %>% invisible(.)
+) -> lista.pof2002_cs
 
 # POF 2008
 # POF 2008, todas as faixas etárias, sem sexo
 mapply(
-  faixa.etaria = lista.faixas.etarias2008,
-  faixa.etaria.var_name = names(lista.faixas.etarias2008),
+  faixa.etaria = lista.faixas.etarias2008_ss,
+  faixa.etaria.var_name = names(lista.faixas.etarias2008_ss),
   function(faixa.etaria,
            faixa.etaria.var_name){
     # Domicílios agregados POF 2008
@@ -327,16 +344,16 @@ mapply(
     merge(domicilio.agg.temp,
           consumo.agg.temp) -> pof.temp
     
-    assign(x = glue('pof_{faixa.etaria.var_name}_ss'),
-           value = pof.temp,
-           envir = .GlobalEnv)
+    # assign(x = glue('pof_{faixa.etaria.var_name}_ss'),
+    #        value = pof.temp,
+    #        envir = .GlobalEnv)
   }
-) %>% invisible(.)
+) -> lista.pof2008_ss
 
 # POF 2008, todas as faixas etárias, com sexo
 mapply(
-  faixa.etaria = lista.faixas.etarias2008,
-  faixa.etaria.var_name = names(lista.faixas.etarias2008),
+  faixa.etaria = lista.faixas.etarias2008_cs,
+  faixa.etaria.var_name = names(lista.faixas.etarias2008_cs),
   function(faixa.etaria,
            faixa.etaria.var_name){
     # Domicílios agregados POF 2008
@@ -379,4 +396,4 @@ mapply(
            value = pof.temp,
            envir = .GlobalEnv)
   }
-) %>% invisible(.)
+) -> lista.pof2008_cs

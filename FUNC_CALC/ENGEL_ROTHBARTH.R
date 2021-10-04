@@ -5,10 +5,9 @@ lapply(pkg, function(x)
   if(!require(x, character.only = T))
   {install.packages(x); require(x)})
 
+# Citação dos pacotes
 # lapply(pkg, function(x)
 #   {citation(package = x)})
-
-
 
 # 2. FUNÇÃO DE REGRESSÃO OLS (ENGEL E ROTHBARTH) FLEXÍVEL ---------------------
 # [ENDOGENEIDADE MUITO FORTE => NÃO UTILIZAR OLS]

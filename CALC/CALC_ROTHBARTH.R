@@ -83,16 +83,108 @@ lista.pof2008_ss$pof_ac_2008_ss %>%
 
 # 4. OUTROS ARGUMENTOS DA REGRESSÃO ------------------------------------------------
 # POF2002
-engel.welfare.indicator_pof2002 <- 'share_despesas.mensais.alimentacao' #Para o método de Engel, o bem-estar é inferido da participação orçamentária de comida
+rothbarth.welfare.indicator_pof2002 <- 'share_despesas.mensais.alimentacao' #Para o método de Engel, o bem-estar é inferido da participação orçamentária de comida
 expenditure_pof2002 <- 'despesas.mensais.totais_per.capita' #Dispêndio per capita
 iv.expenditure_pof2002 <- 'renda_per.capita' #Variável instrumental do dispêndio = renda
 weights.var_pof2002 <- 'fator' #Peso amostral
 
 # POF2008
-engel.welfare.indicator_pof2008 <- 'share_despesas.mensais.alimentacao' #Para o método de Engel, o bem-estar é inferido da participação orçamentária de comida
+rothbarth.welfare.indicator_pof2008 <- 'share_despesas.mensais.alimentacao' #Para o método de Engel, o bem-estar é inferido da participação orçamentária de comida
 expenditure_pof2008 <- 'despesas.mensais.totais_per.capita' #Dispêndio per capita
 iv.expenditure_pof2008 <- 'renda_total_per.capita' #Variável instrumental do dispêndio = renda
 weights.var_pof2008 <- 'fator_expansao1' #Peso amostral
+
+# 5. BENS ADULTOS (ROTHBARTH) ------------------------------------------------------------
+# SELEÇÃO DE BENS ADULTOS
+bens_adultos <- c(
+  
+  # 'share_despesas.mensais.vestuario.infantil' #Children goods?
+  # 'share_despesas.mensais.artigos.escolares' #Children goods?
+  # 'share_despesas.mensais.brinquedos_jogos' #Children goods?
+  # 'share_despesas.mensais.lanche.escolar' #Children goods?
+  'share_despesas.mensais.manicure_pedicure'
+  # 'share_despesas.mensais.ensino.superior'
+  # 'share_despesas.mensais.bebidas.alcoolicas',
+  # 'share_despesas.mensais.fumo',
+  # 'share_despesas.mensais.jogos_apostas',
+  # 'share_despesas.mensais.vestuario.homem_mulher'
+  
+)
+
+
+# POF2002
+# Sem sexo
+lapply( 
+  lista.pof2002_ss,
+  function(pof){ 
+    pof %>%
+      mutate(
+        share_despesas.mensais.bens_adultos = rowSums(
+          across(
+            .cols = bens_adultos),
+          na.rm = T)
+      ) -> pof.temp
+    
+    # assign(x = glue('{pof.name}.engle.sample'),
+    #        value = pof.temp,
+    #        envir = .GlobalEnv)
+  }
+) -> lista.pof2002_ss.engle.sample
+
+# Com sexo
+lapply( 
+  lista.pof2002_cs,
+  function(pof){ 
+    pof %>%
+      mutate(
+        share_despesas.mensais.bens_adultos = rowSums(
+          across(
+            .cols = bens_adultos),
+          na.rm = T)
+      ) -> pof.temp
+    
+    # assign(x = glue('{pof.name}.engle.sample'),
+    #        value = pof.temp,
+    #        envir = .GlobalEnv)
+  }
+) -> lista.pof2002_cs.engle.sample
+
+# POF2008
+# Sem sexo
+lapply( 
+  lista.pof2008_ss,
+  function(pof){ 
+    pof %>%
+      mutate(
+        share_despesas.mensais.bens_adultos = rowSums(
+          across(
+            .cols = bens_adultos),
+          na.rm = T)
+      ) -> pof.temp
+    
+    # assign(x = glue('{pof.name}.engle.sample'),
+    #        value = pof.temp,
+    #        envir = .GlobalEnv)
+  }
+) -> lista.pof2008_ss.engle.sample
+
+# Com sexo
+lapply( 
+  lista.pof2008_cs,
+  function(pof){ 
+    pof %>%
+      mutate(
+        share_despesas.mensais.bens_adultos = rowSums(
+          across(
+            .cols = bens_adultos),
+          na.rm = T)
+      ) -> pof.temp
+    
+    # assign(x = glue('{pof.name}.engle.sample'),
+    #        value = pof.temp,
+    #        envir = .GlobalEnv)
+  }
+) -> lista.pof2008_cs.engle.sample
 
 # 5. SELEÇÃO AMOSTRAL (APENAS Xi > 0) ------------------------------------------------------------
 # POF2002
@@ -101,7 +193,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2002) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) -> pof.temp
@@ -117,7 +209,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2002) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) -> pof.temp
@@ -134,7 +226,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2008) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) -> pof.temp
@@ -150,7 +242,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2008) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) -> pof.temp
@@ -169,7 +261,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2002) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) %>% 
@@ -201,7 +293,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2002) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) %>%
@@ -234,7 +326,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2008) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) %>% 
@@ -266,7 +358,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2008) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) %>%
@@ -300,7 +392,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2002) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) %>% 
@@ -332,7 +424,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2002) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) %>%
@@ -365,7 +457,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2008) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) %>% 
@@ -397,7 +489,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2008) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) %>%
@@ -431,7 +523,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2002) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) %>% 
@@ -463,7 +555,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2002) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) %>%
@@ -496,7 +588,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2008) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) %>% 
@@ -528,7 +620,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        !!sym(engel.welfare.indicator_pof2008) > 0,
+        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) %>%
@@ -563,7 +655,7 @@ Map(
     pof %>%
       iv.engel.rothbarth.econ_scale(
         # iv.engel.rothbarth(
-        welfare.indicator = engel.welfare.indicator_pof2002,
+        welfare.indicator = rothbarth.welfare.indicator_pof2002,
         expenditure = expenditure_pof2002,
         iv.expenditure = iv.expenditure_pof2002,
         qtd_morador = qtd_moradores_pof2002,
@@ -573,27 +665,27 @@ Map(
         weights.var = weights.var_pof2002,
         show.diagnostics = F
       ) %>%
-      fix.heteroskedasticity(.) -> iv.engel.model
+      fix.heteroskedasticity(.) -> iv.rothbarth.model
     
     # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2002_ss) %>% View(.)
     list(
       'AA vs AAC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 1,
           na.r = 2, nc.r = 0
         ),
       'AA vs AACC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 2,
           na.r = 2, nc.r = 0
         ),
       'AA vs AACCC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 3,
           na.r = 2, nc.r = 0
@@ -611,7 +703,7 @@ Map(
     pof %>%
       iv.engel.rothbarth.econ_scale(
         # iv.engel.rothbarth(
-        welfare.indicator = engel.welfare.indicator_pof2002,
+        welfare.indicator = rothbarth.welfare.indicator_pof2002,
         expenditure = expenditure_pof2002,
         iv.expenditure = iv.expenditure_pof2002,
         qtd_morador = qtd_moradores_pof2002,
@@ -621,27 +713,27 @@ Map(
         weights.var = weights.var_pof2002,
         show.diagnostics = F
       ) %>%
-      fix.heteroskedasticity(.) -> iv.engel.model
+      fix.heteroskedasticity(.) -> iv.rothbarth.model
     
     # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2002_cs) %>% View(.)
     list(
       'AA vs AAC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 1,
           na.r = 2, nc.r = 0
         ),
       'AA vs AACC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 2,
           na.r = 2, nc.r = 0
         ),
       'AA vs AACCC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 3,
           na.r = 2, nc.r = 0
@@ -659,7 +751,7 @@ Map(
     pof %>%
       iv.engel.rothbarth.econ_scale(
         # iv.engel.rothbarth(
-        welfare.indicator = engel.welfare.indicator_pof2008,
+        welfare.indicator = rothbarth.welfare.indicator_pof2008,
         expenditure = expenditure_pof2008,
         iv.expenditure = iv.expenditure_pof2008,
         qtd_morador = qtd_moradores_pof2008,
@@ -669,27 +761,27 @@ Map(
         weights.var = weights.var_pof2008,
         show.diagnostics = F
       ) %>%
-      fix.heteroskedasticity(.) -> iv.engel.model
+      fix.heteroskedasticity(.) -> iv.rothbarth.model
     
     # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2008_ss) %>% View(.)
     list(
       'AA vs AAC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 1,
           na.r = 2, nc.r = 0
         ),
       'AA vs AACC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 2,
           na.r = 2, nc.r = 0
         ),
       'AA vs AACCC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 3,
           na.r = 2, nc.r = 0
@@ -707,7 +799,7 @@ Map(
     pof %>%
       iv.engel.rothbarth.econ_scale(
         # iv.engel.rothbarth(
-        welfare.indicator = engel.welfare.indicator_pof2008,
+        welfare.indicator = rothbarth.welfare.indicator_pof2008,
         expenditure = expenditure_pof2008,
         iv.expenditure = iv.expenditure_pof2008,
         qtd_morador = qtd_moradores_pof2008,
@@ -717,27 +809,27 @@ Map(
         weights.var = weights.var_pof2008,
         show.diagnostics = F
       ) %>%
-      fix.heteroskedasticity(.) -> iv.engel.model
+      fix.heteroskedasticity(.) -> iv.rothbarth.model
     
     # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2008_cs) %>% View(.)
     list(
       'AA vs AAC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 1,
           na.r = 2, nc.r = 0
         ),
       'AA vs AACC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 2,
           na.r = 2, nc.r = 0
         ),
       'AA vs AACCC' = 
         equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
+          model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = 3,
           na.r = 2, nc.r = 0
