@@ -1,5 +1,9 @@
 # 1. PACOTES --------------------------------------------------------------
-pkg <- c('sandwich', 'lmtest', 'np', 'Matching', 'systemfit', 'ivreg', 'plyr', 'glue', 'tidyverse')
+c(
+  'sandwich', 'lmtest', #Diagnósticos e ajustes
+  'np', 'Matching', 'systemfit', 'ivreg', #Modelos 
+  'plyr', 'glue', 'broom', 'tidyverse' #Manipulação de dados
+) -> pkg
 
 lapply(pkg, function(x)
   if(!require(x, character.only = T))
@@ -97,7 +101,7 @@ lapply(pkg, function(x)
 
 
 
-# 3. FUNÇÃO DE REGRESSÃO 2SLS (ENGEL E ROTHBARTH) FLEXÍVEL ----------------
+# 3. FUNÇÃO DE REtGRESSÃO 2SLS (ENGEL E ROTHBARTH) FLEXÍVEL ----------------
 iv.engel.rothbarth <- function(
   df, 
   welfare.indicator,
@@ -168,7 +172,7 @@ iv.engel.rothbarth <- function(
   # Teste de endogeneidade e validade da variável instrumental
   if(show.diagnostics){
     
-    ivreg.engel.rothbarth %>% 
+    ivreg.engel.rothbarth %>%
       summary(diagnostics = T) %>%
       print(.)
     
@@ -354,22 +358,40 @@ iv.engel.rothbarth.econ_scale <- function(
   
 }
 
-# 3. FUNÇÃO DE DIAGNÓSTICO E CONSERTO DE HETEROSCEDASTICIDADE -----------------------
+# 4. FUNÇÕES DE DIAGNÓSTICO E CONSERTO DE HETEROSCEDASTICIDADE -----------------------
 fix.heteroskedasticity <- function(
   model, 
-  .type = 'HC3',
+  .type = 'HC1',
   significance = 0.05
 ){
   
   if(bptest(model)$p.value <= significance){
+    
     model %>%
-      coeftest(vcov = vcovHC(., type = .type))}
+      coeftest(
+        vcov = vcovHC(., type = .type)
+      )
+    
+  }
   else
     model
 }
 
+# 5. FUNÇÕES DE STD.ERRORS ROBUSTOS -----------------------
+robust_std.errors <- function(
+  model, 
+  .type = 'HC1'
+){
+  
+  model %>%
+    vcovHC(type = .type) %>%
+    diag(.) %>%
+    sqrt(.) %>%
+    return(.)
+  
+}
 
-# 4. FUNÇÃO DE ESCALAS DE EQUIVALÊNCIA DE ENGEL E ROTHBARTH -------------------------
+# 6. FUNÇÃO DE ESCALAS DE EQUIVALÊNCIA DE ENGEL E ROTHBARTH -------------------------
 equivalence.scales.engel.rothbarth <- function(
   model, 
   expenditure = 'despesas.mensais.totais_per.capita',
@@ -402,8 +424,11 @@ equivalence.scales.engel.rothbarth <- function(
       
       !!sym(glue('p.value<={significance.level}')) := p.value <= significance.level
     ) %>% 
+    filter(
+      term != pessoa.referencia
+    ) %>%
     select(
-      term, 
+      term,
       std.error,
       p.value,
       !!sym(glue('p.value<={significance.level}')),
@@ -445,6 +470,9 @@ equivalence.scales.engel.rothbarth2 <- function(
       
       !!sym(glue('p.value<={significance.level}')) := p.value <= significance.level
     ) %>% 
+    filter(
+      term != pessoa.referencia
+    ) %>%
     select(
       term, 
       std.error,
@@ -499,6 +527,9 @@ equivalence.scales.engel.rothbarth.econ_scale <- function(
       
       !!sym(glue('p.value<={significance.level}')) := p.value <= significance.level
     ) %>% 
+    filter(
+      term != pessoa.referencia
+    ) %>%
     select(
       term, 
       std.error,
@@ -510,4 +541,32 @@ equivalence.scales.engel.rothbarth.econ_scale <- function(
     ) %>%
     return(.)
 }
+
+
+# 7. FUNÇÃO DE TABELAS DE REGRESSÃO ---------------------------------------
+
+# Adjust standard errors
+# cov1         <- vcovHC(model, type = "HC1")
+# robust_se    <- sqrt(diag(cov1))
+# 
+# robust.se(teste.lista$pof_ac_2002_ss) %>% tidy(.)
+
+# Stargazer output (with and without RSE)
+# stargazer(model, model, type = "text",
+#           se = list(NULL, robust_se))
+
+
+# stargazer(teste.lista$pof_ac_2002_ss,
+          # type = 'text'
+          # se = coeftest(.),  
+          # se = list(NULL, robust_se)
+          # se = list(NULL, 
+          #           sqrt(
+          #             diag(
+          #               vcovHC(teste.lista$pof_ac_2002_ss, type = "HC1")
+          #             )
+          #           )
+          # )
+# )
+
 

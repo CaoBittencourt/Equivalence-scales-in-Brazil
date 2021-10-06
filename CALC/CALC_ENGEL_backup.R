@@ -1,7 +1,7 @@
 # 1. PACOTES --------------------------------------------------------------
 # Pacotes
 c(
-  'openxlsx', 'rio', 'plyr', 'glue', 'broom', 'tidyverse', #Leitura e manipulação de dados
+  'rio', 'plyr', 'glue', 'broom', 'tidyverse', #Leitura e manipulação de dados
   'huxtable', 'stargazer', 'gtsummary' #Tabelas de regressão bonitas
 ) -> pkg
 
@@ -83,7 +83,7 @@ lista.pof2008_ss$pof_ac_2008_ss %>%
   names(.) %>% 
   {glue('`{.}`')} -> control_pof2008
 
-# 4. OUTROS ARGUMENTOS DO MODELO ------------------------------------------------
+# 4. OUTROS ARGUMENTOS DA REGRESSÃO ------------------------------------------------
 # POF2002
 engel.welfare.indicator_pof2002 <- 'share_despesas.mensais.alimentacao' #Para o método de Engel, o bem-estar é inferido da participação orçamentária de comida
 expenditure_pof2002 <- 'despesas.mensais.totais_per.capita' #Dispêndio per capita
@@ -97,7 +97,7 @@ iv.expenditure_pof2008 <- 'renda_total_per.capita' #Variável instrumental do di
 weights.var_pof2008 <- 'fator_expansao1' #Peso amostral
 
 # Quantidade de crianças para cálculo de escalas de equivalência
-n.child.range <- seq(1,3)
+n.child.range <- seq(1,4)
 
 # 5. SELEÇÃO AMOSTRAL (APENAS Xi > 0) ------------------------------------------------------------
 # POF2002
@@ -561,7 +561,54 @@ lapply(
 
 # 9. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2002, todas as faixas etárias, sem sexo
-# Modelos 2SLS (para output de tabelas)
+Map(
+  pof = lista.pof2002_ss.engle.sample,
+  pessoa_ref = lista.ref_2002_ss,
+  function(pof, pessoa_ref){
+    pof %>%
+      iv.engel.rothbarth.econ_scale(
+        # iv.engel.rothbarth(
+        welfare.indicator = engel.welfare.indicator_pof2002,
+        expenditure = expenditure_pof2002,
+        iv.expenditure = iv.expenditure_pof2002,
+        qtd_morador = qtd_moradores_pof2002,
+        
+        control = control_pof2002,
+        weights = T,
+        weights.var = weights.var_pof2002,
+        show.diagnostics = F
+      ) %>%
+      fix.heteroskedasticity(.) -> iv.engel.model
+    
+    # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2002_ss) %>% View(.)
+    list(
+      'AA vs AAC' =
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 1,
+          na.r = 2, nc.r = 0
+        ),
+      'AA vs AACC' =
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 2,
+          na.r = 2, nc.r = 0
+        ),
+      'AA vs AACCC' =
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 3,
+          na.r = 2, nc.r = 0
+        )
+    ) %>% return(.)
+  }
+)
+
+# TESTE ------------------------------------------------------------
+# POF2002, todas as faixas etárias, sem sexo
 Map(
   pof = lista.pof2002_ss.engle.sample,
   pessoa_ref = lista.ref_2002_ss,
@@ -582,7 +629,6 @@ Map(
   }
 ) -> lista.pof2002_ss.engle.sample.ivreg
 
-# Erros robustos (para output de tabelas)
 lapply(
   lista.pof2002_ss.engle.sample.ivreg,
   function(model){
@@ -591,7 +637,6 @@ lapply(
   }
 ) -> lista.pof2002_ss.engle.sample.str_errors.robust
 
-# Modelos robustos (para cálculos)
 lapply(
   lista.pof2002_ss.engle.sample.ivreg,
   function(model){
@@ -600,7 +645,36 @@ lapply(
   }
 ) -> lista.pof2002_ss.engle.sample.ivreg.robust
 
-# Escalas de equivalência
+# Map(
+#   iv.engel.model = lista.pof2002_ss.engle.sample.ivreg.robust,
+#   pessoa_ref = lista.ref_2002_ss,
+#   function(iv.engel.model, pessoa_ref){
+#     list(
+#       'AA vs AAC' =
+#         equivalence.scales.engel.rothbarth(
+#           model = iv.engel.model,
+#           pessoa.referencia = pessoa_ref,
+#           na.h = 2, nc.h = 1,
+#           na.r = 2, nc.r = 0
+#         ),
+#       'AA vs AACC' =
+#         equivalence.scales.engel.rothbarth(
+#           model = iv.engel.model,
+#           pessoa.referencia = pessoa_ref,
+#           na.h = 2, nc.h = 2,
+#           na.r = 2, nc.r = 0
+#         ),
+#       'AA vs AACCC' =
+#         equivalence.scales.engel.rothbarth(
+#           model = iv.engel.model,
+#           pessoa.referencia = pessoa_ref,
+#           na.h = 2, nc.h = 3,
+#           na.r = 2, nc.r = 0
+#         )
+#     ) %>% return(.)
+#   }
+# )
+
 Map(
   iv.engel.model = lista.pof2002_ss.engle.sample.ivreg.robust,
   sample = names(lista.pof2002_ss.engle.sample.ivreg.robust),
@@ -621,350 +695,75 @@ Map(
           na.r = 2, nc.r = 0
         ) %>% 
           mutate(
+            # family.comparison = 'AA vs AAC',
             family.comparison = glue('AA vs AA', strrep('C',n)),
             data = sample
+          ) %>% 
+          arrange(
+            family.comparison
           )
       }
     ) %>% bind_rows(.)
   } 
-) %>% bind_rows(.) -> pof2002_ss.engle_scales
-
-# 10. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
-# POF2002, todas as faixas etárias, sem sexo
-# Modelos 2SLS (para output de tabelas)
-Map(
-  pof = lista.pof2002_cs.engle.sample,
-  pessoa_ref = lista.ref_2002_cs,
-  function(pof, pessoa_ref){
-    pof %>%
-      iv.engel.rothbarth.econ_scale(
-        # iv.engel.rothbarth(
-        welfare.indicator = engel.welfare.indicator_pof2002,
-        expenditure = expenditure_pof2002,
-        iv.expenditure = iv.expenditure_pof2002,
-        qtd_morador = qtd_moradores_pof2002,
-        
-        control = control_pof2002,
-        weights = T,
-        weights.var = weights.var_pof2002,
-        show.diagnostics = F
-      ) %>% return(.)
-  }
-) -> lista.pof2002_cs.engle.sample.ivreg
-
-# Erros robustos (para output de tabelas)
-lapply(
-  lista.pof2002_cs.engle.sample.ivreg,
-  function(model){
-    model %>% 
-      robust_std.errors(.type = 'HC1')
-  }
-) -> lista.pof2002_cs.engle.sample.str_errors.robust
-
-# Modelos robustos (para cálculos)
-lapply(
-  lista.pof2002_cs.engle.sample.ivreg,
-  function(model){
-    model %>% 
-      fix.heteroskedasticity(.type = 'HC1')
-  }
-) -> lista.pof2002_cs.engle.sample.ivreg.robust
-
-# Escalas de equivalência
-Map(
-  iv.engel.model = lista.pof2002_cs.engle.sample.ivreg.robust,
-  sample = names(lista.pof2002_cs.engle.sample.ivreg.robust),
-  pessoa_ref = lista.ref_2002_cs,
-  function(
-    iv.engel.model, 
-    sample,
-    pessoa_ref,
-    n.child = n.child.range
-  ){
-    lapply(
-      n.child, 
-      function(n){
-        equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
-          pessoa.referencia = pessoa_ref,
-          na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
-          mutate(
-            family.comparison = glue('AA vs AA', strrep('C',n)),
-            data = sample
-          )
-      }
-    ) %>% bind_rows(.)
-  } 
-) %>% bind_rows(.) -> pof2002_cs.engle_scales
-
-# 11. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
-# POF2008, todas as faixas etárias, sem sexo
-# Modelos 2SLS (para output de tabelas)
-Map(
-  pof = lista.pof2008_ss.engle.sample,
-  pessoa_ref = lista.ref_2008_ss,
-  function(pof, pessoa_ref){
-    pof %>%
-      iv.engel.rothbarth.econ_scale(
-        # iv.engel.rothbarth(
-        welfare.indicator = engel.welfare.indicator_pof2008,
-        expenditure = expenditure_pof2008,
-        iv.expenditure = iv.expenditure_pof2008,
-        qtd_morador = qtd_moradores_pof2008,
-        
-        control = control_pof2008,
-        weights = T,
-        weights.var = weights.var_pof2008,
-        show.diagnostics = F
-      ) %>% return(.)
-  }
-) -> lista.pof2008_ss.engle.sample.ivreg
-
-# Erros robustos (para output de tabelas)
-lapply(
-  lista.pof2008_ss.engle.sample.ivreg,
-  function(model){
-    model %>% 
-      robust_std.errors(.type = 'HC1')
-  }
-) -> lista.pof2008_ss.engle.sample.str_errors.robust
-
-# Modelos robustos (para cálculos)
-lapply(
-  lista.pof2008_ss.engle.sample.ivreg,
-  function(model){
-    model %>% 
-      fix.heteroskedasticity(.type = 'HC1')
-  }
-) -> lista.pof2008_ss.engle.sample.ivreg.robust
-
-# Escalas de equivalência
-Map(
-  iv.engel.model = lista.pof2008_ss.engle.sample.ivreg.robust,
-  sample = names(lista.pof2008_ss.engle.sample.ivreg.robust),
-  pessoa_ref = lista.ref_2008_ss,
-  function(
-    iv.engel.model, 
-    sample,
-    pessoa_ref,
-    n.child = n.child.range
-  ){
-    lapply(
-      n.child, 
-      function(n){
-        equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
-          pessoa.referencia = pessoa_ref,
-          na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
-          mutate(
-            family.comparison = glue('AA vs AA', strrep('C',n)),
-            data = sample
-          )
-      }
-    ) %>% bind_rows(.)
-  } 
-) %>% bind_rows(.) -> pof2008_ss.engle_scales
-
-# 12. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, com sexo ------------------------------------------------------------
-# POF2008, todas as faixas etárias, sem sexo
-# Modelos 2SLS (para output de tabelas)
-Map(
-  pof = lista.pof2008_cs.engle.sample,
-  pessoa_ref = lista.ref_2008_cs,
-  function(pof, pessoa_ref){
-    pof %>%
-      iv.engel.rothbarth.econ_scale(
-        # iv.engel.rothbarth(
-        welfare.indicator = engel.welfare.indicator_pof2008,
-        expenditure = expenditure_pof2008,
-        iv.expenditure = iv.expenditure_pof2008,
-        qtd_morador = qtd_moradores_pof2008,
-        
-        control = control_pof2008,
-        weights = T,
-        weights.var = weights.var_pof2008,
-        show.diagnostics = F
-      ) %>% return(.)
-  }
-) -> lista.pof2008_cs.engle.sample.ivreg
-
-# Erros robustos (para output de tabelas)
-lapply(
-  lista.pof2008_cs.engle.sample.ivreg,
-  function(model){
-    model %>% 
-      robust_std.errors(.type = 'HC1')
-  }
-) -> lista.pof2008_cs.engle.sample.str_errors.robust
-
-# Modelos robustos (para cálculos)
-lapply(
-  lista.pof2008_cs.engle.sample.ivreg,
-  function(model){
-    model %>% 
-      fix.heteroskedasticity(.type = 'HC1')
-  }
-) -> lista.pof2008_cs.engle.sample.ivreg.robust
-
-# Escalas de equivalência
-Map(
-  iv.engel.model = lista.pof2008_cs.engle.sample.ivreg.robust,
-  sample = names(lista.pof2008_cs.engle.sample.ivreg.robust),
-  pessoa_ref = lista.ref_2008_cs,
-  function(
-    iv.engel.model, 
-    sample,
-    pessoa_ref,
-    n.child = n.child.range
-  ){
-    lapply(
-      n.child, 
-      function(n){
-        equivalence.scales.engel.rothbarth(
-          model = iv.engel.model,
-          pessoa.referencia = pessoa_ref,
-          na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
-          mutate(
-            family.comparison = glue('AA vs AA', strrep('C',n)),
-            data = sample
-          )
-      }
-    ) %>% bind_rows(.)
-  } 
-) %>% bind_rows(.) -> pof2008_cs.engle_scales
-
-# 13. ARQUIVOS EXCEL ------------------------------------------------------
-list(
-  'POF2002 (sem sexo)' = pof2002_ss.engle_scales,
-  'POF2002 (com sexo)' = pof2002_cs.engle_scales,
-  'POF2008 (sem sexo)' = pof2008_ss.engle_scales,
-  'POF2008 (com sexo)' = pof2008_cs.engle_scales,
-) %>% 
-  openxlsx::write.xlsx(file = 'Escalas_Equivalencia_Engel.xlsx')
-
-# 14. TESTE TABELAS REGRESSÃO BONITAS ------------------------------------------------------------
-stargazer(
-  teste.lista,
-  type = 'html',
-  out = 'teste.htm',
-  title = 'Regressões de Engel (POF 2002): todas as faixas etárias, sem separação por sexo',
-  dep.var.labels.include = F,
-  dep.var.caption = 'Variável dependente: participação orçamentária de comida',
-  # covariate.labels = 
-  align = T,
-  # column.labels = names(teste.lista)
-) 
-
-stargazer(
-  lista.pof2002_cs.engle.sample.ivreg,
-  type = 'html',
-  out = 'teste.htm',
-  title = 'Regressões de Engel (POF 2002): todas as faixas etárias, sem separação por sexo',
-  dep.var.labels.include = F,
-  dep.var.caption = 'Variável dependente: participação orçamentária de comida',
-  se = lista.pof2002_cs.engle.sample.str_errors.robust,
-  # covariate.labels = 
-  align = T
-  # column.labels = names(teste.lista)
-) 
-
-stargazer(
-  type = 'html', 
-  out = 'lala.htm',
-  
-  lista.pof2002_cs.engle.sample.ivreg$pof_ac_2002_cs
-  # ,
-  # se = lista.pof2002_cs.engle.sample.str_errors.robust
-)
-
-
-Map(
-  list.models = list(
-    lista.pof2002_ss.engle.sample.ivreg,
-    lista.pof2002_cs.engle.sample.ivreg,
-    lista.pof2008_ss.engle.sample.ivreg,
-    lista.pof2008_cs.engle.sample.ivreg
-  ),
-  list.str_errors = list(
-    lista.pof2002_ss.engle.sample.str_errors.robust,
-    lista.pof2002_cs.engle.sample.str_errors.robust,
-    lista.pof2008_ss.engle.sample.str_errors.robust,
-    lista.pof2008_cs.engle.sample.str_errors.robust
-  ),
-  list.names = list(
-    'Engle_2SLS_POF2002_SemSexo',
-    'Engle_2SLS_POF2002_ComSexo',
-    'Engle_2SLS_POF2008_SemSexo',
-    'Engle_2SLS_POF2008_ComSexo'
-  ),
-  function(
-    list.models,
-    list.str_errors,
-    list.names
-  ){
-    stargazer(
-      list.models,
-      se = list.str_errors,
-      type = 'html',
-      out = glue('{list.names}.htm')
-    )
-  }
-)
-
-huxreg(lista.pof2002_ss.engle.sample.ivreg)
-
-# stargazer(lista.pof2002_cs$pof_ac_2002_cs %>% 
-#             select(
-#               `Homens_[0,14]`,
-#               `Homens_(14,110]`,
-#               `Mulheres_[0,14]`,
-#               `Mulheres_(14,110]`
-#             ),
-#           
-#           type = 'html',
-#           out = 'teste2.htm'
-# )
-
-lapply(
-  teste.lista, 
-  broom::tidy
-) -> teste.lista.tidy
-
-lapply(
-  teste.lista.tidy, 
-  function(model){
-    model %>%
-      df.recode(list.recode = list.recode.models2002) 
-  }
-) -> teste.lista.tidy
-
-huxreg(
-  teste.lista.tidy, 
-  error_pos = 'below',
-  stars = c(
-    '***' = 0.001,
-    '**' = 0.01,
-    '*' = 0.05,
-    '.' = 0.1
-  ),
-  statistics = NULL,
-  note = 'Nota: {stars}'
-)
+) %>% bind_rows(.)
 
 lalala %>% 
   bind_rows(.) %>% 
   df.recode(list.recode = list.recode.models2002) %>%
   export(file = 'lalala.xlsx')
 
-View(.)
+  View(.)
 
 lalala$pof_deaton_2002_ss %>% View(.)
+
+Map(
+  iv.engel.model = lista.pof2002_ss.engle.sample.ivreg.robust,
+  sample = names(lista.pof2002_ss.engle.sample.ivreg.robust),
+  pessoa_ref = lista.ref_2002_ss,
+  function(
+    iv.engel.model, 
+    sample,
+    pessoa_ref
+  ){
+    equivalence.scales.engel.rothbarth.econ_scale(
+      model = iv.engel.model,
+      pessoa.referencia = pessoa_ref,
+      na.h = 2, nc.h = 1,
+      na.r = 2, nc.r = 0
+    ) %>% 
+      mutate(
+        family.comparison = 'AA vs AAC',
+        data = sample
+      ) -> temp
+    
+    equivalence.scales.engel.rothbarth.ec(
+      model = iv.engel.model,
+      pessoa.referencia = pessoa_ref,
+      na.h = 2, nc.h = 1,
+      na.r = 2, nc.r = 0
+    ) %>% 
+      mutate(
+        family.comparison = 'AA vs AAC',
+        data = sample
+      ) -> temp
+    
+    #   'AA vs AACC' =
+    #     equivalence.scales.engel.rothbarth(
+    #       model = iv.engel.model,
+    #       pessoa.referencia = pessoa_ref,
+    #       na.h = 2, nc.h = 2,
+    #       na.r = 2, nc.r = 0
+    #     ),
+    #   'AA vs AACCC' =
+    #     equivalence.scales.engel.rothbarth(
+    #       model = iv.engel.model,
+    #       pessoa.referencia = pessoa_ref,
+    #       na.h = 2, nc.h = 3,
+    #       na.r = 2, nc.r = 0
+    #     )
+    # ) %>% return(.)
+    return(temp)}
+) %>% bind_rows(.) %>% View(.)
 
 stargazer(
   type = 'html',
@@ -992,22 +791,286 @@ lapply(
   huxtable::quick_html
 )
 
-pof2002_ss.engle_scales %>%
-  # pof2002_cs.engle_scales %>%
-  # pof2008_ss.engle_scales %>%
-  # pof2008_cs.engle_scales %>%
-  ggplot(aes(x = term,
-             y = member.cost)) +
-  geom_bar(stat = 'identity',
-           aes(fill = `p.value<=0.05`)) +
-  facet_grid(
-    cols = vars(family.comparison),
-    rows = vars(data)
-  ) +
-  coord_flip() +
-  ggthemes::theme_economist()
+# lalala.tidy$pof_vaz_2002_ss %>%
+#   bind_rows(lalala.tidy$pof_vaz_2002_ss) %>% 
+#   bind_rows(lalala.tidy$pof_deaton_2002_ss) %>% 
+#   ggplot(aes(x = term,
+#              y = member.cost)) + 
+#   geom_bar(stat = 'identity',
+#            aes(fill = `p.value<=0.05`)) + 
+#   facet_grid(
+#     cols = vars(family.comparison),
+#     rows = vars(data)
+#   ) + 
+#   coord_flip() +
+#   ggthemes::theme_economist()
+
+huxreg(
+  teste.lista.tidy, 
+  error_pos = 'below',
+  stars = c(
+    '***' = 0.001,
+    '**' = 0.01,
+    '*' = 0.05,
+    '.' = 0.1
+  ),
+  statistics = NULL,
+  note = 'Nota: {stars}'
+)
 
 
+# 10. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
+# POF2002, todas as faixas etárias, sem sexo
+Map(
+  pof = lista.pof2002_cs.engle.sample,
+  pessoa_ref = lista.ref_2002_cs,
+  function(pof, pessoa_ref){
+    pof %>%
+      iv.engel.rothbarth.econ_scale(
+        # iv.engel.rothbarth(
+        welfare.indicator = engel.welfare.indicator_pof2002,
+        expenditure = expenditure_pof2002,
+        iv.expenditure = iv.expenditure_pof2002,
+        qtd_morador = qtd_moradores_pof2002,
+        
+        control = control_pof2002,
+        weights = T,
+        weights.var = weights.var_pof2002,
+        show.diagnostics = F
+      ) %>%
+      fix.heteroskedasticity(.) -> iv.engel.model
+    
+    # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2002_cs) %>% View(.)
+    list(
+      'AA vs AAC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 1,
+          na.r = 2, nc.r = 0
+        ),
+      'AA vs AACC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 2,
+          na.r = 2, nc.r = 0
+        ),
+      'AA vs AACCC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 3,
+          na.r = 2, nc.r = 0
+        ) 
+    ) %>% return(.)
+  }
+)
+
+# 11. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
+# POF2008, todas as faixas etárias, sem sexo
+Map(
+  pof = lista.pof2008_ss.engle.sample,
+  pessoa_ref = lista.ref_2008_ss,
+  function(pof, pessoa_ref){
+    pof %>%
+      iv.engel.rothbarth.econ_scale(
+        # iv.engel.rothbarth(
+        welfare.indicator = engel.welfare.indicator_pof2008,
+        expenditure = expenditure_pof2008,
+        iv.expenditure = iv.expenditure_pof2008,
+        qtd_morador = qtd_moradores_pof2008,
+        
+        control = control_pof2008,
+        weights = T,
+        weights.var = weights.var_pof2008,
+        show.diagnostics = F
+      ) %>%
+      fix.heteroskedasticity(.) -> iv.engel.model
+    
+    # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2008_ss) %>% View(.)
+    list(
+      'AA vs AAC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 1,
+          na.r = 2, nc.r = 0
+        ),
+      'AA vs AACC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 2,
+          na.r = 2, nc.r = 0
+        ),
+      'AA vs AACCC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 3,
+          na.r = 2, nc.r = 0
+        ) 
+    ) %>% return(.)
+  }
+)
+
+# 12. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, com sexo ------------------------------------------------------------
+# POF2008, todas as faixas etárias, sem sexo
+Map(
+  pof = lista.pof2008_cs.engle.sample,
+  pessoa_ref = lista.ref_2008_cs,
+  function(pof, pessoa_ref){
+    pof %>%
+      iv.engel.rothbarth.econ_scale(
+        # iv.engel.rothbarth(
+        welfare.indicator = engel.welfare.indicator_pof2008,
+        expenditure = expenditure_pof2008,
+        iv.expenditure = iv.expenditure_pof2008,
+        qtd_morador = qtd_moradores_pof2008,
+        
+        control = control_pof2008,
+        weights = T,
+        weights.var = weights.var_pof2008,
+        show.diagnostics = F
+      ) %>%
+      fix.heteroskedasticity(.) -> iv.engel.model
+    
+    # equivalence.scales.engel.rothbarth.econ_scale(pessoa.referencia = ref_ac_2008_cs) %>% View(.)
+    list(
+      'AA vs AAC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 1,
+          na.r = 2, nc.r = 0
+        ),
+      'AA vs AACC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 2,
+          na.r = 2, nc.r = 0
+        ),
+      'AA vs AACCC' = 
+        equivalence.scales.engel.rothbarth(
+          model = iv.engel.model,
+          pessoa.referencia = pessoa_ref,
+          na.h = 2, nc.h = 3,
+          na.r = 2, nc.r = 0
+        ) 
+    ) %>% return(.)
+  }
+)
+
+
+# FAZER DEPOIS? TABELAS DE RESULTADOS BONITAS ----------------------------------------------------------------------
+# names(models$pof_ac_2002_ss)
+# huxreg(models[['pof_ac_2002_ss']], 
+#        models[['pof_vaz_2002_ss']],
+#        statistics = names(models$pof_ac_2002_ss)[]
+#        )
+# ?huxreg()
+# stargazer(
+#   models[['pof_ac_2002_ss']], 
+#   models[['pof_ac_2002_cs']], 
+#   type = 'html'
+# ) #%>% 
+#   #cat(file = 'lala.doc')
+# 
+# stargazer(models.var[[country]]$varresult[1],
+#           models.var[[country]]$varresult[2],
+#           type = 'html',
+#           title = paste0('VAR Model (',
+#                          lags,
+#                          ') - ',
+#                          country.name),
+#           column.labels = c(names(models.var[[country]]$varresult[1]),
+#                             names(models.var[[country]]$varresult[2])),
+#           dep.var.labels = '',
+#           model.numbers = F,
+#           align = T) -> model.stargazer
+# cat(model.stargazer,
+#     file = paste0('ModelosVAR(',lags,').doc'),
+#     append = T)
+
+
+# TESTE TABELAS REGRESSÃO BONITAS ------------------------------------------------------------
+# POF2002, todas as faixas etárias, sem sexo
+# [PROBLEMA]
+# fix.heteroskedasticity() usa o pacote sandwich ou lmtest (função coeftest)
+# retorna um objeto "coeftest", não um modelo
+# se tirar essa parte funciona corretamente o resto
+# mas é necessário consertar a heteroscedasticidade (de outro modo?)
+
+
+Map(
+  pof = lista.pof2002_ss.engle.sample,
+  pessoa_ref = lista.ref_2002_ss,
+  function(pof, pessoa_ref){
+    pof %>%
+      iv.engel.rothbarth.econ_scale.teste(
+        # iv.engel.rothbarth(
+        welfare.indicator = engel.welfare.indicator_pof2002,
+        expenditure = expenditure_pof2002,
+        iv.expenditure = iv.expenditure_pof2002,
+        qtd_morador = qtd_moradores_pof2002,
+        
+        control = control_pof2002,
+        weights = T,
+        weights.var = weights.var_pof2002,
+        show.diagnostics = F
+      ) #%>%
+    #fix.heteroskedasticity(.) -> iv.engel.model
+  }
+) -> teste.lista3
+
+teste.lista$pof_ac_2002_ss %>% class(.)
+teste.lista2$pof_ac_2002_ss %>% class(.)
+teste.lista3$pof_ac_2002_ss %>% class(.)
+
+stargazer(
+  teste.lista,
+  type = 'html',
+  out = 'teste.htm',
+  title = 'Regressões de Engel (POF 2002): todas as faixas etárias, sem separação por sexo',
+  dep.var.labels.include = F,
+  dep.var.caption = 'Variável dependente: participação orçamentária de comida',
+  # covariate.labels = 
+  align = T,
+  # column.labels = names(teste.lista)
+) 
+
+stargazer(
+  teste.lista, 
+  type = 'html', 
+  out = 'lala.htm'
+)
+
+# stargazer(lista.pof2002_cs$pof_ac_2002_cs %>% 
+#             select(
+#               `Homens_[0,14]`,
+#               `Homens_(14,110]`,
+#               `Mulheres_[0,14]`,
+#               `Mulheres_(14,110]`
+#             ),
+#           
+#           type = 'html',
+#           out = 'teste2.htm'
+# )
+
+lapply(
+  teste.lista, 
+  broom::tidy
+) -> teste.lista.tidy
+
+lapply(
+  teste.lista.tidy, 
+  function(model){
+    model %>%
+      df.recode(list.recode = list.recode.models2002) 
+  }
+) -> teste.lista.tidy
 
 huxreg(
   teste.lista.tidy, 
