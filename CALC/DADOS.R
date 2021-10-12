@@ -54,12 +54,18 @@ faixas.etarias.vaz2008 <- c(0, 4, 9, 14, max(individuos.pof2008$idade_anos))
 faixas.etarias.deaton2002 <- c(0, 4, 9, 14, 54, max(individuos.pof2002$idade))
 faixas.etarias.deaton2008 <- c(0, 4, 9, 14, 54, max(individuos.pof2008$idade_anos))
 
+# # Faixas Etárias V
+# # Faixas etárias utilizadas por Lancaster & Ray (1998)
+# faixas.etarias.lancaster2002 <- c(0, 17, max(individuos.pof2002$idade))
+# faixas.etarias.lancaster2008 <- c(0, 17, max(individuos.pof2008$idade_anos))
+
 # Listas
 list(
   # 'normais_2002' = faixas.etarias.normais2002, 
   'ac_2002' = faixas.etarias.ac2002,
   'vaz_2002' = faixas.etarias.vaz2002,
   'deaton_2002' = faixas.etarias.deaton2002
+  # , 'lancaster_2002' = faixas.etarias.lancaster2002
 ) -> lista.faixas.etarias2002
 
 list(
@@ -67,6 +73,7 @@ list(
   'ac_2008' = faixas.etarias.ac2008,
   'vaz_2008' = faixas.etarias.vaz2008,
   'deaton_2008' = faixas.etarias.deaton2008
+  # , 'lancaster_2008' = faixas.etarias.lancaster2008
 ) -> lista.faixas.etarias2008
 
 lista.faixas.etarias2002_ss <- lista.faixas.etarias2002
@@ -87,12 +94,16 @@ names(lista.faixas.etarias2008_cs) <- glue('pof_{names(lista.faixas.etarias2008)
 # Moradia (tr1)
 list(
   
+  # 'cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
+  #                    '2' = 'Imóvel próprio (em pagamento)',
+  #                    '3' = 'Imóvel cedido (por empregador)',
+  #                    '4' = 'Imóvel cedido (outra forma)',
+  #                    '5' = 'Outras condições de ocupação',
+  #                    '6' = 'Imóvel alugado')
+  
   'cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
                      '2' = 'Imóvel próprio (em pagamento)',
-                     '3' = 'Imóvel cedido (por empregador)',
-                     '4' = 'Imóvel cedido (outra forma)',
-                     '5' = 'Outras condições de ocupação',
-                     '6' = 'Imóvel alugado')
+                     .default = 'Outras condições de ocupação')
   
 ) -> list.var.recode_tr1.pof2002
 
@@ -128,12 +139,16 @@ list(
 # Moradia (tr1)
 list(
   
+  # 'cod_cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
+  #                        '2' = 'Imóvel próprio (em pagamento)',
+  #                        '3' = 'Imóvel cedido (por empregador)',
+  #                        '4' = 'Imóvel cedido (outra forma)',
+  #                        '5' = 'Outras condições de ocupação',
+  #                        '6' = 'Imóvel alugado')
+  
   'cod_cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
                          '2' = 'Imóvel próprio (em pagamento)',
-                         '3' = 'Imóvel cedido (por empregador)',
-                         '4' = 'Imóvel cedido (outra forma)',
-                         '5' = 'Outras condições de ocupação',
-                         '6' = 'Imóvel alugado')
+                         .default = 'Outras condições de ocupação')
   
 ) -> list.var.recode_tr1.pof2008
 
