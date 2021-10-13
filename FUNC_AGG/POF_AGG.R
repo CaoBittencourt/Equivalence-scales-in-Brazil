@@ -56,17 +56,35 @@ list(alimentacao = 'vada',
 
 # Identidade das despesas para agregação (categorias específicas utilizadas em alguns métodos de estimação) 
 list(
+  takein.food = c('vada01', 'vada02', 'vada03', 'vada04',
+                  'vada05', 'vada06', 'vada07', 'vada08',
+                  'vada09', 'vada10', 'vada11', 'vada12',
+                  'vada13', 'vada14', 'vada15', 'vada16'),
   takeout.food = c('vada21', 'vada22', 'vada23', 'vada24',
                    'vada25', 'vada28', 'vada29'),
+  alimentacao_menos.bebidas.alcoolicas = c('vada01', 'vada02', 'vada03', 'vada04',
+                                           'vada05', 'vada06', 'vada07', 'vada08',
+                                           'vada09', 'vada10', 'vada11', 'vada12',
+                                           'vada13', 'vada14', 'vada15', 'vada16',
+                                           'vada21', 'vada22', 'vada23', 'vada24',
+                                           'vada25', 'vada27', 'vada28', 'vada29'),
   bebidas.alcoolicas = 'vada26',
   lanche.escolar = 'vada27',
   vestuario.infantil = 'vadd033',
   vestuario.homem_mulher = c('vadd031', 'vadd032'),
+  joias = 'vadd035',
+  transporte.proprio_proxy = c('vadd042', 'vadd043',
+                               'vadd044', 'vadd045'),
+  transporte.proprio_proxy_apenas.combustivel = c('vadd042', 'vadd043'),
+  viagens = 'vadd046',
+  perfume = 'vadd051',
   ensino.superior = 'vadd072',
   artigos.escolares = 'vadd075',
+  lazer_adulto = c('vadd082', 'vadd083', 'vadd084', 'vadd085'),
   brinquedos_jogos = 'vadd081',
   manicure_pedicure = 'vadd102',
   jogos_apostas = 'vadd111',
+  # festas = 'vadd113',
   imoveis.aquisicao = 'vadd131',
   imoveis.reforma = 'vadd132',
   imoveis.prestacao = 'vadd142'
@@ -78,7 +96,6 @@ list(
 #     paste0('cr',x))
 #   
 # }) -> id_despesas.especificas
-
 
 # 3. FUNÇÃO DE AGREGAÇÃO DE DESPESAS ------------------------------------
 pof.agg_fun <- function(

@@ -361,7 +361,7 @@ iv.engel.rothbarth.econ_scale <- function(
 # 4. FUNÇÕES DE DIAGNÓSTICO E CONSERTO DE HETEROSCEDASTICIDADE -----------------------
 fix.heteroskedasticity <- function(
   model, 
-  .type = 'HC1',
+  .type = 'HC3',
   significance = 0.05
 ){
   
@@ -380,7 +380,7 @@ fix.heteroskedasticity <- function(
 # 5. FUNÇÕES DE STD.ERRORS ROBUSTOS -----------------------
 robust_std.errors <- function(
   model, 
-  .type = 'HC1'
+  .type = 'HC3'
 ){
   
   model %>%
@@ -696,7 +696,7 @@ equivalence.scales.engel.rothbarth.econ_scale <- function(
 # 7. FUNÇÃO DE TABELAS DE REGRESSÃO ---------------------------------------
 
 # Adjust standard errors
-# cov1         <- vcovHC(model, type = "HC1")
+# cov1         <- vcovHC(model, type = "HC3")
 # robust_se    <- sqrt(diag(cov1))
 # 
 # robust.se(teste.lista$pof_ac_2002_ss) %>% tidy(.)
@@ -713,7 +713,7 @@ equivalence.scales.engel.rothbarth.econ_scale <- function(
           # se = list(NULL, 
           #           sqrt(
           #             diag(
-          #               vcovHC(teste.lista$pof_ac_2002_ss, type = "HC1")
+          #               vcovHC(teste.lista$pof_ac_2002_ss, type = "HC3")
           #             )
           #           )
           # )

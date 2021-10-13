@@ -51,28 +51,28 @@ faixas.etarias.vaz2008 <- c(0, 4, 9, 14, max(individuos.pof2008$idade_anos))
 
 # Faixas Etárias IV
 # Faixas etárias utilizadas por Deaton (2018)
-faixas.etarias.deaton2002 <- c(0, 4, 9, 14, 54, max(individuos.pof2002$idade))
-faixas.etarias.deaton2008 <- c(0, 4, 9, 14, 54, max(individuos.pof2008$idade_anos))
+# faixas.etarias.deaton2002 <- c(0, 4, 9, 14, 54, max(individuos.pof2002$idade))
+# faixas.etarias.deaton2008 <- c(0, 4, 9, 14, 54, max(individuos.pof2008$idade_anos))
 
 # # Faixas Etárias V
 # # Faixas etárias utilizadas por Lancaster & Ray (1998)
-# faixas.etarias.lancaster2002 <- c(0, 17, max(individuos.pof2002$idade))
-# faixas.etarias.lancaster2008 <- c(0, 17, max(individuos.pof2008$idade_anos))
+# faixas.etarias.lancaster2002 <- c(0, 4, 14, 17, max(individuos.pof2002$idade))
+# faixas.etarias.lancaster2008 <- c(0, 4, 14, 17, max(individuos.pof2008$idade_anos))
 
 # Listas
 list(
   # 'normais_2002' = faixas.etarias.normais2002, 
   'ac_2002' = faixas.etarias.ac2002,
-  'vaz_2002' = faixas.etarias.vaz2002,
-  'deaton_2002' = faixas.etarias.deaton2002
+  'vaz_2002' = faixas.etarias.vaz2002
+  # , 'deaton_2002' = faixas.etarias.deaton2002
   # , 'lancaster_2002' = faixas.etarias.lancaster2002
 ) -> lista.faixas.etarias2002
 
 list(
   # 'normais_2008' = faixas.etarias.normais2008, 
   'ac_2008' = faixas.etarias.ac2008,
-  'vaz_2008' = faixas.etarias.vaz2008,
-  'deaton_2008' = faixas.etarias.deaton2008
+  'vaz_2008' = faixas.etarias.vaz2008
+  # , 'deaton_2008' = faixas.etarias.deaton2008
   # , 'lancaster_2008' = faixas.etarias.lancaster2008
 ) -> lista.faixas.etarias2008
 
@@ -101,9 +101,9 @@ list(
   #                    '5' = 'Outras condições de ocupação',
   #                    '6' = 'Imóvel alugado')
   
-  'cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
-                     '2' = 'Imóvel próprio (em pagamento)',
-                     .default = 'Outras condições de ocupação')
+  # 'cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
+  #                    '2' = 'Imóvel próprio (em pagamento)',
+  #                    .default = 'Outras condições de ocupação')
   
 ) -> list.var.recode_tr1.pof2002
 
@@ -131,7 +131,9 @@ list(
   'cartao' = list('1' = 'Tem cartão de crédito',
                   .default = 'Não tem cartão de crédito'),
   'plano_saude' = list('1' = 'Tem plano de saúde',
-                       .default = 'Não tem plano de saúde')
+                       .default = 'Não tem plano de saúde'),
+  'cheque_esp' = list('1' = 'Tem cheque especial',
+                      .default = 'Não tem cheque especial')
   
 ) -> list.var.recode_tr2.pof2002
 
@@ -146,9 +148,9 @@ list(
   #                        '5' = 'Outras condições de ocupação',
   #                        '6' = 'Imóvel alugado')
   
-  'cod_cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
-                         '2' = 'Imóvel próprio (em pagamento)',
-                         .default = 'Outras condições de ocupação')
+  # 'cod_cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
+  #                        '2' = 'Imóvel próprio (em pagamento)',
+  #                        .default = 'Outras condições de ocupação')
   
 ) -> list.var.recode_tr1.pof2008
 
@@ -176,7 +178,9 @@ list(
   'cod_tem_cartao' = list('1' = 'Tem cartão de crédito',
                           .default = 'Não tem cartão de crédito'),
   'plano_saude' = list('1' = 'Tem plano de saúde',
-                       .default = 'Não tem plano de saúde')
+                       .default = 'Não tem plano de saúde'),
+  'cod_tem_cheque' = list('1' = 'Tem cheque especial',
+                          .default = 'Não tem cheque especial')
   
 ) -> list.var.recode_tr2.pof2008
 
@@ -208,14 +212,14 @@ unid_fed_pof2008 <- 'cod_uf'
 # 6. VARIÁVEIS DE CONTROLE ------------------------------------------------
 # POF 2002
 # Variáveis de controle POF 2002
-var.interesse_chefe.fam_pof2002 <- c(var.idade_pof2002, var.anos_estudo_pof2002)
-var.interesse_indv_pof2002 <- c('cor', 'orc_rend', 'cartao', 'plano_saude')
+var.interesse_chefe.fam_pof2002 <- c(var.idade_pof2002, var.anos_estudo_pof2002, 'cor')
+var.interesse_indv_pof2002 <- c('orc_rend', 'cartao', 'plano_saude', 'cheque_esp')
 var.interesse_domc_pof2002 <- c('cond_ocup')
 
 # POF 2008
 # Variáveis de controle POF 2008
-var.interesse_chefe.fam_pof2008 <- c(var.idade_pof2008, var.anos_estudo_pof2008)
-var.interesse_indv_pof2008 <- c('cod_cor_raca', 'cod_sit_receita', 'cod_tem_cartao', 'plano_saude')
+var.interesse_chefe.fam_pof2008 <- c(var.idade_pof2008, var.anos_estudo_pof2008, 'cod_cor_raca')
+var.interesse_indv_pof2008 <- c('cod_sit_receita', 'cod_tem_cartao', 'plano_saude', 'cod_tem_cheque')
 var.interesse_domc_pof2008 <- c('cod_cond_ocup')
 
 # 7. AGREGAÇÃO ------------------------------------------------------------
@@ -263,8 +267,8 @@ mapply(
           consumo.agg.temp) -> pof.temp
     
     # assign(x = glue('pof_{faixa.etaria.var_name}_ss'),
-           # value = pof.temp,
-           # envir = .GlobalEnv)
+    # value = pof.temp,
+    # envir = .GlobalEnv)
   }
 ) -> lista.pof2002_ss
 
