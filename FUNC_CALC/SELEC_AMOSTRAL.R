@@ -23,7 +23,7 @@ sample.selection <- function(
   incluir_solteiros_com.filhos = F,
   
   var.chefe_idade,
-  max_idade_chefe = 200,
+  max_idade_chefe = max(df[var.chefe_idade]),
   min_idade_chefe = 0,
   
   max_moradores = 7,
@@ -42,8 +42,8 @@ sample.selection <- function(
       # UF_sigla %in% UF,
       # urbano %in% rural_urbano,
       
-      !!sym(var.chefe_idade) %in% seq(min_idade_chefe,
-                                      max_idade_chefe),
+      !!sym(var.chefe_idade) >= min_idade_chefe,
+      !!sym(var.chefe_idade) <= max_idade_chefe,
       
       !!sym(qtd_morador) <= max_moradores,
       
@@ -58,7 +58,7 @@ sample.selection <- function(
   
   if(!incluir_solteiros_sem.filhos){
     
-    df %>% 
+    sample %>% 
       filter(
         !(qtd_conjuge == 0 & qtd_filhos == 0)
       ) -> sample
@@ -67,7 +67,7 @@ sample.selection <- function(
   
   if(!incluir_solteiros_com.filhos){ 
     
-    df %>% 
+    sample %>% 
       filter(
         !(qtd_conjuge == 0 & qtd_filhos > 0)
       ) -> sample
@@ -77,7 +77,7 @@ sample.selection <- function(
   if(!incluir_solteiros_sem.filhos & 
      !incluir_solteiros_com.filhos){ 
     
-    df %>% 
+    sample %>% 
       filter(
         !(qtd_conjuge == 0)
       ) -> sample

@@ -2,7 +2,7 @@
 c(
   'sandwich', 'lmtest', #Diagnósticos e ajustes
   'np', 'Matching', 'systemfit', 'ivreg', #Modelos 
-  'plyr', 'glue', 'broom', 'tidyverse' #Manipulação de dados
+  'plyr', 'glue', 'broom', 'purrr', 'tidyverse' #Manipulação de dados
 ) -> pkg
 
 lapply(pkg, function(x)
@@ -139,15 +139,27 @@ iv.engel.rothbarth <- function(
     {glue('`{.}`')} %>%
     paste(collapse = '+') -> classes.etarias
   
-  paste(control, collapse = '+') %>%
-    {glue('{welfare.indicator} ~ ', #Regressão normal
-          '{classes.etarias}',
-          '+ {expenditure}',
-          '+ {.} |', #Regressão instrumental a partir de "|"
-          '{classes.etarias}',
-          '+ {iv.expenditure}',
-          '+ {.}')} %>%
-    as.formula(.) -> f
+  if(is_empty(control)){
+    glue('{welfare.indicator} ~ ', #Regressão normal
+         '{classes.etarias}',
+         '+ {expenditure}',
+         '|', #Regressão instrumental a partir de "|"
+         '{classes.etarias}',
+         '+ {iv.expenditure}') %>%
+      as.formula(.) -> f
+  }
+  else { 
+    paste(control, collapse = '+') %>%
+      {glue('{welfare.indicator} ~ ', #Regressão normal
+            '{classes.etarias}',
+            '+ {expenditure}',
+            '+ {.}', 
+            '|', #Regressão instrumental a partir de "|"
+            '{classes.etarias}',
+            '+ {iv.expenditure}',
+            '+ {.}')} %>%
+      as.formula(.) -> f
+  }
   
   # Regressão com pesos amostrais
   if(weights){
@@ -173,93 +185,6 @@ iv.engel.rothbarth <- function(
   if(show.diagnostics){
     
     ivreg.engel.rothbarth %>%
-      summary(diagnostics = T) %>%
-      print(.)
-    
-  }
-  
-  return(ivreg.engel.rothbarth)
-  
-}
-
-iv.engel.rothbarth.quad <- function(
-  df, 
-  welfare.indicator = 'share_despesas.mensais.alimentacao',
-  expenditure = 'despesas.mensais.totais_per.capita',
-  iv.expenditure = 'renda_total_per.capita',
-  show.diagnostics = F,
-  control = c('UF_sigla', 'urbano'),
-  weights = T,
-  weights.var = 'fator_expansao1'
-){
-  
-  # Pesos amostrais
-  if(weights){
-    
-    df %>% 
-      mutate(
-        wgt = !!sym(weights.var)
-      ) -> df
-    
-  }
-  
-  # log(expenditure)
-  df %>%
-    filter(!!sym(expenditure) > 0,
-           !!sym(iv.expenditure) > 0) %>%
-    mutate(
-      !!sym(expenditure) := log(!!sym(expenditure)),
-      !!sym(iv.expenditure) := log(!!sym(iv.expenditure)),
-      
-      # Termos quadráticos
-      !!sym(glue('quad_{expenditure}')) := (!!sym(expenditure))^2,
-      !!sym(glue('quad_{iv.expenditure}')) := (!!sym(iv.expenditure))^2
-      
-    ) -> df
-  
-  # Classes de sexo e idade
-  df %>%
-    select(contains(']')) %>%
-    names(.) %>%
-    {glue('`{.}`')} %>%
-    paste(collapse = '+') -> classes.etarias
-  
-  paste(control, collapse = '+') %>%
-    {glue('{welfare.indicator} ~ ', #Regressão normal
-          '{classes.etarias}',
-          '+ {expenditure}',
-          '+ quad_{expenditure}',
-          '+ {.} |', #Regressão instrumental a partir de "|"
-          '{classes.etarias}',
-          '+ {iv.expenditure}',
-          '+ quad_{iv.expenditure}',
-          '+ {.}')} %>%
-    as.formula(.) -> f
-  
-  # Regressão com pesos amostrais
-  if(weights){
-    
-    ivreg(
-      formula = f, 
-      data = df,
-      weights = wgt
-    ) -> ivreg.engel.rothbarth
-    
-  }
-  # Regressão sem pesos amostrais
-  else {
-    
-    ivreg(
-      formula = f, 
-      data = df
-    ) -> ivreg.engel.rothbarth
-    
-  }
-  
-  # Teste de endogeneidade e validade da variável instrumental
-  if(show.diagnostics){
-    
-    ivreg.engel.rothbarth %>% 
       summary(diagnostics = T) %>%
       print(.)
     
@@ -313,17 +238,27 @@ iv.engel.rothbarth.econ_scale <- function(
     {glue('`{.}`')} %>%
     paste(collapse = '+') -> classes.etarias
   
-  paste(control, collapse = '+') %>%
-    {glue('{welfare.indicator} ~ ', #Regressão normal
-          '{classes.etarias}',
-          '+ {expenditure}',
-          '+ {qtd_morador}',
-          '+ {.} |', #Regressão instrumental a partir de "|"
-          '{classes.etarias}',
-          '+ {iv.expenditure}',
-          '+ {qtd_morador}',
-          '+ {.}')} %>%
-    as.formula(.) -> f
+  if(is_empty(control)){
+    glue('{welfare.indicator} ~ ', #Regressão normal
+         '{classes.etarias}',
+         '+ {expenditure}',
+         '|', #Regressão instrumental a partir de "|"
+         '{classes.etarias}',
+         '+ {iv.expenditure}') %>%
+      as.formula(.) -> f
+  }
+  else { 
+    paste(control, collapse = '+') %>%
+      {glue('{welfare.indicator} ~ ', #Regressão normal
+            '{classes.etarias}',
+            '+ {expenditure}',
+            '+ {.}', 
+            '|', #Regressão instrumental a partir de "|"
+            '{classes.etarias}',
+            '+ {iv.expenditure}',
+            '+ {.}')} %>%
+      as.formula(.) -> f
+  }
   
   # Regressão com pesos amostrais
   if(weights){
@@ -693,7 +628,33 @@ equivalence.scales.engel.rothbarth.econ_scale <- function(
 }
 
 
-# 7. FUNÇÃO DE TABELAS DE REGRESSÃO ---------------------------------------
+# # 7. FUNÇÃO DE STD. ERRORS DAS ESCALAS DE EQUIVALÊNCIA -------------------------
+# scale.std_error <- function(
+#   model,
+#   expenditure = 'despesas.mensais.totais_per.capita',
+#   qtd_morador
+# ){
+#   # Adaptado de DUDEL et al., 2020
+#   # Standard error via Delta method
+#   b1      <- coef(model)[expenditure]
+#   b2      <- coef(model)[qtd_morador]
+#   A       <- exp(-b2/b1)
+#   
+#   varb1   <- vcov(model)[expenditure, expenditure]
+#   varb2   <- vcov(model)[qtd_morador, qtd_morador]
+#   covb1b2 <- vcov(model)[expenditure, qtd_morador]
+#   
+#   dAdb1   <- A*(b2/b1^2)
+#   dAdb2   <- A*(-1/b1)
+#   
+#   VarA    <- dAdb1^2 * varb1 + dAdb2^2 * varb2 + 2 * dAdb1 * dAdb2 * covb1b2
+#   sdA     <- sqrt(VarA)
+#   
+#   return(sdA)
+#   
+# }
+
+# 8. FUNÇÃO DE TABELAS DE REGRESSÃO ---------------------------------------
 
 # Adjust standard errors
 # cov1         <- vcovHC(model, type = "HC3")
@@ -707,16 +668,16 @@ equivalence.scales.engel.rothbarth.econ_scale <- function(
 
 
 # stargazer(teste.lista$pof_ac_2002_ss,
-          # type = 'text'
-          # se = coeftest(.),  
-          # se = list(NULL, robust_se)
-          # se = list(NULL, 
-          #           sqrt(
-          #             diag(
-          #               vcovHC(teste.lista$pof_ac_2002_ss, type = "HC3")
-          #             )
-          #           )
-          # )
+# type = 'text'
+# se = coeftest(.),  
+# se = list(NULL, robust_se)
+# se = list(NULL, 
+#           sqrt(
+#             diag(
+#               vcovHC(teste.lista$pof_ac_2002_ss, type = "HC3")
+#             )
+#           )
+# )
 # )
 
 

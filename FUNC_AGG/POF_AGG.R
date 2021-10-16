@@ -69,7 +69,6 @@ list(
                                            'vada21', 'vada22', 'vada23', 'vada24',
                                            'vada25', 'vada27', 'vada28', 'vada29'),
   bebidas.alcoolicas = 'vada26',
-  lanche.escolar = 'vada27',
   vestuario.infantil = 'vadd033',
   vestuario.homem_mulher = c('vadd031', 'vadd032'),
   joias = 'vadd035',
@@ -84,7 +83,6 @@ list(
   brinquedos_jogos = 'vadd081',
   manicure_pedicure = 'vadd102',
   jogos_apostas = 'vadd111',
-  # festas = 'vadd113',
   imoveis.aquisicao = 'vadd131',
   imoveis.reforma = 'vadd132',
   imoveis.prestacao = 'vadd142'

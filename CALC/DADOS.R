@@ -100,10 +100,10 @@ list(
   #                    '4' = 'Imóvel cedido (outra forma)',
   #                    '5' = 'Outras condições de ocupação',
   #                    '6' = 'Imóvel alugado')
-  
-  # 'cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
-  #                    '2' = 'Imóvel próprio (em pagamento)',
-  #                    .default = 'Outras condições de ocupação')
+
+  'cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
+                     '2' = 'Imóvel próprio (em pagamento)',
+                     .default = 'Outras condições de ocupação')
   
 ) -> list.var.recode_tr1.pof2002
 
@@ -133,7 +133,28 @@ list(
   'plano_saude' = list('1' = 'Tem plano de saúde',
                        .default = 'Não tem plano de saúde'),
   'cheque_esp' = list('1' = 'Tem cheque especial',
-                      .default = 'Não tem cheque especial')
+                      .default = 'Não tem cheque especial'),
+  
+  'nivel_instr'  = list(
+    # Obs: na POF 2002 NA's são imputados como '88' => Default = NA
+    '0' = 'SEM INSTRUÇÃO',
+    '1' = 'CRECHE',
+    '2' = 'PRÉ-ESCOLAR',
+    '3' = 'CLASSE DE ALFABETIZAÇÃO DE CRIANÇAS',
+    '4' = 'ALFABETIZAÇÃO DE ADULTOS',
+    '5' = 'ENSINO FUNDAMENTAL OU 1º GRAU REGULAR SERIADO',
+    '6' = 'ENSINO FUNDAMENTAL OU 1º GRAU REGULAR NÃO SERIADO',
+    '7' = 'SUPLETIVO (ENSINO FUNDAMENTAL OU 1º GRAU)',
+    '8' = 'ENSINO MÉDIO OU 2º GRAU REGULAR SERIADO',
+    '9' = 'ENSINO MÉDIO OU 2º GRAU REGULAR NÃO SERIADO',
+    '10' = 'SUPLETIVO (ENSINO MÉDIO OU 2º GRAU)',
+    '11' = 'TECNOLOGIA',
+    '12' = 'PRÉ-VESTIBULAR',
+    '13' = 'SUPERIOR-GRADUADO COMPLETO',
+    '14' = 'SUPERIOR-GRADUADO INCOMPLETO',
+    '15' = 'ESPECIALIZAÇÃO SUPERIOR',
+    '16' = 'MESTRADO OU DOUTORADO',
+    .default = NA_character_)
   
 ) -> list.var.recode_tr2.pof2002
 
@@ -148,9 +169,9 @@ list(
   #                        '5' = 'Outras condições de ocupação',
   #                        '6' = 'Imóvel alugado')
   
-  # 'cod_cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
-  #                        '2' = 'Imóvel próprio (em pagamento)',
-  #                        .default = 'Outras condições de ocupação')
+  'cod_cond_ocup' = list('1' = 'Imóvel próprio (já pago)',
+                         '2' = 'Imóvel próprio (em pagamento)',
+                         .default = 'Outras condições de ocupação')
   
 ) -> list.var.recode_tr1.pof2008
 
@@ -180,7 +201,27 @@ list(
   'plano_saude' = list('1' = 'Tem plano de saúde',
                        .default = 'Não tem plano de saúde'),
   'cod_tem_cheque' = list('1' = 'Tem cheque especial',
-                          .default = 'Não tem cheque especial')
+                          .default = 'Não tem cheque especial'),
+  
+  'cod_nivel_instr'  = list(
+    '0' = 'SEM INSTRUÇÃO',
+    '1' = 'CRECHE',
+    '2' = 'PRÉ-ESCOLAR',
+    '3' = 'CLASSE DE ALFABETIZAÇÃO DE CRIANÇAS',
+    '4' = 'ALFABETIZAÇÃO DE ADULTOS',
+    '5' = 'ENSINO FUNDAMENTAL OU 1º GRAU REGULAR SERIADO',
+    '6' = 'ENSINO FUNDAMENTAL OU 1º GRAU REGULAR NÃO SERIADO',
+    '7' = 'SUPLETIVO (ENSINO FUNDAMENTAL OU 1º GRAU)',
+    '8' = 'ENSINO MÉDIO OU 2º GRAU REGULAR SERIADO',
+    '9' = 'ENSINO MÉDIO OU 2º GRAU REGULAR NÃO SERIADO',
+    '10' = 'SUPLETIVO (ENSINO MÉDIO OU 2º GRAU)',
+    '11' = 'TECNOLOGIA',
+    '12' = 'PRÉ-VESTIBULAR',
+    '13' = 'SUPERIOR-GRADUADO COMPLETO',
+    '14' = 'SUPERIOR-GRADUADO INCOMPLETO',
+    '15' = 'ESPECIALIZAÇÃO SUPERIOR',
+    '16' = 'MESTRADO OU DOUTORADO',
+    .default = NA_character_)
   
 ) -> list.var.recode_tr2.pof2008
 
@@ -209,16 +250,16 @@ qtd_moradores_pof2008 <- 'qtd_morador_domc'
 renda_pof2008 <- 'renda_total'
 unid_fed_pof2008 <- 'cod_uf'
 
-# 6. VARIÁVEIS DE CONTROLE ------------------------------------------------
+# 6. VARIÁVEIS DE INTERESSE ------------------------------------------------
 # POF 2002
 # Variáveis de controle POF 2002
-var.interesse_chefe.fam_pof2002 <- c(var.idade_pof2002, var.anos_estudo_pof2002, 'cor')
+var.interesse_chefe.fam_pof2002 <- c(var.idade_pof2002, var.anos_estudo_pof2002, 'orc_rend', 'cor', 'sexo')
 var.interesse_indv_pof2002 <- c('orc_rend', 'cartao', 'plano_saude', 'cheque_esp')
 var.interesse_domc_pof2002 <- c('cond_ocup')
 
 # POF 2008
 # Variáveis de controle POF 2008
-var.interesse_chefe.fam_pof2008 <- c(var.idade_pof2008, var.anos_estudo_pof2008, 'cod_cor_raca')
+var.interesse_chefe.fam_pof2008 <- c(var.idade_pof2008, var.anos_estudo_pof2008, 'cod_sit_receita', 'cod_cor_raca', 'cod_sexo')
 var.interesse_indv_pof2008 <- c('cod_sit_receita', 'cod_tem_cartao', 'plano_saude', 'cod_tem_cheque')
 var.interesse_domc_pof2008 <- c('cod_cond_ocup')
 

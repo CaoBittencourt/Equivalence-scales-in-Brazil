@@ -62,10 +62,21 @@ lista.ref_2008_cs <- list(ref_ac_2008_cs, ref_vaz_2008_cs
 # POF2002
 lista.pof2002_ss$pof_ac_2002_ss %>% 
   select(
-    contains('control'),
-    -contains('Não tem'),
+    # `control.domc_cond_ocup`
+    # ,`control.chefe_idade`
+    # ,`control.chefe_anos_est`
+    # ,`control.chefe_cor`
+    # ,`control.qtd_Empregado`
+    # ,`control.qtd_Tem cartão de crédito`
+    # ,`control.qtd_Tem plano de saúde`
+    # ,`control.qtd_Tem cheque especial`
+    # ,`UF_sigla`
+    # ,`urbano`
+    
+    # contains('control'),
+    # -contains('Não tem'),
     # -contains('chefe_idade'),
-    -contains('Não empregado'),
+    # -contains('Não empregado'),
     # -contains('cheque'),
     
     # [PROVAVELMENTE NÃO USAR, OU USAR COMO DUMMY APENAS]
@@ -75,8 +86,8 @@ lista.pof2002_ss$pof_ac_2002_ss %>%
     # share_despesas.mensais.imoveis.aquisicao, # Despesas atípicas/temporárias com imóveis
     # share_despesas.mensais.imoveis.prestacao, # Despesas atípicas/temporárias com imóveis
     # share_despesas.mensais.imoveis.reforma, # Despesas atípicas/temporárias com imóveis
-    UF_sigla,
-    urbano
+    # UF_sigla,
+    # urbano
   ) %>%
   names(.) %>% 
   {glue('`{.}`')} -> control_pof2002
@@ -84,19 +95,30 @@ lista.pof2002_ss$pof_ac_2002_ss %>%
 # POF2008
 lista.pof2008_ss$pof_ac_2008_ss %>% 
   select(
-    contains('control'),
-    -contains('Não tem'),
-    # -contains('chefe_idade'),
-    -contains('Não empregado'),
-    # -contains('cheque'),
+    # `control.domc_cond_ocup`
+    # ,`control.chefe_idade`
+    # ,`control.chefe_anos_est`
+    # ,`control.chefe_cor`
+    # ,`control.qtd_Empregado`
+    # ,`control.qtd_Tem cartão de crédito`
+    # ,`control.qtd_Tem plano de saúde`
+    # ,`control.qtd_Tem cheque especial`
+    # ,`UF_sigla`
+    # ,`urbano`
     
-    # share_despesas.mensais.transporte.proprio_proxy, # Veículo próprio 
-    # share_despesas.mensais.transporte.proprio_proxy_apenas.combustivel, # Veículo próprio (apenas combustível)
-    # share_despesas.mensais.imoveis.aquisicao, # Despesas atípicas/temporárias com imóveis
-    # share_despesas.mensais.imoveis.prestacao, # Despesas atípicas/temporárias com imóveis
-    # share_despesas.mensais.imoveis.reforma, # Despesas atípicas/temporárias com imóveis
-    UF_sigla,
-    urbano
+    # contains('control'),
+    # -contains('Não tem'),
+    # # -contains('chefe_idade'),
+    # -contains('Não empregado'),
+    # # -contains('cheque'),
+    # 
+    # # share_despesas.mensais.transporte.proprio_proxy, # Veículo próprio 
+    # # share_despesas.mensais.transporte.proprio_proxy_apenas.combustivel, # Veículo próprio (apenas combustível)
+    # # share_despesas.mensais.imoveis.aquisicao, # Despesas atípicas/temporárias com imóveis
+    # # share_despesas.mensais.imoveis.prestacao, # Despesas atípicas/temporárias com imóveis
+    # # share_despesas.mensais.imoveis.reforma, # Despesas atípicas/temporárias com imóveis
+    # UF_sigla,
+    # urbano
   ) %>%
   names(.) %>% 
   {glue('`{.}`')} -> control_pof2008
@@ -104,46 +126,42 @@ lista.pof2008_ss$pof_ac_2008_ss %>%
 # 4. OUTROS ARGUMENTOS DO MODELO ------------------------------------------------
 # POF2002
 rothbarth.welfare.indicator_pof2002 <- 'despesas.mensais.bens_adultos' #Para o método de Rothbarth, o bem-estar é inferido do nível de consumo de bens adultos
-# expenditure_pof2002 <- 'despesas.mensais.totais' #Dispêndio
 expenditure_pof2002 <- 'despesas.mensais.totais_per.capita' #Dispêndio per capita
-# iv.expenditure_pof2002 <- 'renda' #Variável instrumental do dispêndio = renda
 iv.expenditure_pof2002 <- 'renda_per.capita' #Variável instrumental do dispêndio = renda
 weights.var_pof2002 <- 'fator' #Peso amostral
 
 # POF2008
 rothbarth.welfare.indicator_pof2008 <- 'despesas.mensais.bens_adultos' #Para o método de Rothbarth, o bem-estar é inferido do nível de consumo de bens adultos
-# expenditure_pof2008 <- 'despesas.mensais.totais' #Dispêndio
 expenditure_pof2008 <- 'despesas.mensais.totais_per.capita' #Dispêndio per capita
-# iv.expenditure_pof2008 <- 'renda_total' #Variável instrumental do dispêndio = renda
 iv.expenditure_pof2008 <- 'renda_total_per.capita' #Variável instrumental do dispêndio = renda
 weights.var_pof2008 <- 'fator_expansao1' #Peso amostral
 
 # Quantidade de crianças para cálculo de escalas de equivalência
-n.child.range <- seq(1,3)
+n.child.range <- seq(0,3)
 
 # 5. BENS ADULTOS (ROTHBARTH) ------------------------------------------------------------
 # SELEÇÃO DE BENS ADULTOS
 bens_adultos <- c(
   
-  'despesas.mensais.manicure_pedicure', # Mais ou menos para menos
-
-  'despesas.mensais.bebidas.alcoolicas', # Mais ou menos para menos
-
-  'despesas.mensais.fumo', # Mais ou menos para mais
-
-  'despesas.mensais.jogos_apostas', # Horrível
-
-  'despesas.mensais.lazer_adulto', # Muito bom
-
-  'despesas.mensais.takeout.food', # Muito bom
-
-  'despesas.mensais.viagens', # Muito bom (crianças de 14-17 ficam mais caras)
-
-  'despesas.mensais.joias', # Bom (velha escala OCDE)
-
-  'despesas.mensais.perfume', # Mais ou menos
-
-  'despesas.mensais.vestuario.homem_mulher' # Bom
+  # # 'despesas.mensais.manicure_pedicure', # Mais ou menos para menos
+  # # 
+  # # 'despesas.mensais.bebidas.alcoolicas', # Mais ou menos para menos
+  # # 
+  # # 'despesas.mensais.fumo', # Mais ou menos para mais
+  # # 
+  # # 'despesas.mensais.jogos_apostas', # Horrível
+  # # 
+  # # 'despesas.mensais.lazer_adulto', # Muito bom
+  # # 
+  # 'despesas.mensais.takeout.food', # Muito bom
+  # # 
+  # #  #'despesas.mensais.viagens', # Muito bom (crianças de mais velhas ficam mais caras)
+  # 
+  # 'despesas.mensais.joias' # Bom (velha escala OCDE)
+  # 
+  # # 'despesas.mensais.perfume', # Mais ou menos
+  # # 
+  # # 'despesas.mensais.vestuario.homem_mulher' # Bom
 
 )
 
@@ -221,73 +239,6 @@ lapply(
     #        envir = .GlobalEnv)
   }
 ) -> lista.pof2008_cs.rothbarth
-
-# 6. X SELEÇÃO AMOSTRAL (APENAS Xi > 0) ------------------------------------------------------------
-# POF2002
-lapply( 
-  lista.pof2002_ss.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
-        !!sym(expenditure_pof2002) > 0,
-        !!sym(iv.expenditure_pof2002) > 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2002_ss.rothbarth.sample
-
-lapply( 
-  lista.pof2002_cs.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
-        !!sym(expenditure_pof2002) > 0,
-        !!sym(iv.expenditure_pof2002) > 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2002_cs.rothbarth.sample
-
-# POF2008
-lapply( 
-  lista.pof2008_ss.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
-        !!sym(expenditure_pof2008) > 0,
-        !!sym(iv.expenditure_pof2008) > 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2008_ss.rothbarth.sample
-
-lapply( 
-  lista.pof2008_cs.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
-        !!sym(expenditure_pof2008) > 0,
-        !!sym(iv.expenditure_pof2008) > 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2008_cs.rothbarth.sample
 
 # 7. X SELEÇÃO AMOSTRAL (CASTRO, 2006) ------------------------------------------------------------
 # POF2002
@@ -420,7 +371,7 @@ lapply(
   }
 ) -> lista.pof2008_cs.rothbarth.sample
 
-# 8. ==> SELEÇÃO AMOSTRAL (VAZ & VAZ, 2007) ------------------------------------------------------------
+# 7. (ADAPTADO) SELEÇÃO AMOSTRAL (CASTRO, 2006) ------------------------------------------------------------
 # POF2002
 # Sem sexo
 lapply( 
@@ -432,16 +383,16 @@ lapply(
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) %>% 
-      sample.selection( # Seleção amostral VAZ & VAZ (2007)
+      sample.selection( # Seleção amostral Castro (2006)
         incluir_solteiros_sem.filhos = F,
         incluir_solteiros_com.filhos = F,
         var.chefe_idade = 'control.chefe_idade',
         max_idade_chefe = 69,
         min_idade_chefe = 18,
         qtd_morador = qtd_moradores_pof2002,
-        max_moradores = 8,
-        max_filhos = 6,
-        max_outros.parentes = 6,
+        max_moradores = 5,
+        max_filhos = 3,
+        max_outros.parentes = 3,
         max_agregados = 0,
         max_pensionistas = 0,
         max_empregados = 0,
@@ -464,16 +415,16 @@ lapply(
         !!sym(expenditure_pof2002) > 0,
         !!sym(iv.expenditure_pof2002) > 0
       ) %>%
-      sample.selection( # Seleção amostral VAZ & VAZ (2007)
+      sample.selection( # Seleção amostral Castro (2006)
         incluir_solteiros_sem.filhos = F,
         incluir_solteiros_com.filhos = F,
         var.chefe_idade = 'control.chefe_idade',
         max_idade_chefe = 69,
         min_idade_chefe = 18,
         qtd_morador = qtd_moradores_pof2002,
-        max_moradores = 8,
-        max_filhos = 6,
-        max_outros.parentes = 6,
+        max_moradores = 5,
+        max_filhos = 3,
+        max_outros.parentes = 3,
         max_agregados = 0,
         max_pensionistas = 0,
         max_empregados = 0,
@@ -497,16 +448,16 @@ lapply(
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) %>% 
-      sample.selection( # Seleção amostral VAZ & VAZ (2007)
+      sample.selection( # Seleção amostral Castro (2006)
         incluir_solteiros_sem.filhos = F,
         incluir_solteiros_com.filhos = F,
         var.chefe_idade = 'control.chefe_idade_anos',
         max_idade_chefe = 69,
         min_idade_chefe = 18,
         qtd_morador = qtd_moradores_pof2008,
-        max_moradores = 8,
-        max_filhos = 6,
-        max_outros.parentes = 6,
+        max_moradores = 5,
+        max_filhos = 3,
+        max_outros.parentes = 3,
         max_agregados = 0,
         max_pensionistas = 0,
         max_empregados = 0,
@@ -529,16 +480,16 @@ lapply(
         !!sym(expenditure_pof2008) > 0,
         !!sym(iv.expenditure_pof2008) > 0
       ) %>%
-      sample.selection( # Seleção amostral VAZ & VAZ (2007)
+      sample.selection( # Seleção amostral Castro (2006)
         incluir_solteiros_sem.filhos = F,
         incluir_solteiros_com.filhos = F,
         var.chefe_idade = 'control.chefe_idade_anos',
         max_idade_chefe = 69,
         min_idade_chefe = 18,
         qtd_morador = qtd_moradores_pof2008,
-        max_moradores = 8,
-        max_filhos = 6,
-        max_outros.parentes = 6,
+        max_moradores = 5,
+        max_filhos = 3,
+        max_outros.parentes = 3,
         max_agregados = 0,
         max_pensionistas = 0,
         max_empregados = 0,
@@ -550,6 +501,63 @@ lapply(
     #        envir = .GlobalEnv)
   }
 ) -> lista.pof2008_cs.rothbarth.sample
+
+# 7. (TESTE) SELEÇÃO AMOSTRAL (TESTE) ------------------------------------------------------------
+# POF2002
+# Sem sexo
+lapply(
+  lista.pof2002_ss.rothbarth,
+  function(pof){ 
+    pof %>% 
+      filter(
+        round(!!sym(rothbarth.welfare.indicator_pof2002),2) > 0,
+        round(!!sym(expenditure_pof2002),2) > 0,
+        round(!!sym(iv.expenditure_pof2002),2) > 0,
+      ) %>%
+      sample.selection(
+        incluir_solteiros_sem.filhos = F,
+        incluir_solteiros_com.filhos = F,
+        var.chefe_idade = 'control.chefe_idade',
+        max_idade_chefe = 65,
+        min_idade_chefe = 18,
+        qtd_morador = qtd_moradores_pof2002,
+        max_moradores = 5,
+        max_filhos = 3,
+        max_outros.parentes = 3,
+        max_agregados = 0,
+        max_pensionistas = 0,
+        max_empregados = 0,
+        max_parentes.empregados = 0
+      ) -> pof.temp
+  }
+) -> lista.pof2002_ss.rothbarth.sample
+
+lapply(
+  lista.pof2008_ss.rothbarth,
+  function(pof){
+    pof %>% 
+      filter(
+        round(!!sym(rothbarth.welfare.indicator_pof2008),2) > 0,
+        round(!!sym(expenditure_pof2008),2) > 0,
+        round(!!sym(iv.expenditure_pof2008),2) > 0,
+      ) %>%
+      sample.selection(
+        incluir_solteiros_sem.filhos = F,
+        incluir_solteiros_com.filhos = F,
+        var.chefe_idade = 'control.chefe_idade_anos',
+        max_idade_chefe = 65,
+        min_idade_chefe = 18,
+        qtd_morador = qtd_moradores_pof2008,
+        max_moradores = 5,
+        max_filhos = 3,
+        max_outros.parentes = 3,
+        max_agregados = 0,
+        max_pensionistas = 0,
+        max_empregados = 0,
+        max_parentes.empregados = 0
+      ) -> pof.temp
+  }
+) -> lista.pof2008_ss.rothbarth.sample
 
 # 9. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2002, todas as faixas etárias, sem sexo
@@ -628,77 +636,6 @@ Map(
 # -> pof2002_ss.rothbarth_scales
 # pof2002_ss.rothbarth_scales
 
-# 10. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
-# POF2002, todas as faixas etárias, sem sexo
-# Modelos 2SLS (para output de tabelas)
-Map(
-  pof = lista.pof2002_cs.rothbarth.sample,
-  pessoa_ref = lista.ref_2002_cs,
-  function(pof, pessoa_ref){
-    pof %>%
-      # iv.engel.rothbarth.econ_scale(
-      iv.engel.rothbarth(
-        welfare.indicator = rothbarth.welfare.indicator_pof2002,
-        expenditure = expenditure_pof2002,
-        iv.expenditure = iv.expenditure_pof2002,
-        # qtd_morador = qtd_moradores_pof2002,
-        
-        control = control_pof2002,
-        weights = T,
-        weights.var = weights.var_pof2002,
-        show.diagnostics = T
-      ) %>% return(.)
-  }
-) -> lista.pof2002_cs.rothbarth.sample.ivreg
-
-# Erros robustos (para output de tabelas)
-# lapply(
-#   lista.pof2002_cs.rothbarth.sample.ivreg,
-#   function(model){
-#     model %>% 
-#       robust_std.errors(.type = 'HC3')
-#   }
-# ) -> lista.pof2002_cs.rothbarth.sample.str_errors.robust
-
-# Modelos robustos (para cálculos)
-lapply(
-  lista.pof2002_cs.rothbarth.sample.ivreg,
-  function(model){
-    model %>% 
-      fix.heteroskedasticity(.type = 'HC3')
-  }
-) -> lista.pof2002_cs.rothbarth.sample.ivreg.robust
-
-# Escalas de equivalência
-Map(
-  iv.rothbarth.model = lista.pof2002_cs.rothbarth.sample.ivreg.robust,
-  sample = names(lista.pof2002_cs.rothbarth.sample.ivreg.robust),
-  pessoa_ref = lista.ref_2002_cs,
-  function(
-    iv.rothbarth.model, 
-    sample,
-    pessoa_ref,
-    n.child = n.child.range
-  ){
-    lapply(
-      n.child, 
-      function(n){
-        equivalence.scales.engel.rothbarth2(
-          model = iv.rothbarth.model,
-          pessoa.referencia = pessoa_ref,
-          na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
-          mutate(
-            family.comparison = glue('AA vs AA', strrep('C',n)),
-            data = sample
-          )
-      }
-    ) %>% bind_rows(.)
-  } 
-) %>% bind_rows(.) %>% View(.)
-# -> pof2002_cs.rothbarth_scales
-# pof2002_cs.rothbarth_scales
 # 11. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2008, todas as faixas etárias, sem sexo
 # Modelos 2SLS (para output de tabelas)
@@ -771,77 +708,148 @@ Map(
 # -> pof2008_ss.rothbarth_scales
 # pof2008_ss.rothbarth_scales
 
-# 12. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, com sexo ------------------------------------------------------------
-# POF2008, todas as faixas etárias, sem sexo
-# Modelos 2SLS (para output de tabelas)
-Map(
-  pof = lista.pof2008_cs.rothbarth.sample,
-  pessoa_ref = lista.ref_2008_cs,
-  function(pof, pessoa_ref){
-    pof %>%
-      # iv.engel.rothbarth.econ_scale(
-      iv.engel.rothbarth(
-        welfare.indicator = rothbarth.welfare.indicator_pof2008,
-        expenditure = expenditure_pof2008,
-        iv.expenditure = iv.expenditure_pof2008,
-        # qtd_morador = qtd_moradores_pof2008,
-        
-        control = control_pof2008,
-        weights = T,
-        weights.var = weights.var_pof2008,
-        show.diagnostics = T
-      ) %>% return(.)
-  }
-) -> lista.pof2008_cs.rothbarth.sample.ivreg
-
-# Erros robustos (para output de tabelas)
+# # 10. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
+# # POF2002, todas as faixas etárias, sem sexo
+# # Modelos 2SLS (para output de tabelas)
+# Map(
+#   pof = lista.pof2002_cs.rothbarth.sample,
+#   pessoa_ref = lista.ref_2002_cs,
+#   function(pof, pessoa_ref){
+#     pof %>%
+#       # iv.engel.rothbarth.econ_scale(
+#       iv.engel.rothbarth(
+#         welfare.indicator = rothbarth.welfare.indicator_pof2002,
+#         expenditure = expenditure_pof2002,
+#         iv.expenditure = iv.expenditure_pof2002,
+#         # qtd_morador = qtd_moradores_pof2002,
+#         
+#         control = control_pof2002,
+#         weights = T,
+#         weights.var = weights.var_pof2002,
+#         show.diagnostics = T
+#       ) %>% return(.)
+#   }
+# ) -> lista.pof2002_cs.rothbarth.sample.ivreg
+# 
+# # Erros robustos (para output de tabelas)
+# # lapply(
+# #   lista.pof2002_cs.rothbarth.sample.ivreg,
+# #   function(model){
+# #     model %>% 
+# #       robust_std.errors(.type = 'HC3')
+# #   }
+# # ) -> lista.pof2002_cs.rothbarth.sample.str_errors.robust
+# 
+# # Modelos robustos (para cálculos)
+# lapply(
+#   lista.pof2002_cs.rothbarth.sample.ivreg,
+#   function(model){
+#     model %>% 
+#       fix.heteroskedasticity(.type = 'HC3')
+#   }
+# ) -> lista.pof2002_cs.rothbarth.sample.ivreg.robust
+# 
+# # Escalas de equivalência
+# Map(
+#   iv.rothbarth.model = lista.pof2002_cs.rothbarth.sample.ivreg.robust,
+#   sample = names(lista.pof2002_cs.rothbarth.sample.ivreg.robust),
+#   pessoa_ref = lista.ref_2002_cs,
+#   function(
+#     iv.rothbarth.model, 
+#     sample,
+#     pessoa_ref,
+#     n.child = n.child.range
+#   ){
+#     lapply(
+#       n.child, 
+#       function(n){
+#         equivalence.scales.engel.rothbarth2(
+#           model = iv.rothbarth.model,
+#           pessoa.referencia = pessoa_ref,
+#           na.h = 2, nc.h = n,
+#           na.r = 2, nc.r = 0
+#         ) %>% 
+#           mutate(
+#             family.comparison = glue('AA vs AA', strrep('C',n)),
+#             data = sample
+#           )
+#       }
+#     ) %>% bind_rows(.)
+#   } 
+# ) %>% bind_rows(.) %>% View(.)
+# # -> pof2002_cs.rothbarth_scales
+# # pof2002_cs.rothbarth_scales
+# # 12. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, com sexo ------------------------------------------------------------
+# # POF2008, todas as faixas etárias, sem sexo
+# # Modelos 2SLS (para output de tabelas)
+# Map(
+#   pof = lista.pof2008_cs.rothbarth.sample,
+#   pessoa_ref = lista.ref_2008_cs,
+#   function(pof, pessoa_ref){
+#     pof %>%
+#       # iv.engel.rothbarth.econ_scale(
+#       iv.engel.rothbarth(
+#         welfare.indicator = rothbarth.welfare.indicator_pof2008,
+#         expenditure = expenditure_pof2008,
+#         iv.expenditure = iv.expenditure_pof2008,
+#         # qtd_morador = qtd_moradores_pof2008,
+#         
+#         control = control_pof2008,
+#         weights = T,
+#         weights.var = weights.var_pof2008,
+#         show.diagnostics = T
+#       ) %>% return(.)
+#   }
+# ) -> lista.pof2008_cs.rothbarth.sample.ivreg
+# 
+# # Erros robustos (para output de tabelas)
+# # lapply(
+# #   lista.pof2008_cs.rothbarth.sample.ivreg,
+# #   function(model){
+# #     model %>% 
+# #       robust_std.errors(.type = 'HC3')
+# #   }
+# # ) -> lista.pof2008_cs.rothbarth.sample.str_errors.robust
+# 
+# # Modelos robustos (para cálculos)
 # lapply(
 #   lista.pof2008_cs.rothbarth.sample.ivreg,
 #   function(model){
 #     model %>% 
-#       robust_std.errors(.type = 'HC3')
+#       fix.heteroskedasticity(.type = 'HC3')
 #   }
-# ) -> lista.pof2008_cs.rothbarth.sample.str_errors.robust
-
-# Modelos robustos (para cálculos)
-lapply(
-  lista.pof2008_cs.rothbarth.sample.ivreg,
-  function(model){
-    model %>% 
-      fix.heteroskedasticity(.type = 'HC3')
-  }
-) -> lista.pof2008_cs.rothbarth.sample.ivreg.robust
-
-# Escalas de equivalência
-Map(
-  iv.rothbarth.model = lista.pof2008_cs.rothbarth.sample.ivreg.robust,
-  sample = names(lista.pof2008_cs.rothbarth.sample.ivreg.robust),
-  pessoa_ref = lista.ref_2008_cs,
-  function(
-    iv.rothbarth.model, 
-    sample,
-    pessoa_ref,
-    n.child = n.child.range
-  ){
-    lapply(
-      n.child, 
-      function(n){
-        equivalence.scales.engel.rothbarth2(
-          model = iv.rothbarth.model,
-          pessoa.referencia = pessoa_ref,
-          na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
-          mutate(
-            family.comparison = glue('AA vs AA', strrep('C',n)),
-            data = sample
-          )
-      }
-    ) %>% bind_rows(.)
-  } 
-) %>% bind_rows(.) %>% View(.)
-# -> pof2008_cs.rothbarth_scales
-# pof2008_cs.rothbarth_scales
+# ) -> lista.pof2008_cs.rothbarth.sample.ivreg.robust
+# 
+# # Escalas de equivalência
+# Map(
+#   iv.rothbarth.model = lista.pof2008_cs.rothbarth.sample.ivreg.robust,
+#   sample = names(lista.pof2008_cs.rothbarth.sample.ivreg.robust),
+#   pessoa_ref = lista.ref_2008_cs,
+#   function(
+#     iv.rothbarth.model, 
+#     sample,
+#     pessoa_ref,
+#     n.child = n.child.range
+#   ){
+#     lapply(
+#       n.child, 
+#       function(n){
+#         equivalence.scales.engel.rothbarth2(
+#           model = iv.rothbarth.model,
+#           pessoa.referencia = pessoa_ref,
+#           na.h = 2, nc.h = n,
+#           na.r = 2, nc.r = 0
+#         ) %>% 
+#           mutate(
+#             family.comparison = glue('AA vs AA', strrep('C',n)),
+#             data = sample
+#           )
+#       }
+#     ) %>% bind_rows(.)
+#   } 
+# ) %>% bind_rows(.) %>% View(.)
+# # -> pof2008_cs.rothbarth_scales
+# # pof2008_cs.rothbarth_scales
 
 # 13. ARQUIVOS EXCEL ------------------------------------------------------
 list(
