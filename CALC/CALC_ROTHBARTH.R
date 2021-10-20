@@ -22,72 +22,51 @@ source('C:/Users/Sony/Documents/GitHub/TCC/FUNC_CALC/ENGEL_ROTHBARTH.R', encodin
 # Pessoas de referência
 ref_ac_2002_ss <- '`(14,110] anos`' 
 # ref_normais_2002_ss <- '`(18,65] anos`'
-ref_vaz_2002_ss <- '`(14,110] anos`'
-ref_deaton_2002_ss <- '`(14,54] anos`'
+# ref_vaz_2002_ss <- '`(14,110] anos`'
+# ref_deaton_2002_ss <- '`(14,54] anos`'
 # ref_lancaster_2002_ss <- '`(17,110] anos`'
 
-ref_ac_2002_cs <- '`Homens_(14,110]`'
+# ref_ac_2002_cs <- '`Homens_(14,110]`'
 # ref_normais_2002_cs <- '`Homens_(18,65]`'
-ref_vaz_2002_cs <- '`Homens_(14,110]`'
-ref_deaton_2002_cs <- '`Homens_(14,54]`'
+# ref_vaz_2002_cs <- '`Homens_(14,110]`'
+# ref_deaton_2002_cs <- '`Homens_(14,54]`'
 
 ref_ac_2008_ss <- '`(14,104] anos`' 
 # ref_normais_2008_ss <- '`(18,65] anos`'
-ref_vaz_2008_ss <- '`(14,104] anos`'
-ref_deaton_2008_ss <- '`(14,54] anos`'
+# ref_vaz_2008_ss <- '`(14,104] anos`'
+# ref_deaton_2008_ss <- '`(14,54] anos`'
 # ref_lancaster_2008_ss <- '`(17,104] anos`'
 
-ref_ac_2008_cs <- '`Homens_(14,104]`'
+# ref_ac_2008_cs <- '`Homens_(14,104]`'
 # ref_normais_2008_cs <- '`Homens_(18,65]`'
-ref_vaz_2008_cs <- '`Homens_(14,104]`'
-ref_deaton_2008_cs <- '`Homens_(14,54]`'
+# ref_vaz_2008_cs <- '`Homens_(14,104]`'
+# ref_deaton_2008_cs <- '`Homens_(14,54]`'
 
-lista.ref_2002_ss <- list(ref_ac_2002_ss, ref_vaz_2002_ss
+lista.ref_2002_ss <- list(ref_ac_2002_ss
+                          # , ref_vaz_2002_ss
                           # , ref_deaton_2002_ss
                           # , ref_lancaster_2002_ss
 )
-lista.ref_2002_cs <- list(ref_ac_2002_cs, ref_vaz_2002_cs
-                          # , ref_deaton_2002_cs
-)
+# lista.ref_2002_cs <- list(ref_ac_2002_cs, ref_vaz_2002_cs
+# , ref_deaton_2002_cs
+# )
 
-lista.ref_2008_ss <- list(ref_ac_2008_ss, ref_vaz_2008_ss
+lista.ref_2008_ss <- list(ref_ac_2008_ss
+                          # , ref_vaz_2008_ss
                           # , ref_deaton_2008_ss
                           # , ref_lancaster_2008_ss
 )
-lista.ref_2008_cs <- list(ref_ac_2008_cs, ref_vaz_2008_cs
-                          # , ref_deaton_2008_cs
-)
+# lista.ref_2008_cs <- list(ref_ac_2008_cs, ref_vaz_2008_cs
+#                           # , ref_deaton_2008_cs
+# )
 
 # 3. VARIÁVEIS DE CONTROLE ------------------------------------------------
-# POF2002
 lista.pof2002_ss$pof_ac_2002_ss %>% 
   select(
-    # `control.domc_cond_ocup`
-    # ,`control.chefe_idade`
-    # ,`control.chefe_anos_est`
-    # ,`control.chefe_cor`
-    # ,`control.qtd_Empregado`
-    # ,`control.qtd_Tem cartão de crédito`
-    # ,`control.qtd_Tem plano de saúde`
-    # ,`control.qtd_Tem cheque especial`
-    # ,`UF_sigla`
-    # ,`urbano`
-    
-    # contains('control'),
-    # -contains('Não tem'),
-    # -contains('chefe_idade'),
-    # -contains('Não empregado'),
-    # -contains('cheque'),
-    
-    # [PROVAVELMENTE NÃO USAR, OU USAR COMO DUMMY APENAS]
-    # despesas.mensais.transporte.proprio_proxy, # Veículo próprio
-    # despesas.mensais.transporte.proprio_proxy_apenas.combustivel, # Veículo próprio (apenas combustível)
-    # [NÃO FAZ MUITA DIFERENÇA]
-    # share_despesas.mensais.imoveis.aquisicao, # Despesas atípicas/temporárias com imóveis
-    # share_despesas.mensais.imoveis.prestacao, # Despesas atípicas/temporárias com imóveis
-    # share_despesas.mensais.imoveis.reforma, # Despesas atípicas/temporárias com imóveis
-    # UF_sigla,
-    # urbano
+    contains('control'),
+    -contains('Não'),
+    UF_sigla,
+    urbano
   ) %>%
   names(.) %>% 
   {glue('`{.}`')} -> control_pof2002
@@ -95,30 +74,10 @@ lista.pof2002_ss$pof_ac_2002_ss %>%
 # POF2008
 lista.pof2008_ss$pof_ac_2008_ss %>% 
   select(
-    # `control.domc_cond_ocup`
-    # ,`control.chefe_idade`
-    # ,`control.chefe_anos_est`
-    # ,`control.chefe_cor`
-    # ,`control.qtd_Empregado`
-    # ,`control.qtd_Tem cartão de crédito`
-    # ,`control.qtd_Tem plano de saúde`
-    # ,`control.qtd_Tem cheque especial`
-    # ,`UF_sigla`
-    # ,`urbano`
-    
-    # contains('control'),
-    # -contains('Não tem'),
-    # # -contains('chefe_idade'),
-    # -contains('Não empregado'),
-    # # -contains('cheque'),
-    # 
-    # # share_despesas.mensais.transporte.proprio_proxy, # Veículo próprio 
-    # # share_despesas.mensais.transporte.proprio_proxy_apenas.combustivel, # Veículo próprio (apenas combustível)
-    # # share_despesas.mensais.imoveis.aquisicao, # Despesas atípicas/temporárias com imóveis
-    # # share_despesas.mensais.imoveis.prestacao, # Despesas atípicas/temporárias com imóveis
-    # # share_despesas.mensais.imoveis.reforma, # Despesas atípicas/temporárias com imóveis
-    # UF_sigla,
-    # urbano
+    contains('control'),
+    -contains('Não'),
+    UF_sigla,
+    urbano
   ) %>%
   names(.) %>% 
   {glue('`{.}`')} -> control_pof2008
@@ -143,25 +102,17 @@ n.child.range <- seq(0,3)
 # SELEÇÃO DE BENS ADULTOS
 bens_adultos <- c(
   
-  # # 'despesas.mensais.manicure_pedicure', # Mais ou menos para menos
-  # # 
-  # # 'despesas.mensais.bebidas.alcoolicas', # Mais ou menos para menos
-  # # 
-  # # 'despesas.mensais.fumo', # Mais ou menos para mais
-  # # 
-  # # 'despesas.mensais.jogos_apostas', # Horrível
-  # # 
-  # # 'despesas.mensais.lazer_adulto', # Muito bom
-  # # 
-  # 'despesas.mensais.takeout.food', # Muito bom
-  # # 
-  # #  #'despesas.mensais.viagens', # Muito bom (crianças de mais velhas ficam mais caras)
+  # # 1) Bens adultos utilizados por Castro (2006) e Vaz & Vaz (2007)
+  'despesas.mensais.vestuario.homem_mulher' # Bom
+  ,'despesas.mensais.bebidas.alcoolicas' # Ruim
+  ,'despesas.mensais.fumo' # Perfeito (ambas parecidas com a escala OCDE modificada)
+  ,'despesas.mensais.jogos_apostas' # Bom (velha escala OCDE 2002, OCDE 2008. um pouco menor)
   # 
-  # 'despesas.mensais.joias' # Bom (velha escala OCDE)
-  # 
-  # # 'despesas.mensais.perfume', # Mais ou menos
-  # # 
-  # # 'despesas.mensais.vestuario.homem_mulher' # Bom
+  # #  2) Outros candidatos a bens de adulto
+  # 'despesas.mensais.lazer_adulto' # Muito bom
+  # ,'despesas.mensais.takeout.food' # Muito bom
+  # ,'despesas.mensais.joias' # Muito Bom (velha escala OCDE 2002, OCDE 2008)
+  # ,'despesas.mensais.perfume' # Muito bom (velha escala OCDE 2002, OCDE 2008)
 
 )
 
@@ -185,23 +136,23 @@ lapply(
   }
 ) -> lista.pof2002_ss.rothbarth
 
-# Com sexo
-lapply( 
-  lista.pof2002_cs,
-  function(pof){ 
-    pof %>%
-      mutate(
-        despesas.mensais.bens_adultos = rowSums(
-          across(
-            .cols = bens_adultos),
-          na.rm = T)
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2002_cs.rothbarth
+# # Com sexo
+# lapply( 
+#   lista.pof2002_cs,
+#   function(pof){ 
+#     pof %>%
+#       mutate(
+#         despesas.mensais.bens_adultos = rowSums(
+#           across(
+#             .cols = bens_adultos),
+#           na.rm = T)
+#       ) -> pof.temp
+#     
+#     # assign(x = glue('{pof.name}.rothbarth.sample'),
+#     #        value = pof.temp,
+#     #        envir = .GlobalEnv)
+#   }
+# ) -> lista.pof2002_cs.rothbarth
 
 # POF2008
 # Sem sexo
@@ -222,344 +173,163 @@ lapply(
   }
 ) -> lista.pof2008_ss.rothbarth
 
-# Com sexo
-lapply( 
-  lista.pof2008_cs,
-  function(pof){ 
-    pof %>%
-      mutate(
-        despesas.mensais.bens_adultos = rowSums(
-          across(
-            .cols = bens_adultos),
-          na.rm = T)
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2008_cs.rothbarth
+# # Com sexo
+# lapply( 
+#   lista.pof2008_cs,
+#   function(pof){ 
+#     pof %>%
+#       mutate(
+#         despesas.mensais.bens_adultos = rowSums(
+#           across(
+#             .cols = bens_adultos),
+#           na.rm = T)
+#       ) -> pof.temp
+#     
+#     # assign(x = glue('{pof.name}.rothbarth.sample'),
+#     #        value = pof.temp,
+#     #        envir = .GlobalEnv)
+#   }
+# ) -> lista.pof2008_cs.rothbarth
 
-# 7. X SELEÇÃO AMOSTRAL (CASTRO, 2006) ------------------------------------------------------------
+
+
+
+
+
+
+
+# 6. SELEÇÃO AMOSTRAL ------------------------------------------------------------
 # POF2002
 # Sem sexo
 lapply( 
   lista.pof2002_ss.rothbarth,
   function(pof){ 
     pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
-        !!sym(expenditure_pof2002) > 0,
-        !!sym(iv.expenditure_pof2002) > 0
-      ) %>% 
-      sample.selection( # Seleção amostral Castro (2006)
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
-        var.chefe_idade = 'control.chefe_idade',
-        max_idade_chefe = 70,
-        min_idade_chefe = 21,
-        qtd_morador = qtd_moradores_pof2002,
-        max_moradores = 5,
-        max_filhos = 3,
-        max_outros.parentes = 0,
-        max_agregados = 0,
-        max_pensionistas = 0,
-        max_empregados = 0,
-        max_parentes.empregados = 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2002_ss.rothbarth.sample
-
-# Com sexo
-lapply( 
-  lista.pof2002_cs.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
-        !!sym(expenditure_pof2002) > 0,
-        !!sym(iv.expenditure_pof2002) > 0
-      ) %>%
-      sample.selection( # Seleção amostral Castro (2006)
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
-        var.chefe_idade = 'control.chefe_idade',
-        max_idade_chefe = 70,
-        min_idade_chefe = 21,
-        qtd_morador = qtd_moradores_pof2002,
-        max_moradores = 5,
-        max_filhos = 3,
-        max_outros.parentes = 0,
-        max_agregados = 0,
-        max_pensionistas = 0,
-        max_empregados = 0,
-        max_parentes.empregados = 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2002_cs.rothbarth.sample
-
-# POF2008
-# Sem sexo
-lapply( 
-  lista.pof2008_ss.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
-        !!sym(expenditure_pof2008) > 0,
-        !!sym(iv.expenditure_pof2008) > 0
-      ) %>% 
-      sample.selection( # Seleção amostral Castro (2006)
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
-        var.chefe_idade = 'control.chefe_idade_anos',
-        max_idade_chefe = 70,
-        min_idade_chefe = 21,
-        qtd_morador = qtd_moradores_pof2008,
-        max_moradores = 5,
-        max_filhos = 3,
-        max_outros.parentes = 0,
-        max_agregados = 0,
-        max_pensionistas = 0,
-        max_empregados = 0,
-        max_parentes.empregados = 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2008_ss.rothbarth.sample
-
-# Com sexo
-lapply( 
-  lista.pof2008_cs.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
-        !!sym(expenditure_pof2008) > 0,
-        !!sym(iv.expenditure_pof2008) > 0
-      ) %>%
-      sample.selection( # Seleção amostral Castro (2006)
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
-        var.chefe_idade = 'control.chefe_idade_anos',
-        max_idade_chefe = 70,
-        min_idade_chefe = 21,
-        qtd_morador = qtd_moradores_pof2008,
-        max_moradores = 5,
-        max_filhos = 3,
-        max_outros.parentes = 0,
-        max_agregados = 0,
-        max_pensionistas = 0,
-        max_empregados = 0,
-        max_parentes.empregados = 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2008_cs.rothbarth.sample
-
-# 7. (ADAPTADO) SELEÇÃO AMOSTRAL (CASTRO, 2006) ------------------------------------------------------------
-# POF2002
-# Sem sexo
-lapply( 
-  lista.pof2002_ss.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
-        !!sym(expenditure_pof2002) > 0,
-        !!sym(iv.expenditure_pof2002) > 0
-      ) %>% 
-      sample.selection( # Seleção amostral Castro (2006)
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
-        var.chefe_idade = 'control.chefe_idade',
-        max_idade_chefe = 69,
-        min_idade_chefe = 18,
-        qtd_morador = qtd_moradores_pof2002,
-        max_moradores = 5,
-        max_filhos = 3,
-        max_outros.parentes = 3,
-        max_agregados = 0,
-        max_pensionistas = 0,
-        max_empregados = 0,
-        max_parentes.empregados = 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2002_ss.rothbarth.sample
-
-# Com sexo
-lapply( 
-  lista.pof2002_cs.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2002) > 0,
-        !!sym(expenditure_pof2002) > 0,
-        !!sym(iv.expenditure_pof2002) > 0
-      ) %>%
-      sample.selection( # Seleção amostral Castro (2006)
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
-        var.chefe_idade = 'control.chefe_idade',
-        max_idade_chefe = 69,
-        min_idade_chefe = 18,
-        qtd_morador = qtd_moradores_pof2002,
-        max_moradores = 5,
-        max_filhos = 3,
-        max_outros.parentes = 3,
-        max_agregados = 0,
-        max_pensionistas = 0,
-        max_empregados = 0,
-        max_parentes.empregados = 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2002_cs.rothbarth.sample
-
-# POF2008
-# Sem sexo
-lapply( 
-  lista.pof2008_ss.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
-        !!sym(expenditure_pof2008) > 0,
-        !!sym(iv.expenditure_pof2008) > 0
-      ) %>% 
-      sample.selection( # Seleção amostral Castro (2006)
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
-        var.chefe_idade = 'control.chefe_idade_anos',
-        max_idade_chefe = 69,
-        min_idade_chefe = 18,
-        qtd_morador = qtd_moradores_pof2008,
-        max_moradores = 5,
-        max_filhos = 3,
-        max_outros.parentes = 3,
-        max_agregados = 0,
-        max_pensionistas = 0,
-        max_empregados = 0,
-        max_parentes.empregados = 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2008_ss.rothbarth.sample
-
-# Com sexo
-lapply( 
-  lista.pof2008_cs.rothbarth,
-  function(pof){ 
-    pof %>%
-      filter(
-        !!sym(rothbarth.welfare.indicator_pof2008) > 0,
-        !!sym(expenditure_pof2008) > 0,
-        !!sym(iv.expenditure_pof2008) > 0
-      ) %>%
-      sample.selection( # Seleção amostral Castro (2006)
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
-        var.chefe_idade = 'control.chefe_idade_anos',
-        max_idade_chefe = 69,
-        min_idade_chefe = 18,
-        qtd_morador = qtd_moradores_pof2008,
-        max_moradores = 5,
-        max_filhos = 3,
-        max_outros.parentes = 3,
-        max_agregados = 0,
-        max_pensionistas = 0,
-        max_empregados = 0,
-        max_parentes.empregados = 0
-      ) -> pof.temp
-    
-    # assign(x = glue('{pof.name}.rothbarth.sample'),
-    #        value = pof.temp,
-    #        envir = .GlobalEnv)
-  }
-) -> lista.pof2008_cs.rothbarth.sample
-
-# 7. (TESTE) SELEÇÃO AMOSTRAL (TESTE) ------------------------------------------------------------
-# POF2002
-# Sem sexo
-lapply(
-  lista.pof2002_ss.rothbarth,
-  function(pof){ 
-    pof %>% 
       filter(
         round(!!sym(rothbarth.welfare.indicator_pof2002),2) > 0,
         round(!!sym(expenditure_pof2002),2) > 0,
-        round(!!sym(iv.expenditure_pof2002),2) > 0,
-      ) %>%
+        round(!!sym(iv.expenditure_pof2002),2) > 0
+      ) %>% 
       sample.selection(
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
+        incluir_solteiros_sem.filhos = T,
+        incluir_solteiros_com.filhos = T,
         var.chefe_idade = 'control.chefe_idade',
-        max_idade_chefe = 65,
-        min_idade_chefe = 18,
+        max_idade_chefe = 69, 
+        min_idade_chefe = 18, 
         qtd_morador = qtd_moradores_pof2002,
-        max_moradores = 5,
-        max_filhos = 3,
+        max_moradores = 5, 
+        max_filhos = 3, 
         max_outros.parentes = 3,
         max_agregados = 0,
         max_pensionistas = 0,
         max_empregados = 0,
         max_parentes.empregados = 0
       ) -> pof.temp
+    
+    # assign(x = glue('{pof.name}.rothbarth.sample'),
+    #        value = pof.temp,
+    #        envir = .GlobalEnv)
   }
 ) -> lista.pof2002_ss.rothbarth.sample
 
-lapply(
+# # Com sexo
+# lapply( 
+#   lista.pof2002_cs.rothbarth,
+#   function(pof){ 
+#     pof %>%
+#       filter(
+#         round(!!sym(rothbarth.welfare.indicator_pof2002),2) > 0,
+#         round(!!sym(expenditure_pof2002),2) > 0,
+#         round(!!sym(iv.expenditure_pof2002),2) > 0
+#       ) %>%
+#       sample.selection( 
+#         incluir_solteiros_sem.filhos = T,
+#         incluir_solteiros_com.filhos = T,
+#         var.chefe_idade = 'control.chefe_idade',
+#         max_idade_chefe = 69, 
+#         min_idade_chefe = 18, 
+#         qtd_morador = qtd_moradores_pof2002,
+#         max_moradores = 5, 
+#         max_filhos = 3, 
+#         max_outros.parentes = 3,
+#         max_agregados = 0,
+#         max_pensionistas = 0,
+#         max_empregados = 0,
+#         max_parentes.empregados = 0
+#       ) -> pof.temp
+#     
+#     # assign(x = glue('{pof.name}.rothbarth.sample'),
+#     #        value = pof.temp,
+#     #        envir = .GlobalEnv)
+#   }
+# ) -> lista.pof2002_cs.rothbarth.sample
+
+# POF2008
+# Sem sexo
+lapply( 
   lista.pof2008_ss.rothbarth,
-  function(pof){
-    pof %>% 
+  function(pof){ 
+    pof %>%
       filter(
         round(!!sym(rothbarth.welfare.indicator_pof2008),2) > 0,
         round(!!sym(expenditure_pof2008),2) > 0,
-        round(!!sym(iv.expenditure_pof2008),2) > 0,
-      ) %>%
-      sample.selection(
-        incluir_solteiros_sem.filhos = F,
-        incluir_solteiros_com.filhos = F,
+        round(!!sym(iv.expenditure_pof2008),2) > 0
+      ) %>% 
+      sample.selection( 
+        incluir_solteiros_sem.filhos = T,
+        incluir_solteiros_com.filhos = T,
         var.chefe_idade = 'control.chefe_idade_anos',
-        max_idade_chefe = 65,
-        min_idade_chefe = 18,
+        max_idade_chefe = 69, 
+        min_idade_chefe = 18, 
         qtd_morador = qtd_moradores_pof2008,
-        max_moradores = 5,
-        max_filhos = 3,
+        max_moradores = 5, 
+        max_filhos = 3, 
         max_outros.parentes = 3,
         max_agregados = 0,
         max_pensionistas = 0,
         max_empregados = 0,
         max_parentes.empregados = 0
       ) -> pof.temp
+    
+    # assign(x = glue('{pof.name}.rothbarth.sample'),
+    #        value = pof.temp,
+    #        envir = .GlobalEnv)
   }
 ) -> lista.pof2008_ss.rothbarth.sample
 
-# 9. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, sem sexo ------------------------------------------------------------
+# # Com sexo
+# lapply( 
+#   lista.pof2008_cs.rothbarth,
+#   function(pof){ 
+#     pof %>%
+#       filter(
+        # round(!!sym(rothbarth.welfare.indicator_pof2008),2) > 0,
+        # round(!!sym(expenditure_pof2008),2) > 0,
+        # round(!!sym(iv.expenditure_pof2008),2) > 0
+#       ) %>%
+#       sample.selection( 
+#         incluir_solteiros_sem.filhos = T,
+#         incluir_solteiros_com.filhos = T,
+#         var.chefe_idade = 'control.chefe_idade_anos',
+#         max_idade_chefe = 69, 
+#         min_idade_chefe = 18, 
+#         qtd_morador = qtd_moradores_pof2008,
+#         max_moradores = 5, 
+#         max_filhos = 3, 
+#         max_outros.parentes = 3,
+#         max_agregados = 0,
+#         max_pensionistas = 0,
+#         max_empregados = 0,
+#         max_parentes.empregados = 0
+#       ) -> pof.temp
+#     
+#     # assign(x = glue('{pof.name}.rothbarth.sample'),
+#     #        value = pof.temp,
+#     #        envir = .GlobalEnv)
+#   }
+# ) -> lista.pof2008_cs.rothbarth.sample
+
+# 7. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2002, todas as faixas etárias, sem sexo
 # Modelos 2SLS (para output de tabelas)
 Map(
@@ -567,17 +337,10 @@ Map(
   pessoa_ref = lista.ref_2002_ss,
   function(pof, pessoa_ref){
     pof %>%
-      # iv.engel.rothbarth.econ_scale(
       iv.engel.rothbarth(
-      # iv.engel.rothbarth.quad(
         welfare.indicator = rothbarth.welfare.indicator_pof2002,
         expenditure = expenditure_pof2002,
         iv.expenditure = iv.expenditure_pof2002,
-        # expenditure = 'despesas.mensais.totais',
-        # iv.expenditure = 'renda',
-
-        # qtd_morador = qtd_moradores_pof2002,
-
         control = control_pof2002,
         weights = T,
         weights.var = weights.var_pof2002,
@@ -618,25 +381,21 @@ Map(
     lapply(
       n.child, 
       function(n){
-        # equivalence.scales.engel.rothbarth.econ_scale(
-        equivalence.scales.engel.rothbarth2(
+        equivalence.scales.engel.rothbarth(
           model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = n,
           na.r = 2, nc.r = 0
         ) %>% 
           mutate(
-            family.comparison = glue('AA vs AA', strrep('C',n)),
+            family.type = glue('AA', strrep('C',n)),
             data = sample
           )
       }
     ) %>% bind_rows(.)
-  } 
-) %>% bind_rows(.) %>% View(.)
-# -> pof2002_ss.rothbarth_scales
-# pof2002_ss.rothbarth_scales
+  }) %>% bind_rows(.) -> pof2002_ss.rothbarth_scales
 
-# 11. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
+# 8. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2008, todas as faixas etárias, sem sexo
 # Modelos 2SLS (para output de tabelas)
 Map(
@@ -644,13 +403,10 @@ Map(
   pessoa_ref = lista.ref_2008_ss,
   function(pof, pessoa_ref){
     pof %>%
-      # iv.engel.rothbarth.econ_scale(
       iv.engel.rothbarth(
         welfare.indicator = rothbarth.welfare.indicator_pof2008,
         expenditure = expenditure_pof2008,
         iv.expenditure = iv.expenditure_pof2008,
-        # qtd_morador = qtd_moradores_pof2008,
-        
         control = control_pof2008,
         weights = T,
         weights.var = weights.var_pof2008,
@@ -691,24 +447,21 @@ Map(
     lapply(
       n.child, 
       function(n){
-        equivalence.scales.engel.rothbarth2(
+        equivalence.scales.engel.rothbarth(
           model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = n,
           na.r = 2, nc.r = 0
         ) %>% 
           mutate(
-            family.comparison = glue('AA vs AA', strrep('C',n)),
+            family.type = glue('AA', strrep('C',n)),
             data = sample
           )
       }
     ) %>% bind_rows(.)
-  } 
-) %>% bind_rows(.) %>% View(.)
-# -> pof2008_ss.rothbarth_scales
-# pof2008_ss.rothbarth_scales
+  }) %>% bind_rows(.) -> pof2008_ss.rothbarth_scales
 
-# # 10. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
+# # 9. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
 # # POF2002, todas as faixas etárias, sem sexo
 # # Modelos 2SLS (para output de tabelas)
 # Map(
@@ -763,14 +516,14 @@ Map(
 #     lapply(
 #       n.child, 
 #       function(n){
-#         equivalence.scales.engel.rothbarth2(
+#         equivalence.scales.engel.rothbarth(
 #           model = iv.rothbarth.model,
 #           pessoa.referencia = pessoa_ref,
 #           na.h = 2, nc.h = n,
 #           na.r = 2, nc.r = 0
 #         ) %>% 
 #           mutate(
-#             family.comparison = glue('AA vs AA', strrep('C',n)),
+#             family.type = glue('AA', strrep('C',n)),
 #             data = sample
 #           )
 #       }
@@ -779,7 +532,7 @@ Map(
 # ) %>% bind_rows(.) %>% View(.)
 # # -> pof2002_cs.rothbarth_scales
 # # pof2002_cs.rothbarth_scales
-# # 12. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, com sexo ------------------------------------------------------------
+# # 10. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, com sexo ------------------------------------------------------------
 # # POF2008, todas as faixas etárias, sem sexo
 # # Modelos 2SLS (para output de tabelas)
 # Map(
@@ -834,14 +587,14 @@ Map(
 #     lapply(
 #       n.child, 
 #       function(n){
-#         equivalence.scales.engel.rothbarth2(
+#         equivalence.scales.engel.rothbarth(
 #           model = iv.rothbarth.model,
 #           pessoa.referencia = pessoa_ref,
 #           na.h = 2, nc.h = n,
 #           na.r = 2, nc.r = 0
 #         ) %>% 
 #           mutate(
-#             family.comparison = glue('AA vs AA', strrep('C',n)),
+#             family.type = glue('AA', strrep('C',n)),
 #             data = sample
 #           )
 #       }
@@ -851,52 +604,56 @@ Map(
 # # -> pof2008_cs.rothbarth_scales
 # # pof2008_cs.rothbarth_scales
 
-# 13. ARQUIVOS EXCEL ------------------------------------------------------
+# 11. ARQUIVOS EXCEL ------------------------------------------------------
 list(
   'POF2002 (sem sexo)' = pof2002_ss.rothbarth_scales,
-  'POF2002 (com sexo)' = pof2002_cs.rothbarth_scales,
-  'POF2008 (sem sexo)' = pof2008_ss.rothbarth_scales,
-  'POF2008 (com sexo)' = pof2008_cs.rothbarth_scales
+  # 'POF2002 (com sexo)' = pof2002_cs.rothbarth_scales,
+  'POF2008 (sem sexo)' = pof2008_ss.rothbarth_scales
+  # , 'POF2008 (com sexo)' = pof2008_cs.rothbarth_scales
 ) %>% 
   openxlsx::write.xlsx(file = 'Escalas_Equivalencia_Rothbarth.xlsx')
 
-# 14. Teste Tabelas de Regressão Bonitas --------------------------------------
-Map(
-  list.models = list(
-    lista.pof2002_ss.rothbarth.sample.ivreg,
-    # lista.pof2002_cs.rothbarth.sample.ivreg,
-    lista.pof2008_ss.rothbarth.sample.ivreg
-    # lista.pof2008_cs.rothbarth.sample.ivreg
-  ),
-  list.str_errors = list(
-    lista.pof2002_ss.rothbarth.sample.str_errors.robust,
-    # lista.pof2002_cs.rothbarth.sample.str_errors.robust,
-    lista.pof2008_ss.rothbarth.sample.str_errors.robust
-    # lista.pof2008_cs.rothbarth.sample.str_errors.robust
-  ),
-  list.names = list(
-    'Rothbarth_2SLS_POF2002_SemSexo',
-    # 'Rothbarth_2SLS_POF2002_ComSexo',
-    'Rothbarth_2SLS_POF2008_SemSexo'
-    # 'Rothbarth_2SLS_POF2008_ComSexo'
-  ),
-  function(
-    list.models,
-    list.str_errors,
-    list.names
-  ){
-    
-    stargazer(
-      list.models,
-      se = list.str_errors,
-      type = 'html',
-      # add.lines = list(
-      #   
-      # ),
-      out = glue('{list.names}.htm')
-    )
-  }
-)
+# # 12. Teste Tabelas de Regressão Bonitas --------------------------------------
+# Map(
+#   list.models = list(
+#     lista.pof2002_ss.rothbarth.sample.ivreg,
+#     # lista.pof2002_cs.rothbarth.sample.ivreg,
+#     lista.pof2008_ss.rothbarth.sample.ivreg
+#     # lista.pof2008_cs.rothbarth.sample.ivreg
+#   ),
+#   list.str_errors = list(
+#     lista.pof2002_ss.rothbarth.sample.str_errors.robust,
+#     # lista.pof2002_cs.rothbarth.sample.str_errors.robust,
+#     lista.pof2008_ss.rothbarth.sample.str_errors.robust
+#     # lista.pof2008_cs.rothbarth.sample.str_errors.robust
+#   ),
+#   list.names = list(
+#     'Rothbarth_2SLS_POF2002_SemSexo',
+#     # 'Rothbarth_2SLS_POF2002_ComSexo',
+#     'Rothbarth_2SLS_POF2008_SemSexo'
+#     # 'Rothbarth_2SLS_POF2008_ComSexo'
+#   ),
+#   function(
+#     list.models,
+#     list.str_errors,
+#     list.names
+#   ){
+#     
+#     stargazer(
+#       list.models,
+#       se = list.str_errors,
+#       type = 'html',
+#       # add.lines = list(
+#       #   
+#       # ),
+#       out = glue('{list.names}.htm')
+#     )
+#   }
+# )
+# 
+# 
+# 
 
-
-
+# temp --------------------------------------------------------------------
+lapply(lista.pof2002_ss.rothbarth.sample.ivreg, summary)
+lapply(lista.pof2008_ss.rothbarth.sample.ivreg, summary)

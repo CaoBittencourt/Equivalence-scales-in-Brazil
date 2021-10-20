@@ -46,8 +46,8 @@ faixas.etarias.ac2008 <- c(0, 14, max(individuos.pof2008$idade_anos))
 
 # Faixas Etárias III
 # Faixas etárias utilizadas por Vaz & Vaz (2007)
-faixas.etarias.vaz2002 <- c(0, 4, 9, 14, max(individuos.pof2002$idade))
-faixas.etarias.vaz2008 <- c(0, 4, 9, 14, max(individuos.pof2008$idade_anos))
+# faixas.etarias.vaz2002 <- c(0, 4, 9, 14, max(individuos.pof2002$idade))
+# faixas.etarias.vaz2008 <- c(0, 4, 9, 14, max(individuos.pof2008$idade_anos))
 
 # Faixas Etárias IV
 # Faixas etárias utilizadas por Deaton (2018)
@@ -62,16 +62,16 @@ faixas.etarias.vaz2008 <- c(0, 4, 9, 14, max(individuos.pof2008$idade_anos))
 # Listas
 list(
   # 'normais_2002' = faixas.etarias.normais2002, 
-  'ac_2002' = faixas.etarias.ac2002,
-  'vaz_2002' = faixas.etarias.vaz2002
+  'ac_2002' = faixas.etarias.ac2002
+  # , 'vaz_2002' = faixas.etarias.vaz2002
   # , 'deaton_2002' = faixas.etarias.deaton2002
   # , 'lancaster_2002' = faixas.etarias.lancaster2002
 ) -> lista.faixas.etarias2002
 
 list(
   # 'normais_2008' = faixas.etarias.normais2008, 
-  'ac_2008' = faixas.etarias.ac2008,
-  'vaz_2008' = faixas.etarias.vaz2008
+  'ac_2008' = faixas.etarias.ac2008
+  # , 'vaz_2008' = faixas.etarias.vaz2008
   # , 'deaton_2008' = faixas.etarias.deaton2008
   # , 'lancaster_2008' = faixas.etarias.lancaster2008
 ) -> lista.faixas.etarias2008
@@ -266,7 +266,7 @@ var.interesse_domc_pof2008 <- c('cod_cond_ocup')
 # 7. AGREGAÇÃO ------------------------------------------------------------
 # POF 2002
 # POF 2002, todas as faixas etárias, sem sexo
-mapply(
+Map(
   faixa.etaria = lista.faixas.etarias2002_ss,
   faixa.etaria.var_name = names(lista.faixas.etarias2002_ss),
   function(faixa.etaria,
@@ -314,7 +314,7 @@ mapply(
 ) -> lista.pof2002_ss
 
 # POF 2002, todas as faixas etárias, com sexo
-mapply(
+Map(
   faixa.etaria = lista.faixas.etarias2002_cs,
   faixa.etaria.var_name = names(lista.faixas.etarias2002_cs),
   function(faixa.etaria,
@@ -363,7 +363,7 @@ mapply(
 
 # POF 2008
 # POF 2008, todas as faixas etárias, sem sexo
-mapply(
+Map(
   faixa.etaria = lista.faixas.etarias2008_ss,
   faixa.etaria.var_name = names(lista.faixas.etarias2008_ss),
   function(faixa.etaria,
@@ -411,7 +411,7 @@ mapply(
 ) -> lista.pof2008_ss
 
 # POF 2008, todas as faixas etárias, com sexo
-mapply(
+Map(
   faixa.etaria = lista.faixas.etarias2008_cs,
   faixa.etaria.var_name = names(lista.faixas.etarias2008_cs),
   function(faixa.etaria,
