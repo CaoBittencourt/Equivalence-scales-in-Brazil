@@ -137,11 +137,11 @@ lapply(
         max_parentes.empregados = 0
       ) -> pof.temp
     
-    # assign(x = glue('{pof.name}.engle.sample'),
+    # assign(x = glue('{pof.name}.engel.sample'),
     #        value = pof.temp,
     #        envir = .GlobalEnv)
   }
-) -> lista.pof2002_ss.engle.sample
+) -> lista.pof2002_ss.engel.sample
 
 # # Com sexo
 # lapply( 
@@ -169,11 +169,11 @@ lapply(
 #         max_parentes.empregados = 0
 #       ) -> pof.temp
 #     
-#     # assign(x = glue('{pof.name}.engle.sample'),
+#     # assign(x = glue('{pof.name}.engel.sample'),
 #     #        value = pof.temp,
 #     #        envir = .GlobalEnv)
 #   }
-# ) -> lista.pof2002_cs.engle.sample
+# ) -> lista.pof2002_cs.engel.sample
 
 # POF2008
 # Sem sexo
@@ -202,11 +202,11 @@ lapply(
         max_parentes.empregados = 0
       ) -> pof.temp
     
-    # assign(x = glue('{pof.name}.engle.sample'),
+    # assign(x = glue('{pof.name}.engel.sample'),
     #        value = pof.temp,
     #        envir = .GlobalEnv)
   }
-) -> lista.pof2008_ss.engle.sample
+) -> lista.pof2008_ss.engel.sample
 
 # # Com sexo
 # lapply( 
@@ -234,17 +234,17 @@ lapply(
 #         max_parentes.empregados = 0
 #       ) -> pof.temp
 #     
-#     # assign(x = glue('{pof.name}.engle.sample'),
+#     # assign(x = glue('{pof.name}.engel.sample'),
 #     #        value = pof.temp,
 #     #        envir = .GlobalEnv)
 #   }
-# ) -> lista.pof2008_cs.engle.sample
+# ) -> lista.pof2008_cs.engel.sample
 
 # 6. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2002, todas as faixas etárias, sem sexo
 # Modelos 2SLS (para output de tabelas)
 Map(
-  pof = lista.pof2002_ss.engle.sample,
+  pof = lista.pof2002_ss.engel.sample,
   pessoa_ref = lista.ref_2002_ss,
   function(pof, pessoa_ref){
     pof %>%
@@ -258,30 +258,30 @@ Map(
         show.diagnostics = T
       ) %>% return(.)
   }
-) -> lista.pof2002_ss.engle.sample.ivreg
+) -> lista.pof2002_ss.engel.sample.ivreg
 
 # Erros robustos (para output de tabelas)
 # lapply(
-#   lista.pof2002_ss.engle.sample.ivreg,
+#   lista.pof2002_ss.engel.sample.ivreg,
 #   function(model){
 #     model %>% 
 #       robust_std.errors(.type = 'HC3')
 #   }
-# ) -> lista.pof2002_ss.engle.sample.str_errors.robust
+# ) -> lista.pof2002_ss.engel.sample.str_errors.robust
 
 # Modelos robustos (para cálculos)
 lapply(
-  lista.pof2002_ss.engle.sample.ivreg,
+  lista.pof2002_ss.engel.sample.ivreg,
   function(model){
     model %>% 
       fix.heteroskedasticity(.type = 'HC3')
   }
-) -> lista.pof2002_ss.engle.sample.ivreg.robust
+) -> lista.pof2002_ss.engel.sample.ivreg.robust
 
 # Escalas de equivalência
 Map(
-  iv.engel.model = lista.pof2002_ss.engle.sample.ivreg.robust,
-  sample = names(lista.pof2002_ss.engle.sample.ivreg.robust),
+  iv.engel.model = lista.pof2002_ss.engel.sample.ivreg.robust,
+  sample = names(lista.pof2002_ss.engel.sample.ivreg.robust),
   pessoa_ref = lista.ref_2002_ss,
   function(
     iv.engel.model, 
@@ -304,13 +304,13 @@ Map(
           )
       }
     ) %>% bind_rows(.)
-  }) %>% bind_rows(.) -> pof2002_ss.engle_scales 
+  }) %>% bind_rows(.) -> pof2002_ss.engel_scales
 
 # 7. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2008, todas as faixas etárias, sem sexo
 # Modelos 2SLS (para output de tabelas)
 Map(
-  pof = lista.pof2008_ss.engle.sample,
+  pof = lista.pof2008_ss.engel.sample,
   pessoa_ref = lista.ref_2008_ss,
   function(pof, pessoa_ref){
     pof %>%
@@ -324,30 +324,30 @@ Map(
         show.diagnostics = T
       ) %>% return(.)
   }
-) -> lista.pof2008_ss.engle.sample.ivreg
+) -> lista.pof2008_ss.engel.sample.ivreg
 
 # Erros robustos (para output de tabelas)
 # lapply(
-#   lista.pof2008_ss.engle.sample.ivreg,
+#   lista.pof2008_ss.engel.sample.ivreg,
 #   function(model){
 #     model %>% 
 #       robust_std.errors(.type = 'HC3')
 #   }
-# ) -> lista.pof2008_ss.engle.sample.str_errors.robust
+# ) -> lista.pof2008_ss.engel.sample.str_errors.robust
 
 # Modelos robustos (para cálculos)
 lapply(
-  lista.pof2008_ss.engle.sample.ivreg,
+  lista.pof2008_ss.engel.sample.ivreg,
   function(model){
     model %>% 
       fix.heteroskedasticity(.type = 'HC3')
   }
-) -> lista.pof2008_ss.engle.sample.ivreg.robust
+) -> lista.pof2008_ss.engel.sample.ivreg.robust
 
 # Escalas de equivalência
 Map(
-  iv.engel.model = lista.pof2008_ss.engle.sample.ivreg.robust,
-  sample = names(lista.pof2008_ss.engle.sample.ivreg.robust),
+  iv.engel.model = lista.pof2008_ss.engel.sample.ivreg.robust,
+  sample = names(lista.pof2008_ss.engel.sample.ivreg.robust),
   pessoa_ref = lista.ref_2008_ss,
   function(
     iv.engel.model, 
@@ -370,13 +370,13 @@ Map(
           )
       }
     ) %>% bind_rows(.)
-  }) %>% bind_rows(.) -> pof2008_ss.engle_scales
+  }) %>% bind_rows(.) -> pof2008_ss.engel_scales
 
 # # 8. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
 # # POF2002, todas as faixas etárias, sem sexo
 # # Modelos 2SLS (para output de tabelas)
 # Map(
-#   pof = lista.pof2002_cs.engle.sample,
+#   pof = lista.pof2002_cs.engel.sample,
 #   pessoa_ref = lista.ref_2002_cs,
 #   function(pof, pessoa_ref){
 #     pof %>%
@@ -393,30 +393,30 @@ Map(
 #         show.diagnostics = T
 #       ) %>% return(.)
 #   }
-# ) -> lista.pof2002_cs.engle.sample.ivreg
+# ) -> lista.pof2002_cs.engel.sample.ivreg
 # 
 # # Erros robustos (para output de tabelas)
 # lapply(
-#   lista.pof2002_cs.engle.sample.ivreg,
+#   lista.pof2002_cs.engel.sample.ivreg,
 #   function(model){
 #     model %>% 
 #       robust_std.errors(.type = 'HC3')
 #   }
-# ) -> lista.pof2002_cs.engle.sample.str_errors.robust
+# ) -> lista.pof2002_cs.engel.sample.str_errors.robust
 # 
 # # Modelos robustos (para cálculos)
 # lapply(
-#   lista.pof2002_cs.engle.sample.ivreg,
+#   lista.pof2002_cs.engel.sample.ivreg,
 #   function(model){
 #     model %>% 
 #       fix.heteroskedasticity(.type = 'HC3')
 #   }
-# ) -> lista.pof2002_cs.engle.sample.ivreg.robust
+# ) -> lista.pof2002_cs.engel.sample.ivreg.robust
 # 
 # # Escalas de equivalência
 # Map(
-#   iv.engel.model = lista.pof2002_cs.engle.sample.ivreg.robust,
-#   sample = names(lista.pof2002_cs.engle.sample.ivreg.robust),
+#   iv.engel.model = lista.pof2002_cs.engel.sample.ivreg.robust,
+#   sample = names(lista.pof2002_cs.engel.sample.ivreg.robust),
 #   pessoa_ref = lista.ref_2002_cs,
 #   function(
 #     iv.engel.model, 
@@ -440,13 +440,13 @@ Map(
 #       }
 #     ) %>% bind_rows(.)
 #   } 
-# ) %>% bind_rows(.) -> pof2002_cs.engle_scales
+# ) %>% bind_rows(.) -> pof2002_cs.engel_scales
 
 # # 9. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, com sexo ------------------------------------------------------------
 # # POF2008, todas as faixas etárias, sem sexo
 # # Modelos 2SLS (para output de tabelas)
 # Map(
-#   pof = lista.pof2008_cs.engle.sample,
+#   pof = lista.pof2008_cs.engel.sample,
 #   pessoa_ref = lista.ref_2008_cs,
 #   function(pof, pessoa_ref){
 #     pof %>%
@@ -463,30 +463,30 @@ Map(
 #         show.diagnostics = T
 #       ) %>% return(.)
 #   }
-# ) -> lista.pof2008_cs.engle.sample.ivreg
+# ) -> lista.pof2008_cs.engel.sample.ivreg
 # 
 # # Erros robustos (para output de tabelas)
 # lapply(
-#   lista.pof2008_cs.engle.sample.ivreg,
+#   lista.pof2008_cs.engel.sample.ivreg,
 #   function(model){
 #     model %>% 
 #       robust_std.errors(.type = 'HC3')
 #   }
-# ) -> lista.pof2008_cs.engle.sample.str_errors.robust
+# ) -> lista.pof2008_cs.engel.sample.str_errors.robust
 # 
 # # Modelos robustos (para cálculos)
 # lapply(
-#   lista.pof2008_cs.engle.sample.ivreg,
+#   lista.pof2008_cs.engel.sample.ivreg,
 #   function(model){
 #     model %>% 
 #       fix.heteroskedasticity(.type = 'HC3')
 #   }
-# ) -> lista.pof2008_cs.engle.sample.ivreg.robust
+# ) -> lista.pof2008_cs.engel.sample.ivreg.robust
 # 
 # # Escalas de equivalência
 # Map(
-#   iv.engel.model = lista.pof2008_cs.engle.sample.ivreg.robust,
-#   sample = names(lista.pof2008_cs.engle.sample.ivreg.robust),
+#   iv.engel.model = lista.pof2008_cs.engel.sample.ivreg.robust,
+#   sample = names(lista.pof2008_cs.engel.sample.ivreg.robust),
 #   pessoa_ref = lista.ref_2008_cs,
 #   function(
 #     iv.engel.model, 
@@ -510,19 +510,16 @@ Map(
 #       }
 #     ) %>% bind_rows(.)
 #   } 
-# ) %>% bind_rows(.) -> pof2008_cs.engle_scales
+# ) %>% bind_rows(.) -> pof2008_cs.engel_scales
 
 # 10. ARQUIVOS EXCEL ------------------------------------------------------
 list(
-  'POF2002 (sem sexo)' = pof2002_ss.engle_scales
-  # ,'POF2002 (com sexo)' = pof2002_cs.engle_scales,
-  ,'POF2008 (sem sexo)' = pof2008_ss.engle_scales
-  # ,'POF2008 (com sexo)' = pof2008_cs.engle_scales
+  'POF2002 (sem sexo)' = pof2002_ss.engel_scales
+  # ,'POF2002 (com sexo)' = pof2002_cs.engel_scales,
+  ,'POF2008 (sem sexo)' = pof2008_ss.engel_scales
+  # ,'POF2008 (com sexo)' = pof2008_cs.engel_scales
 ) %>% 
   openxlsx::write.xlsx(file = 'Escalas_Equivalencia_Engel.xlsx')
 
 
 
-# temp --------------------------------------------------------------------
-lapply(lista.pof2002_ss.engle.sample.ivreg, summary)
-lapply(lista.pof2008_ss.engle.sample.ivreg, summary)

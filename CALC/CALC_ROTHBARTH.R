@@ -109,10 +109,11 @@ bens_adultos <- c(
   ,'despesas.mensais.jogos_apostas' # Bom (velha escala OCDE 2002, OCDE 2008. um pouco menor)
   # 
   # #  2) Outros candidatos a bens de adulto
-  # 'despesas.mensais.lazer_adulto' # Muito bom
+  # ,'despesas.mensais.lazer_adulto' # Muito bom
   # ,'despesas.mensais.takeout.food' # Muito bom
   # ,'despesas.mensais.joias' # Muito Bom (velha escala OCDE 2002, OCDE 2008)
   # ,'despesas.mensais.perfume' # Muito bom (velha escala OCDE 2002, OCDE 2008)
+  # ,'despesas.mensais.ensino.superior'# Ok (entre Engel e velha escala OCDE)
 
 )
 
@@ -653,7 +654,3 @@ list(
 # 
 # 
 # 
-
-# temp --------------------------------------------------------------------
-lapply(lista.pof2002_ss.rothbarth.sample.ivreg, summary)
-lapply(lista.pof2008_ss.rothbarth.sample.ivreg, summary)
