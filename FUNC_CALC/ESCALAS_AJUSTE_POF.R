@@ -110,17 +110,18 @@ tibble(
 
 tibble(
   b = c(
-    1.00
-    ,1.21
-    ,1.30
-    ,1.31
+    sqrt(2)
+    ,sqrt(3)
+    ,sqrt(4)
+    ,sqrt(5)
   ),
   a = seq(0,3)
 ) %>% 
   ggplot(
     aes(x = a, y = b)
   ) +
-  geom_line()
+  geom_bar(stat = 'identity') + 
+  ggthemes::theme_economist()
 
 
 
