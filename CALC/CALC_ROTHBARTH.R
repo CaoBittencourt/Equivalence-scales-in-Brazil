@@ -98,6 +98,9 @@ weights.var_pof2008 <- 'fator_expansao1' #Peso amostral
 # Quantidade de crianças para cálculo de escalas de equivalência
 n.child.range <- seq(0,3)
 
+# Adultos na família de referência
+n.adult.ref.rothbarth <- 2
+
 # 5. BENS ADULTOS (ROTHBARTH) ------------------------------------------------------------
 # SELEÇÃO DE BENS ADULTOS
 bens_adultos <- c(
@@ -193,12 +196,6 @@ lapply(
 # ) -> lista.pof2008_cs.rothbarth
 
 
-
-
-
-
-
-
 # 6. SELEÇÃO AMOSTRAL ------------------------------------------------------------
 # POF2002
 # Sem sexo
@@ -272,7 +269,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        round(!!sym(rothbarth.welfare.indicator_pof2008),2) > 0,
+        round(!!sym(rothbarth.welfare.indicator_pof2002),2) > 0,
         round(!!sym(expenditure_pof2008),2) > 0,
         round(!!sym(iv.expenditure_pof2008),2) > 0
       ) %>% 
@@ -386,15 +383,20 @@ Map(
           model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
+          na.r = n.adult.ref.rothbarth, nc.r = 0
+        ) %>%
           mutate(
-            family.type = glue('AA', strrep('C',n)),
             data = sample
           )
       }
     ) %>% bind_rows(.)
-  }) %>% bind_rows(.) -> pof2002_ss.rothbarth_scales
+  }) %>% bind_rows(.) %>% 
+  mutate(
+    child.cost = equivalence.scale - first(equivalence.scale)
+    , child.cost = child.cost*(n.adult.ref.rothbarth/str_count(family.type,'C'))
+    , acresc.scale = equivalence.scale - lag(equivalence.scale)
+    , family.ref = strrep('A',n.adult.ref.rothbarth) 
+  ) -> pof2002_ss.rothbarth_scales
 
 # 8. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2008, todas as faixas etárias, sem sexo
@@ -452,15 +454,20 @@ Map(
           model = iv.rothbarth.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
+          na.r = n.adult.ref.rothbarth, nc.r = 0
+        ) %>%
           mutate(
-            family.type = glue('AA', strrep('C',n)),
             data = sample
           )
       }
-    ) %>% bind_rows(.)
-  }) %>% bind_rows(.) -> pof2008_ss.rothbarth_scales
+    ) %>% bind_rows(.) 
+  }) %>% bind_rows(.)  %>% 
+  mutate(
+    child.cost = equivalence.scale - first(equivalence.scale)
+    , child.cost = child.cost*(n.adult.ref.rothbarth/str_count(family.type,'C'))
+    , acresc.scale = equivalence.scale - lag(equivalence.scale)
+    , family.ref = strrep('A',n.adult.ref.rothbarth) 
+  ) -> pof2008_ss.rothbarth_scales
 
 # # 9. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
 # # POF2002, todas as faixas etárias, sem sexo
@@ -606,51 +613,10 @@ Map(
 # # pof2008_cs.rothbarth_scales
 
 # 11. ARQUIVOS EXCEL ------------------------------------------------------
-list(
-  'POF2002 (sem sexo)' = pof2002_ss.rothbarth_scales,
-  # 'POF2002 (com sexo)' = pof2002_cs.rothbarth_scales,
-  'POF2008 (sem sexo)' = pof2008_ss.rothbarth_scales
-  # , 'POF2008 (com sexo)' = pof2008_cs.rothbarth_scales
-) %>% 
-  openxlsx::write.xlsx(file = 'Escalas_Equivalencia_Rothbarth.xlsx')
-
-# # 12. Teste Tabelas de Regressão Bonitas --------------------------------------
-# Map(
-#   list.models = list(
-#     lista.pof2002_ss.rothbarth.sample.ivreg,
-#     # lista.pof2002_cs.rothbarth.sample.ivreg,
-#     lista.pof2008_ss.rothbarth.sample.ivreg
-#     # lista.pof2008_cs.rothbarth.sample.ivreg
-#   ),
-#   list.str_errors = list(
-#     lista.pof2002_ss.rothbarth.sample.str_errors.robust,
-#     # lista.pof2002_cs.rothbarth.sample.str_errors.robust,
-#     lista.pof2008_ss.rothbarth.sample.str_errors.robust
-#     # lista.pof2008_cs.rothbarth.sample.str_errors.robust
-#   ),
-#   list.names = list(
-#     'Rothbarth_2SLS_POF2002_SemSexo',
-#     # 'Rothbarth_2SLS_POF2002_ComSexo',
-#     'Rothbarth_2SLS_POF2008_SemSexo'
-#     # 'Rothbarth_2SLS_POF2008_ComSexo'
-#   ),
-#   function(
-#     list.models,
-#     list.str_errors,
-#     list.names
-#   ){
-#     
-#     stargazer(
-#       list.models,
-#       se = list.str_errors,
-#       type = 'html',
-#       # add.lines = list(
-#       #   
-#       # ),
-#       out = glue('{list.names}.htm')
-#     )
-#   }
-# )
-# 
-# 
-# 
+# list(
+#   'POF2002 (sem sexo)' = pof2002_ss.rothbarth_scales,
+#   # 'POF2002 (com sexo)' = pof2002_cs.rothbarth_scales,
+#   'POF2008 (sem sexo)' = pof2008_ss.rothbarth_scales
+#   # , 'POF2008 (com sexo)' = pof2008_cs.rothbarth_scales
+# ) %>% 
+#   openxlsx::write.xlsx(file = 'Escalas_Equivalencia_Rothbarth.xlsx')

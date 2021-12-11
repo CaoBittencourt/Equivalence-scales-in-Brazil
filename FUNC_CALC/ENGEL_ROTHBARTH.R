@@ -100,7 +100,7 @@ lapply(pkg, function(x)
 #   
 # }
 
-# 3. ==> FUNÇÃO DE REtGRESSÃO 2SLS (ENGEL E ROTHBARTH) FLEXÍVEL ----------------
+# 3. ==> FUNÇÃO DE REGRESSÃO 2SLS (ENGEL E ROTHBARTH) FLEXÍVEL ----------------
 iv.engel.rothbarth <- function(
   df, 
   welfare.indicator,
@@ -353,7 +353,8 @@ equivalence.scales.engel.rothbarth <- function(
       
       equivalence.scale = ref.estimate.rel*(na.r - na.h) + coef.rel*(nc.r - nc.h),
       equivalence.scale = exp(equivalence.scale)*(nh/nr),
-      member.cost = (equivalence.scale - 1)*(nr/nc.h),
+      
+      family.type = glue(strrep('A',na.h), strrep('C',nc.h)),
       
       !!sym(glue('p.value<={significance.level}')) := p.value <= significance.level
     ) %>% 
@@ -361,12 +362,11 @@ equivalence.scales.engel.rothbarth <- function(
       term != pessoa.referencia
     ) %>%
     select(
-      term, 
+      family.type,
+      equivalence.scale,
       std.error,
       p.value,
-      !!sym(glue('p.value<={significance.level}')),
-      equivalence.scale,
-      member.cost
+      !!sym(glue('p.value<={significance.level}'))
     ) %>%
     return(.)
 }

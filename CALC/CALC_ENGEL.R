@@ -108,6 +108,9 @@ weights.var_pof2008 <- 'fator_expansao1' #Peso amostral
 # Quantidade de crianças para cálculo de escalas de equivalência
 n.child.range <- seq(0,3)
 
+# Adultos na família de referência
+n.adult.ref.engel <- 1
+
 
 # 5. SELEÇÃO AMOSTRAL ------------------------------------------------------------
 # POF2002
@@ -182,7 +185,7 @@ lapply(
   function(pof){ 
     pof %>%
       filter(
-        round(!!sym(engel.welfare.indicator_pof2008),2) > 0,
+        round(!!sym(engel.welfare.indicator_pof2002),2) > 0,
         round(!!sym(expenditure_pof2008),2) > 0,
         round(!!sym(iv.expenditure_pof2008),2) > 0
       ) %>% 
@@ -296,15 +299,20 @@ Map(
           model = iv.engel.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
+          na.r = n.adult.ref.engel, nc.r = 0
+        ) %>%
           mutate(
-            family.type = glue('AA', strrep('C',n)),
             data = sample
           )
       }
     ) %>% bind_rows(.)
-  }) %>% bind_rows(.) -> pof2002_ss.engel_scales
+  }) %>% bind_rows(.) %>% 
+  mutate(
+    child.cost = equivalence.scale - first(equivalence.scale)
+    , child.cost = child.cost*(n.adult.ref.engel/str_count(family.type,'C'))
+    , acresc.scale = equivalence.scale - lag(equivalence.scale)
+    , family.ref = strrep('A',n.adult.ref.engel) 
+  ) -> pof2002_ss.engel_scales
 
 # 7. ESCALAS DE EQUIVALÊNCIA: POF 2008, todas as faixas etárias, sem sexo ------------------------------------------------------------
 # POF2008, todas as faixas etárias, sem sexo
@@ -362,15 +370,20 @@ Map(
           model = iv.engel.model,
           pessoa.referencia = pessoa_ref,
           na.h = 2, nc.h = n,
-          na.r = 2, nc.r = 0
-        ) %>% 
+          na.r = n.adult.ref.engel, nc.r = 0
+        ) %>%
           mutate(
-            family.type = glue('AA', strrep('C',n)),
             data = sample
           )
       }
     ) %>% bind_rows(.)
-  }) %>% bind_rows(.) -> pof2008_ss.engel_scales
+  }) %>% bind_rows(.) %>% 
+  mutate(
+    child.cost = equivalence.scale - first(equivalence.scale)
+    , child.cost = child.cost*(n.adult.ref.engel/str_count(family.type,'C'))
+    , acresc.scale = equivalence.scale - lag(equivalence.scale)
+    , family.ref = strrep('A',n.adult.ref.engel) 
+  ) -> pof2008_ss.engel_scales
 
 # # 8. ESCALAS DE EQUIVALÊNCIA: POF 2002, todas as faixas etárias, com sexo ------------------------------------------------------------
 # # POF2002, todas as faixas etárias, sem sexo
@@ -513,13 +526,13 @@ Map(
 # ) %>% bind_rows(.) -> pof2008_cs.engel_scales
 
 # 10. ARQUIVOS EXCEL ------------------------------------------------------
-list(
-  'POF2002 (sem sexo)' = pof2002_ss.engel_scales
-  # ,'POF2002 (com sexo)' = pof2002_cs.engel_scales,
-  ,'POF2008 (sem sexo)' = pof2008_ss.engel_scales
-  # ,'POF2008 (com sexo)' = pof2008_cs.engel_scales
-) %>% 
-  openxlsx::write.xlsx(file = 'Escalas_Equivalencia_Engel.xlsx')
+# list(
+#   'POF2002 (sem sexo)' = pof2002_ss.engel_scales
+#   # ,'POF2002 (com sexo)' = pof2002_cs.engel_scales,
+#   ,'POF2008 (sem sexo)' = pof2008_ss.engel_scales
+#   # ,'POF2008 (com sexo)' = pof2008_cs.engel_scales
+# ) %>% 
+#   openxlsx::write.xlsx(file = 'Escalas_Equivalencia_Engel.xlsx')
 
 
 

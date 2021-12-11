@@ -1,4 +1,14 @@
 # 1. PACOTES --------------------------------------------------------------
+pkg <- c(
+  'tidyverse' #Leitura e manipulação de dados
+) 
+
+lapply(pkg, function(x)
+  if(!require(x, character.only = T))
+  {install.packages(x); require(x)})
+
+# lapply(pkg, function(x)
+#   {citation(package = x)})
 
 # 2. FUNÇÃO DE AJUSTE DE POF  ---------------------------------------------
 # Ajuste de renda conforme escala de equivalência
@@ -20,7 +30,6 @@ pof.ajuste.escalas.ac_fun <- function(
   
   
   # 1. TIPO DA FAMÍLIA
-  
   df.pof %>%
     select(
       contains(c('] anos', '[')), #C
@@ -43,86 +52,47 @@ pof.ajuste.escalas.ac_fun <- function(
   df.escalas.ac %>%
     select(equivalence.scale
            ,family.type
-           ,member.cost) %>%
-    merge(df.pof) -> df.pof
+           ,family.ref
+           ,child.cost) %>%
+    full_join(df.pof) %>% 
+    filter(
+      # Configurações familiares para as quais não se calculou escalas de equivalência => NA
+      !is.na(equivalence.scale)
+      # Ajustes não podem ser realizados com base na família de referência
+      & str_count(family.type) != str_count(first(family.ref))
+      ) -> df.pof
   
-  # 2. RENDA POR ADULTO-EQUIVALENTE
-  
-  # df.pof %>%
-  #   mutate(
-  #     renda.ajustada = 
-  #   )
-  
-  # 3. DESPESAS POR ADULTO-EQUIVALENTE
-  
+  # 2. RENDA AJUSTADA
+  df.pof %>%
+    mutate(
+      across(
+        .cols = starts_with('renda')
+        ,.fns = function(x){x*str_length(family.type)/(str_length(family.ref)*equivalence.scale)}
+        ,.names = '{.col}_ajustada'
+      )
+    ) -> df.pof
+
+  # 3. DESPESAS AJUSTADAS
+  df.pof %>%
+    mutate(
+      across(
+        .cols = starts_with('despesas.mensais')
+        ,.fns = function(x){x*str_length(family.type)/(str_length(family.ref)*equivalence.scale)}
+        ,.names = '{.col}_consumo.efetivo'
+      )
+    ) -> df.pof
+
+  # 4. CUSTO DE VIDA AJUSTADO
+  df.pof %>%
+    group_by(classe_social, family.type) %>%
+    mutate(
+      across(
+        .cols = c(starts_with('despesas.mensais'), -contains('consumo.efetivo'))
+        ,.fns = function(x){median(x)*(str_length(family.ref)*equivalence.scale)/str_length(family.type)}
+        ,.names = '{.col}_life.cost'
+      )
+    ) -> df.pof
   
   return(df.pof)
   
 }
-
-
-pof.ajuste.escalas.ac_fun(
-  df.pof = lista.pof2002_ss$pof_ac_2002_ss
-  ,df.escalas.ac = pof2002_ss.engel_scales
-) %>% View(.)
-
-
-# %>% 
-#   mutate(
-#     Afamily.type = strrep('A', A),
-#     Cfamily.type = strrep('C', C),
-#     family.type = paste0(Afamily.type,Cfamily.type)
-# )
-
-# adulto equivalente
-5000/sqrt(5)
-5000/5
-
-
-(5000/5)/sqrt(5)
-
-5000/2
-(5000/2)/sqrt(2)
-
-
-
-# per capita
-5000/5
-5000*5
-
-
-
-
-
-tibble(
-  b = c(
-    0.42
-    ,0.30
-    ,0.20
-  ),
-  a = seq(1,3)
-) %>% 
-  ggplot(
-    aes(x = a, y = b)
-  ) +
-  # geom_line()
-  geom_bar(stat = 'identity')
-
-tibble(
-  b = c(
-    sqrt(2)
-    ,sqrt(3)
-    ,sqrt(4)
-    ,sqrt(5)
-  ),
-  a = seq(0,3)
-) %>% 
-  ggplot(
-    aes(x = a, y = b)
-  ) +
-  geom_bar(stat = 'identity') + 
-  ggthemes::theme_economist()
-
-
-
-
