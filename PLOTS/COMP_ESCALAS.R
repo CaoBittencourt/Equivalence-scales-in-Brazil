@@ -29,78 +29,100 @@ readr::read_csv(
 scales_norm %>% 
   pivot_longer(
     cols = contains('AA')
-    , names_to = 'family_type'
+    , names_to = 'family.type'
     , values_to = 'scale'
   ) %>% select(-A) %>%
   replace(is.na(.), 0) -> scales_norm
 
-# child_cost %>% 
-#   pivot_longer(
-#     cols = contains('AA')
-#     , names_to = 'family_type'
-#     , values_to = 'scale'
-#   ) -> scales_norm
+child_cost %>%
+  pivot_longer(
+    cols = contains('AA')
+    , names_to = 'family.type'
+    , values_to = 'child.cost'
+  )  %>% replace(is.na(.), 0) -> child_cost
 
 
 # 4. VISUALIZAÇÃO (ESCALAS) -----------------------------------------------
-# theme_set(ggthemes::theme_hc(base_size = 25)) 
-theme_set(ggthemes::theme_hc(base_size = 15)) 
+theme_set(ggthemes::theme_hc(base_size = 25))
 
 scales_norm %>% 
   mutate(
     Escala = fct_reorder(
-      Escala, scale, max, .desc = T
+      Escala, scale, max
     )
     , highlight = str_detect(Escala, 'confec')
   ) %>% 
   ggplot(
     aes(
-      x = family_type
+      x = Escala
       , y = scale
       , fill = Região
-    )) + 
-  geom_col() + 
-  # geom_col() + 
-  facet_wrap(facets = vars(Escala)) + 
+    )) +
+  geom_col(size = 1.25, color = 'white') +
+  facet_wrap(
+    facets = vars(family.type)
+    , nrow = 1
+  ) +
   gghighlight(
     highlight
     , calculate_per_facet = T
-    , unhighlighted_params = list(fill = NULL, alpha = 0.5)
-    ) +
-  ggthemes::scale_fill_wsj() +
-  coord_flip() + 
+    , unhighlighted_params = list(
+      fill = NULL, color = NULL, alpha = 0.25)
+  ) +
+  # ggthemes::scale_fill_wsj() +
+  ggthemes::scale_fill_gdocs() +
+  coord_flip() +
   theme(
     legend.title = element_blank()
+    , legend.key.size = unit(2,'line')
     , axis.title.x = element_blank()
     , axis.title.y = element_blank()
   )
 
+ggsave(
+  filename = 'dsdsds.png'
+  , height = 19*3 #, height = 7.66*3
+  # , height = 8.5*3 #, height = 7.66*3
+  , width = 15*3
+  , units = 'cm'
+)
 
 
 
 # 3. VISUALIZAÇÃO (CHILD COST) -----------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+child_cost %>% 
+  mutate(
+    Escala = fct_reorder(
+      Escala, child.cost, min
+    )
+    , highlight = str_detect(Escala, 'confec')
+  ) %>% 
+  ggplot(
+    aes(
+      x = Escala
+      , y = child.cost
+      , fill = Região
+    )) +
+  geom_col(size = 1.25, color = 'white') +
+  facet_wrap(
+    facets = vars(family.type)
+    , nrow = 1
+  ) +
+  gghighlight(
+    highlight
+    , calculate_per_facet = T
+    , unhighlighted_params = list(
+      fill = NULL, color = NULL, alpha = 0.25)
+  ) +
+  # ggthemes::scale_fill_wsj() +
+  ggthemes::scale_fill_gdocs() +
+  coord_flip() +
+  theme(
+    legend.title = element_blank()
+    , legend.key.size = unit(2,'line')
+    , axis.title.x = element_blank()
+    , axis.title.y = element_blank()
+  )
 
 
 

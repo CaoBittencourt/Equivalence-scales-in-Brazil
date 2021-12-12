@@ -138,6 +138,8 @@ lapply(
         # Despesas totais medianas por quintil
         , name = str_remove_all(name, 'mensais ')
         , name = str_replace_all(name, 'Despesas totais','DTM')
+        , name = str_replace_all(name, 'DTM CTV','CTV')
+        , name = str_replace_all(name, 'DTM PC CTV','CTV PC')
         
         , classe_social = str_to_lower(classe_social)
         , classe_social = str_replace_all(classe_social, 'per capita','PC')
@@ -173,6 +175,7 @@ lapply(
       mutate(
         
         name = str_to_title(name)
+        , name = str_remove_all(name, '_total')
         , name = str_replace_all(name, '_',' ')
         , name = str_replace_all(name, '\\.',' ')
         , name = str_replace_all(name, 'ajustada','EQ')
@@ -181,10 +184,11 @@ lapply(
         # Consumo equivalente
         , name = str_replace_all(name, 'consumo efetivo','CSM EQ')
         , name = str_replace_all(name, 'per capita','PC')
-        , name = str_remove_all(name, 'total')
         # Despesas totais medianas por quintil
         , name = str_remove_all(name, 'mensais ')
         , name = str_replace_all(name, 'Despesas totais','DTM')
+        , name = str_replace_all(name, 'DTM CTV','CTV')
+        , name = str_replace_all(name, 'DTM PC CTV','CTV PC')
         
         , classe_social = str_to_lower(classe_social)
         , classe_social = str_replace_all(classe_social, 'per capita','PC')
@@ -263,15 +267,15 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
     )) + 
   geom_col(position = 'dodge') + 
   facet_wrap(facets = vars(family.type)) +
-  scale_x_discrete(
-    labels = function(x){
-      x %>% 
-        str_replace(
-          pattern = ' '
-          , replacement = '\n'
-        )
-    }
-  ) + 
+  # scale_x_discrete(
+  #   labels = function(x){
+  #     x %>% 
+  #       str_replace(
+  #         pattern = ' '
+  #         , replacement = '\n'
+  #       )
+  #   }
+  # ) + 
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -289,7 +293,7 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2002_renda_engel.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -309,15 +313,15 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
     )) + 
   geom_col(position = 'dodge') + 
   facet_wrap(facets = vars(family.type)) +
-  scale_x_discrete(
-    labels = function(x){
-      x %>% 
-        str_replace(
-          pattern = ' '
-          , replacement = '\n'
-        )
-    }
-  ) + 
+  # scale_x_discrete(
+  #   labels = function(x){
+  #     x %>% 
+  #       str_replace(
+  #         pattern = ' '
+  #         , replacement = '\n'
+  #       )
+  #   }
+  # ) + 
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -335,7 +339,7 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2008_renda_engel.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -357,13 +361,13 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
   facet_wrap(facets = vars(family.type), nrow = 1) +
   scale_x_discrete(
     labels = function(x){
-      x %>% 
+      x %>%
         str_replace(
           pattern = ' '
           , replacement = '\n'
         )
     }
-  ) + 
+  ) +
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -381,7 +385,7 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2002_renda_rothbarth.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -403,13 +407,13 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
   facet_wrap(facets = vars(family.type), nrow = 1) +
   scale_x_discrete(
     labels = function(x){
-      x %>% 
+      x %>%
         str_replace(
           pattern = ' '
           , replacement = '\n'
         )
     }
-  ) + 
+  ) +
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -427,7 +431,7 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2008_renda_rothbarth.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -452,15 +456,15 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
     )) + 
   geom_col(position = 'dodge') + 
   facet_wrap(facets = vars(family.type)) +
-  scale_x_discrete(
-    labels = function(x){
-      x %>% 
-        str_replace(
-          pattern = '^(\\S+) (\\S+) '
-          , replacement = '\\1 \\2\n'
-        )
-    }
-  ) + 
+  # scale_x_discrete(
+  #   labels = function(x){
+  #     x %>% 
+  #       str_replace(
+  #         pattern = '^(\\S+) (\\S+) '
+  #         , replacement = '\\1 \\2\n'
+  #       )
+  #   }
+  # ) + 
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -478,7 +482,7 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2002_consumo_engel.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -498,15 +502,15 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
     )) + 
   geom_col(position = 'dodge') + 
   facet_wrap(facets = vars(family.type)) +
-  scale_x_discrete(
-    labels = function(x){
-      x %>% 
-        str_replace(
-          pattern = '^(\\S+) (\\S+) '
-          , replacement = '\\1 \\2\n'
-        )
-    }
-  ) + 
+  # scale_x_discrete(
+  #   labels = function(x){
+  #     x %>% 
+  #       str_replace(
+  #         pattern = '^(\\S+) (\\S+) '
+  #         , replacement = '\\1 \\2\n'
+  #       )
+  #   }
+  # ) + 
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -524,7 +528,7 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2008_consumo_engel.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -546,13 +550,13 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
   facet_wrap(facets = vars(family.type), nrow = 1) +
   scale_x_discrete(
     labels = function(x){
-      x %>% 
+      x %>%
         str_replace(
           pattern = '^(\\S+) (\\S+) '
           , replacement = '\\1 \\2\n'
         )
     }
-  ) + 
+  ) +
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -571,7 +575,7 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2002_consumo_rothbarth.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -594,13 +598,13 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
   facet_wrap(facets = vars(family.type), nrow = 1) +
   scale_x_discrete(
     labels = function(x){
-      x %>% 
+      x %>%
         str_replace(
           pattern = '^(\\S+) (\\S+) '
           , replacement = '\\1 \\2\n'
         )
     }
-  ) + 
+  ) +
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -619,7 +623,7 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2008_consumo_rothbarth.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -630,7 +634,7 @@ theme_set(ggthemes::theme_hc(base_size = 25))
 
 # ENGEL POF 2002
 lista.pof2002_ss.ajustada.summarise3$Engel %>%
-  filter(str_detect(name,'DTM'), !str_detect(name,'CSM')) %>%
+  filter(str_detect(name,'DTM|CTV'), !str_detect(name,'CSM')) %>%
   mutate(
     name = fct_reorder(name, value, max, .desc = T)
     , value = round(value, 2)
@@ -643,15 +647,15 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
     )) + 
   geom_col(position = 'dodge') + 
   facet_wrap(facets = vars(family.type)) +
-  scale_x_discrete(
-    labels = function(x){
-      x %>% 
-        str_replace(
-          pattern = '^(\\S+) (\\S+) '
-          , replacement = '\\1 \\2\n'
-        )
-    }
-  ) + 
+  # scale_x_discrete(
+  #   labels = function(x){
+  #     x %>% 
+  #       str_replace(
+  #         pattern = '^(\\S+) (\\S+) '
+  #         , replacement = '\\1 \\2\n'
+  #       )
+  #   }
+  # ) + 
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -669,14 +673,14 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2002_custodevida_engel.png'
-  , height = 7.66*3
+  , height = 8.5*3
   , width = 15*3
   , units = 'cm'
 )
 
 # ENGEL POF 2008
 lista.pof2008_ss.ajustada.summarise3$Engel %>%
-  filter(str_detect(name,'DTM'), !str_detect(name,'CSM')) %>%
+  filter(str_detect(name,'DTM|CTV'), !str_detect(name,'CSM')) %>%
   mutate(
     name = fct_reorder(name, value, max, .desc = T)
     , value = round(value, 2)
@@ -689,15 +693,15 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
     )) + 
   geom_col(position = 'dodge') + 
   facet_wrap(facets = vars(family.type)) +
-  scale_x_discrete(
-    labels = function(x){
-      x %>% 
-        str_replace(
-          pattern = '^(\\S+) (\\S+) '
-          , replacement = '\\1 \\2\n'
-        )
-    }
-  ) + 
+  # scale_x_discrete(
+  #   labels = function(x){
+  #     x %>% 
+  #       str_replace(
+  #         pattern = '^(\\S+) (\\S+) '
+  #         , replacement = '\\1 \\2\n'
+  #       )
+  #   }
+  # ) + 
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -715,14 +719,14 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2008_custodevida_engel.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
 
 # ROTHBARTH POF 2002
 lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
-  filter(str_detect(name,'DTM'), !str_detect(name,'CSM')) %>%
+  filter(str_detect(name,'DTM|CTV'), !str_detect(name,'CSM')) %>%
   mutate(
     name = fct_reorder(name, value, max, .desc = T)
     , value = round(value, 2)
@@ -737,13 +741,13 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
   facet_wrap(facets = vars(family.type), nrow = 1) +
   scale_x_discrete(
     labels = function(x){
-      x %>% 
+      x %>%
         str_replace(
           pattern = '^(\\S+) (\\S+) '
           , replacement = '\\1 \\2\n'
         )
     }
-  ) + 
+  ) +
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -762,7 +766,7 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2002_custodevida_rothbarth.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -770,7 +774,7 @@ ggsave(
 
 # ROTHBARTH POF 2008
 lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
-  filter(str_detect(name,'DTM'), !str_detect(name,'CSM')) %>%
+  filter(str_detect(name,'DTM|CTV'), !str_detect(name,'CSM')) %>%
   mutate(
     name = fct_reorder(name, value, max, .desc = T)
     , value = round(value, 2)
@@ -785,13 +789,13 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
   facet_wrap(facets = vars(family.type), nrow = 1) +
   scale_x_discrete(
     labels = function(x){
-      x %>% 
+      x %>%
         str_replace(
           pattern = '^(\\S+) (\\S+) '
           , replacement = '\\1 \\2\n'
         )
     }
-  ) + 
+  ) +
   scale_y_continuous(labels = scales::label_dollar(
     prefix = 'R$'
     , big.mark = '.'
@@ -810,7 +814,7 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2008_custodevida_rothbarth.png'
-  , height = 7.66*3
+  , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
