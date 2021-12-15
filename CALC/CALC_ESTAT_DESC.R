@@ -11,183 +11,181 @@ lapply(pkg, function(x)
 # lapply(pkg, function(x)
 #   {citation(package = x)})
 
-# source('C:/Users/Sony/Documents/GitHub/TCC/CALC/CALC_ENGEL.R', encoding = 'UTF-8')
-# source('C:/Users/Sony/Documents/GitHub/TCC/CALC/CALC_ROTHBARTH.R', encoding = 'UTF-8')
+# Confecção própria
+# source('C:/Users/Sony/Documents/GitHub/TCC/CALC/DADOS.R', encoding = 'UTF-8')
 
 
-
-# 2. DADOS INICIAIS VS AMOSTRA PARA CÁLCULO DE ESCALAS --------------------
-
+# 2. DADOS INICIAIS --------------------
+pof2002 <- lista.pof2002_ss$pof_ac_2002_ss
+pof2008 <- lista.pof2008_ss$pof_ac_2008_ss
 
 
 # 3. ESTATÍSTICAS DESCRITIVAS (DESPESAS) ------------------------------------------------
 # POF 2002 (sem sexo)
-lapply(
-  lista.pof2002_ss
-  , function(pof){
-    
-    pof %>%
-      select(
+pof2002 %>%
+  filter(
+    `(14,110] anos` > 0
+  ) %>%
+  summarise(
+    across(
+      .cols = c(
         starts_with('despesas')
         & -contains('capita')
         & -contains('proxy')
-        & -contains('homem_mulher')
+        & -contains('_adulto')
         & -contains('infantil')
         & -contains('menos')
-        & matches(paste0(names(id_despesas.agg),collapse = '|')) 
-      ) %>%
-      summary(.) 
-    
-  })
+        & matches(
+          paste0(
+            paste0(names(id_despesas.agg),collapse = '|')
+            , paste0(names(id_despesas.especificas),collapse = '|')
+            , paste0('|totais')
+          )
+        )
+      )
+      ,.fns = list(
+        'min' = min
+        , 'mean' = mean
+        , 'max' = max
+        , 'sd' = sd)
+    )
+  ) %>% pivot_longer(cols = everything()) %>% 
+  mutate(value = round(value, 2)) %>% View()
+
 
 # POF 2008 (sem sexo)
-lapply(
-  lista.pof2008_ss
-  , function(pof){
-    
-    pof %>%
-      select(
+pof2008 %>%
+  filter(
+    `(14,104] anos` > 0
+  ) %>%
+  summarise(
+    across(
+      .cols = c(
         starts_with('despesas')
         & -contains('capita')
         & -contains('proxy')
-        & -contains('homem_mulher')
+        & -contains('_adulto')
         & -contains('infantil')
         & -contains('menos')
-        & matches(paste0(names(id_despesas.agg),collapse = '|')) 
-      ) %>%
-      summary(.) 
-    
-  })
+        & matches(
+          paste0(
+            paste0(names(id_despesas.agg),collapse = '|')
+            , paste0(names(id_despesas.especificas),collapse = '|')
+            , paste0('|totais')
+          )
+        )
+      )
+      ,.fns = list(
+        'min' = min
+        , 'mean' = mean
+        , 'max' = max
+        , 'sd' = sd)
+    )
+  ) %>% pivot_longer(cols = everything()) %>% 
+  mutate(value = round(value, 2)) %>% View()
 
 
-# 4. ESTATÍSTICAS DESCRITIVAS (PARTICIPAÇÃO ORÇAMENTÁRIA) ------------------------------------------------
+# 3. ESTATÍSTICAS DESCRITIVAS (PARTICIPAÇÃO ORÇAMENTÁRIA) ------------------------------------------------
 # POF 2002 (sem sexo)
-lapply(
-  lista.pof2002_ss
-  , function(pof){
-    
-    pof %>%
-      select(
+pof2002 %>%
+  filter(
+    `(14,110] anos` > 0
+  ) %>%
+  summarise(
+    across(
+      .cols = c(
         starts_with('share')
         & -contains('capita')
         & -contains('proxy')
-        & -contains('homem_mulher')
+        & -contains('_adulto')
         & -contains('infantil')
         & -contains('menos')
-        & matches(paste0(names(id_despesas.agg),collapse = '|')) 
-      ) %>%
-      summary(.) 
-    
-  })
+        & matches(
+          paste0(
+            paste0(names(id_despesas.agg),collapse = '|')
+            , paste0(names(id_despesas.especificas),collapse = '|')
+            , paste0('|totais')
+          )
+        )
+      )
+      ,.fns = list(
+        'min' = min
+        , 'mean' = mean
+        , 'max' = max
+        , 'sd' = sd)
+    )
+  ) %>% pivot_longer(cols = everything()) %>% 
+  mutate(value = round(value, 2)) %>% View()
+
 
 # POF 2008 (sem sexo)
-lapply(
-  lista.pof2008_ss
-  , function(pof){
-    
-    pof %>%
-      select(
+pof2008 %>%
+  filter(
+    `(14,104] anos` > 0
+  ) %>%
+  summarise(
+    across(
+      .cols = c(
         starts_with('share')
         & -contains('capita')
         & -contains('proxy')
-        & -contains('homem_mulher')
+        & -contains('_adulto')
         & -contains('infantil')
         & -contains('menos')
-        & matches(paste0(names(id_despesas.agg),collapse = '|')) 
-      ) %>%
-      summary(.) 
-    
-  })
+        & matches(
+          paste0(
+            paste0(names(id_despesas.agg),collapse = '|')
+            , paste0(names(id_despesas.especificas),collapse = '|')
+            , paste0('|totais')
+          )
+        )
+      )
+      ,.fns = list(
+        'min' = min
+        , 'mean' = mean
+        , 'max' = max
+        , 'sd' = sd)
+    )
+  ) %>% pivot_longer(cols = everything()) %>% 
+  mutate(value = round(value, 2)) %>% View()
 
 
 # 5. ESTATÍSTICAS DESCRITIVAS (DOMICÍLIOS) ------------------------------------------------
 # POF 2002 (sem sexo)
-lapply(
-  lista.pof2002_ss.rothbarth.sample
-  , function(pof){
-    
-    pof %>%
-      select(
-        contains('morador')
-        ,contains('] anos')
-        ,contains('renda') & contains('per.capita')
-      ) %>%
-      summary(.) 
-    
-  })
-
-
-lapply(
-  lista.pof2002_ss.rothbarth.sample
-  , function(pof){
-    
-    Map(
-      function(var){
-        
-        pof %>%
-          select(
-            contains(var)
-          ) %>% sd(.) 
-        
-      }
-      , var = c('morador','] anos','renda')
+pof2002 %>% 
+  filter(
+    `(14,110] anos` > 0
+  ) %>%
+  summarise(
+    across(
+      .cols = c(contains('morador')
+                ,contains('] anos')
+                ,contains('renda') & contains('per.capita')
+      )
+      ,.fns = list(
+        'min' = min
+        , 'mean' = mean
+        , 'max' = max
+        , 'sd' = sd)
     )
-    
-  })
-
-lista.pof2002_ss$pof_ac_2002_ss %>% select(contains('renda')) %>% pull(.) %>% sd(.)
-
-
-lapply(
-  lista.pof2002_ss
-  , function(pof){
-    
-    Map(
-      function(var){
-        
-        pof %>%
-          group_by(
-            !!sym(var)
-          ) %>%
-          tally(.) %>%
-          mutate(
-            prc = n/sum(n)
-          )
-        
-      }
-      , var = c('regiao','urbano','classe_social')
-    )
-    
-  })
-
+  ) %>% pivot_longer(cols = everything())
 
 # POF 2008 (sem sexo)
-lapply(
-  lista.pof2008_ss
-  , function(pof){
-    
-    pof %>%
-      select(
-        contains('morador')
-        ,contains('] anos')
-      ) %>%
-      summary(.) 
-    
-    Map(
-      function(var){
-        
-        pof %>%
-          group_by(
-            !!sym(var)
-          ) %>%
-          tally(.) %>%
-          mutate(
-            prc = n/sum(n)
-          )
-        
-      }
-      , var = c('regiao','urbano','classe_social')
+pof2008 %>%
+  filter(
+    `(14,104] anos` > 0
+  ) %>%
+  summarise(
+    across(
+      .cols = c(contains('morador')
+                ,contains('] anos')
+                ,contains('renda') & contains('per.capita')
+      )
+      ,.fns = list(
+        'min' = min
+        , 'mean' = mean
+        , 'max' = max
+        , 'sd' = sd)
     )
-  })
-
+  ) %>% pivot_longer(cols = everything())
 

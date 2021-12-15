@@ -27,28 +27,45 @@ readr::read_csv(
 
 # 3. MANIPULAÇÃO DE DADOS PARA PLOTAGEM -----------------------------------
 scales_norm %>% 
+  mutate(
+    scale.rank = rank(
+      AACCC
+      , ties.method = 'max'
+      , na.last = F
+      )
+  ) -> scales_norm
+
+scales_norm %>% 
   pivot_longer(
     cols = contains('AA')
     , names_to = 'family.type'
     , values_to = 'scale'
-  ) %>% select(-A) %>%
-  replace(is.na(.), 0) -> scales_norm
+  ) %>% select(-A) -> scales_norm.long
+
+child_cost %>%
+  mutate(
+    child.cost.rank = rank(
+      AACCC
+      , ties.method = 'max'
+      , na.last = F
+    )
+  ) -> child_cost
 
 child_cost %>%
   pivot_longer(
     cols = contains('AA')
     , names_to = 'family.type'
     , values_to = 'child.cost'
-  )  %>% replace(is.na(.), 0) -> child_cost
+  ) -> child_cost.long
 
 
 # 4. VISUALIZAÇÃO (ESCALAS) -----------------------------------------------
-theme_set(ggthemes::theme_hc(base_size = 25))
+theme_set(ggthemes::theme_hc(base_size = 24))
 
-scales_norm %>% 
+scales_norm.long %>% 
   mutate(
     Escala = fct_reorder(
-      Escala, scale, max
+      Escala, scale.rank, max
     )
     , highlight = str_detect(Escala, 'confec')
   ) %>% 
@@ -74,13 +91,13 @@ scales_norm %>%
   coord_flip() +
   theme(
     legend.title = element_blank()
-    , legend.key.size = unit(2,'line')
+    , legend.key.size = unit(1.5,'line')
     , axis.title.x = element_blank()
     , axis.title.y = element_blank()
   )
 
 ggsave(
-  filename = 'dsdsds.png'
+  filename = 'scales_comp.png'
   , height = 19*3 #, height = 7.66*3
   # , height = 8.5*3 #, height = 7.66*3
   , width = 15*3
@@ -88,12 +105,11 @@ ggsave(
 )
 
 
-
-# 3. VISUALIZAÇÃO (CHILD COST) -----------------------------------------------
-child_cost %>% 
+# 5. VISUALIZAÇÃO (CHILD COST) -----------------------------------------------
+child_cost.long %>% 
   mutate(
     Escala = fct_reorder(
-      Escala, child.cost, min
+      Escala, child.cost.rank, max
     )
     , highlight = str_detect(Escala, 'confec')
   ) %>% 
@@ -119,10 +135,44 @@ child_cost %>%
   coord_flip() +
   theme(
     legend.title = element_blank()
-    , legend.key.size = unit(2,'line')
+    , legend.key.size = unit(1.5,'line')
     , axis.title.x = element_blank()
     , axis.title.y = element_blank()
   )
 
+ggsave(
+  filename = 'child.cost_comp.png'
+  , height = 19*3 #, height = 7.66*3
+  # , height = 8.5*3 #, height = 7.66*3
+  , width = 15*3
+  , units = 'cm'
+)
+
+
+
+# 6. CÁLCULOS ADICIONAIS --------------------------------------------------
+child_cost %>% 
+  group_by(family.type) %>%
+  summarise(across(
+    .cols = child.cost
+    ,.fns = list(
+      'mean' = function(x){mean(x, na.rm = T)}
+      , 'sd' = function(x){sd(x, na.rm = T)}
+      ) 
+  )) %>% View()
+  
+scales_norm %>% 
+  group_by(Método) %>% 
+  tally(.) %>% 
+  arrange(desc(n))
+
+scales_norm %>% 
+  mutate(Top10 = scale.rank >= max(scale.rank) - 10) %>%
+  filter(
+    Método == 'Engel'
+    , !is.na(AACCC)
+    ) %>% 
+  select(Top10)
+  
 
 

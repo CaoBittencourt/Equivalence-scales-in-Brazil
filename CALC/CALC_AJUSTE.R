@@ -12,8 +12,8 @@ lapply(pkg, function(x)
 # lapply(pkg, function(x)
 #   {citation(package = x)})
 
-# source('C:/Users/Sony/Documents/GitHub/TCC/CALC/CALC_ENGEL.R', encoding = 'UTF-8')
-# source('C:/Users/Sony/Documents/GitHub/TCC/CALC/CALC_ROTHBARTH.R', encoding = 'UTF-8')
+source('C:/Users/Sony/Documents/GitHub/TCC/CALC/CALC_ENGEL.R', encoding = 'UTF-8')
+source('C:/Users/Sony/Documents/GitHub/TCC/CALC/CALC_ROTHBARTH.R', encoding = 'UTF-8')
 source('C:/Users/Sony/Documents/GitHub/TCC/FUNC_CALC/ESCALAS_AJUSTE_POF.R', encoding = 'UTF-8')
 
 setwd('C:/Users/Sony/Documents/GitHub/TCC/PLOTS')
@@ -293,7 +293,7 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2002_renda_engel.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -339,7 +339,7 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2008_renda_engel.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -385,7 +385,7 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2002_renda_rothbarth.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -431,7 +431,7 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2008_renda_rothbarth.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -482,7 +482,7 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2002_consumo_engel.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -528,7 +528,7 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2008_consumo_engel.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -575,7 +575,7 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2002_consumo_rothbarth.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -623,7 +623,7 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2008_consumo_rothbarth.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -673,7 +673,7 @@ lista.pof2002_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2002_custodevida_engel.png'
-  , height = 8.5*3
+  , height = 8.25*3
   , width = 15*3
   , units = 'cm'
 )
@@ -719,7 +719,7 @@ lista.pof2008_ss.ajustada.summarise3$Engel %>%
 
 ggsave(
   filename = 'pof2008_custodevida_engel.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -766,7 +766,7 @@ lista.pof2002_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2002_custodevida_rothbarth.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
@@ -814,8 +814,71 @@ lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
 
 ggsave(
   filename = 'pof2008_custodevida_rothbarth.png'
-  , height = 8.5*3 #, height = 7.66*3
+  , height = 8.25*3 #, height = 7.66*3
   , width = 15*3
   , units = 'cm'
 )
 
+
+
+
+
+# 10. CÁLCULOS ADICIONAIS --------------------------------------------------------------------
+# lista.pof2002_ss.ajustada.summarise3$Engel %>%
+#   pivot_wider(
+#     id_cols = c(family.type, classe_social)
+#     , names_from = name
+#     , values_from = value
+#   ) %>% 
+#   group_by(family.type) %>% 
+#   mutate(
+#     Renda = 1 - (Renda/max(Renda))
+#   )
+# 
+# lista.pof2002_ss.ajustada.summarise3$Engel %>%
+#   pivot_wider(
+#     id_cols = c(family.type, classe_social)
+#     , names_from = name
+#     , values_from = value
+#   ) %>% 
+#   filter(classe_social != '5Q Renda PC') %>% 
+#   group_by(family.type) %>% 
+#   summarise(
+#     Renda = sum(Renda)
+#   )
+# 
+# lista.pof2002_ss.ajustada.summarise3$Engel %>%
+#   pivot_wider(
+#     id_cols = c(family.type, classe_social)
+#     , names_from = name
+#     , values_from = value
+#   ) %>% 
+#   group_by(family.type) %>% 
+#   transmute(
+#     Renda.prc = Renda/`Renda EQ`
+#     , ganho.prc = 1 - Renda.prc
+#   )
+# 
+# lista.pof2008_ss.ajustada.summarise3$Engel %>%
+#   filter(
+#     str_detect(name,'DTM|CTV|Renda')
+#     , !str_detect(name,'CSM')
+#     , classe_social == '3Q Renda PC'
+#     ) %>%
+#   pivot_wider(
+#     id_cols = c(family.type, classe_social)
+#     , names_from = name
+#     , values_from = value
+#   ) %>% View()
+# 
+# lista.pof2008_ss.ajustada.summarise3$Rothbarth %>%
+#   filter(
+#     str_detect(name,'DTM|CTV|Renda')
+#     , !str_detect(name,'CSM')
+#     , classe_social == '4Q Renda PC'
+#     ) %>%
+#   pivot_wider(
+#     id_cols = c(family.type, classe_social)
+#     , names_from = name
+#     , values_from = value
+#   ) %>% View()
