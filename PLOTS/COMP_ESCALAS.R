@@ -24,6 +24,8 @@ readr::read_csv(
   url('https://docs.google.com/spreadsheets/d/e/2PACX-1vRsrF8OaQGKav6PMpUKtnxMYJheKdti3WDkCql92BpmaXepFUUsYqmIuKuMO5h6gumDo8EyDDJWNs4o/pub?gid=1481008835&single=true&output=csv')
 ) -> child_cost
 
+# Diretório de trabalho
+setwd('C:/Users/Sony/Documents/GitHub/TCC/PLOTS')
 
 # 3. MANIPULAÇÃO DE DADOS PARA PLOTAGEM -----------------------------------
 scales_norm %>% 
@@ -67,7 +69,7 @@ scales_norm.long %>%
     Escala = fct_reorder(
       Escala, scale.rank, max
     )
-    , highlight = str_detect(Escala, 'confec')
+    , highlight = str_detect(Escala, 'Confec')
   ) %>% 
   ggplot(
     aes(
@@ -111,7 +113,7 @@ child_cost.long %>%
     Escala = fct_reorder(
       Escala, child.cost.rank, max
     )
-    , highlight = str_detect(Escala, 'confec')
+    , highlight = str_detect(Escala, 'Confec')
   ) %>% 
   ggplot(
     aes(
@@ -151,16 +153,16 @@ ggsave(
 
 
 # 6. CÁLCULOS ADICIONAIS --------------------------------------------------
-child_cost %>% 
-  group_by(family.type) %>%
-  summarise(across(
-    .cols = child.cost
-    ,.fns = list(
-      'mean' = function(x){mean(x, na.rm = T)}
-      , 'sd' = function(x){sd(x, na.rm = T)}
-      ) 
-  )) %>% View()
-  
+# child_cost %>% 
+#   group_by(family.type) %>%
+#   summarise(across(
+#     .cols = child.cost
+#     ,.fns = list(
+#       'mean' = function(x){mean(x, na.rm = T)}
+#       , 'sd' = function(x){sd(x, na.rm = T)}
+#       ) 
+#   )) %>% View()
+# 
 scales_norm %>% 
   group_by(Método) %>% 
   tally(.) %>% 
